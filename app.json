@@ -1,0 +1,15 @@
+  {
+    "expo": {
+      "name": "Kulinarcho",
+      "icon": "./clipboard.png",
+      "description": "Твоя персонален иконом",
+      "version": "1.0.1",
+      "orientation": "portrait",
+      "privacy": "public",
+      "scheme": "kulinarchoapp",
+
+      "android": {
+        "package": "com.kilesss.kulinarcho"
+      }
+    }
+  }
