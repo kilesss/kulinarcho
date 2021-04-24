@@ -9,7 +9,10 @@
       "scheme": "kulinarchoapp",
 
       "android": {
-        "package": "com.kilesss.kulinarcho"
+        "package": "com.kilesss.kulinarcho",
+        "config": {
+            "googleMobileAdsAppId": "ca-app-pub-5428132222163769~2137322335"
+        }
       }
     }
   }

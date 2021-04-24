@@ -17,6 +17,7 @@ import ImageModal from 'react-native-image-modal';
 import {
   View,
   Text,
+  Image,
   TextInput,
   SafeAreaView,
   ScrollView, FlatList,
@@ -32,25 +33,25 @@ class searchRecipe extends React.Component {
   constructor(props) {
     super(props);
     this.didFocus = props.navigation.addListener("didFocus", (payload) =>
-    BackHandler.addEventListener("hardwareBackPress",async () => {
-      let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
-      let lastRoute = route.pop();
-      if(lastRoute != 'searchRecipe'){
+      BackHandler.addEventListener("hardwareBackPress", async () => {
+        let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
+        let lastRoute = route.pop();
+        if (lastRoute != 'searchRecipe') {
           route.push(lastRoute);
-      }
-      let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
-      if(goRoute != undefined){
-        AsyncStorage.setItem('backRoute', JSON.stringify(route));
-        this.props.navigation.navigate(goRoute);
-      }
-    })
-  );
-  
+        }
+        let goRoute = route.pop();
+        console.log(goRoute);
+        console.log(route);
+        if (goRoute != undefined) {
+          AsyncStorage.setItem('backRoute', JSON.stringify(route));
+          this.props.navigation.navigate(goRoute);
+        }
+      })
+    );
+
   }
 
- 
+
   handleBackButtonClick() {
     this.props.navigation.navigate('HomeScreen');
     return true;
@@ -84,7 +85,7 @@ class searchRecipe extends React.Component {
     const { navigation } = this.props;
     this.props.navigation.setParams({ handleSave: this._saveDetails });
     this.focusListener = navigation.addListener('didFocus', async () => {
-      let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
+      let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
       let arrRoute = [];
 
       if (route === null) {
@@ -336,93 +337,95 @@ class searchRecipe extends React.Component {
     }
     const Card = ({ item }) => {
       return (
-        <TouchableHighlight style={{ width:'100%'}} onPress={() => {AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
-          this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
-        });}}> 
+        <TouchableHighlight style={{ width: '100%' }} onPress={() => {
+          AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
+            this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
+          });
+        }}>
 
-        <View
-          style={{
-            borderLeftWidth: 4, borderLeftColor: '#689F38',
-            // borderBottomWidth:4, borderBottomColor:'#689F38',
-            height: 160,
-            shadowColor: '#000000',
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowRadius: 3,
-            shadowOpacity: 0.5,
-            marginLeft: 15,
-            marginTop: 20,
-            alignItems: 'center',
-            backgroundColor: '#ffffff',
-            borderRadius: 6,
-          }}>
-          <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
-            <Text style={{ fontSize: 20, borderBottomColor: 'silver', borderBottomWidth: 1, textAlign: 'center', fontWeight: '400', color: 'silver' }}>{item.title}</Text>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              <ImageModal
-                borderRadius={80}
-                resizeMode="cover"
-                imageBackgroundColor="#fff"
-                source={{ uri: 'https://s.clipartkey.com/mpngs/s/35-354348_cook-clipart-food-recipe-recipe-clipart.png' + '?time' + (new Date()).getTime() }}
-                style={{
-                  marginLeft: 10, marginBottom: 10,
-                  marginTop: 15,
-                  width: 80,
-                  height: 80,
-                  alignSelf: 'center',
-                }}
-              />
-              <TouchableOpacity style={{
-                width: '100%',
-                paddingLeft: 9,
-                flex: 2,
-                flexDirection: 'column',
-
-              }} onPress={() => {
-                AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
-                  this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
-                });
-              }}>
-                <Text style={{
-                  alignItems: 'flex-end', color: 'green', marginBottom: 10
-                }}>
-                  {item.catTitle}                    </Text>
-                <View
+          <View
+            style={{
+              borderLeftWidth: 4, borderLeftColor: '#689F38',
+              // borderBottomWidth:4, borderBottomColor:'#689F38',
+              height: 160,
+              shadowColor: '#000000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowRadius: 3,
+              shadowOpacity: 0.5,
+              marginLeft: 15,
+              marginTop: 20,
+              alignItems: 'center',
+              backgroundColor: '#ffffff',
+              borderRadius: 6,
+            }}>
+            <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
+              <Text style={{ fontSize: 20, borderBottomColor: 'silver', borderBottomWidth: 1, textAlign: 'center', fontWeight: '400', color: 'silver' }}>{item.title}</Text>
+              <View style={{ flex: 1, flexDirection: 'row' }}>
+                <ImageModal
+                  borderRadius={80}
+                  resizeMode="cover"
+                  imageBackgroundColor="#fff"
+                  source={{ uri: 'https://s.clipartkey.com/mpngs/s/35-354348_cook-clipart-food-recipe-recipe-clipart.png' + '?time' + (new Date()).getTime() }}
                   style={{
-                    width: '100%',
-                    // flex: 1,
-
+                    marginLeft: 10, marginBottom: 10,
+                    marginTop: 15,
+                    width: 80,
                     height: 80,
+                    alignSelf: 'center',
+                  }}
+                />
+                <TouchableOpacity style={{
+                  width: '100%',
+                  paddingLeft: 9,
+                  flex: 2,
+                  flexDirection: 'column',
 
+                }} onPress={() => {
+                  AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
+                    this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
+                  });
+                }}>
+                  <Text style={{
+                    alignItems: 'flex-end', color: 'green', marginBottom: 10
                   }}>
+                    {item.catTitle}                    </Text>
+                  <View
+                    style={{
+                      width: '100%',
+                      // flex: 1,
 
-                  <View style={{ flexDirection: 'row' }}>
-                    <Text style={{ marginRight: 10 }}>Порции: </Text>
-                    <Text style={{
-                      fontSize: 16,
-                      fontWeight: '200',
-                      // fontFamily: 'sans-serif',
-                      marginBottom: 4,
-                      color: '#808080',
-                    }}>{item.portion}</Text>
+                      height: 80,
+
+                    }}>
+
+                    <View style={{ flexDirection: 'row' }}>
+                      <Text style={{ marginRight: 10 }}>Порции: </Text>
+                      <Text style={{
+                        fontSize: 16,
+                        fontWeight: '200',
+                        // fontFamily: 'sans-serif',
+                        marginBottom: 4,
+                        color: '#808080',
+                      }}>{item.portion}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Text style={{ marginRight: 10 }}>Порции: </Text>
+                      <Text style={{
+                        fontSize: 16,
+                        fontWeight: '200',
+                        // fontFamily: 'sans-serif',
+                        marginBottom: 4,
+                        color: '#808080',
+                      }}>{item.all_time}</Text>
+                    </View>
                   </View>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Text style={{ marginRight: 10 }}>Порции: </Text>
-                    <Text style={{
-                      fontSize: 16,
-                      fontWeight: '200',
-                      // fontFamily: 'sans-serif',
-                      marginBottom: 4,
-                      color: '#808080',
-                    }}>{item.all_time}</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
         </TouchableHighlight>
 
       )
@@ -483,174 +486,396 @@ class searchRecipe extends React.Component {
         )
       }
     };
-    if (this.state.externalDataCat === null) {
-      return (
-        <View>
-          <View>
-            <Text>Loading....</Text>
-          </View>
-        </View>
-      )
-    } else {
-      const WINDOW = Dimensions.get('window')
 
-      return (
+    const WINDOW = Dimensions.get('window')
 
-        <View style={{
-          height: '100%',
-        }}>
+    return (
 
-          <DropdownAlert ref={ref => this.dropDownAlertRef = ref} startDelta={WINDOW.height - 150} endDelta={WINDOW.height - 200} />
+      <View style={{
+        height: '100%',
+      }}>
+
+        <DropdownAlert ref={ref => this.dropDownAlertRef = ref} startDelta={WINDOW.height - 150} endDelta={WINDOW.height - 200} />
 
 
-          <SafeAreaView style={{ flexDirection: 'column' }}>
-            <View style={{ flexDirection: 'row' }}>
-              <TextInput
-                placeholder={'Заглавие'}
-                onChangeText={typeTitle => this.setState({ title: typeTitle })}
-                style={{
-                  flex: 8,
-                  height: 50,
-                  marginTop: 20,
-                  borderRadius: 15,
-                  marginLeft: 9, marginRight: 2,
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 7,
-                  },
-                  shadowOpacity: 0.41,
-                  shadowRadius: 9.11,
-                  marginBottom: 20,
+        <SafeAreaView style={{ flexDirection: 'column' }}>
 
-                  elevation: 6,
-                  backgroundColor: '#ffffff',
-                  paddingLeft: 10,
-                  borderTopRightRadius: 0,
-                  borderBottomRightRadius: 0,
-                }}
-              />
-              <Icon style={{ flex: 2, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
-                size={40}
-                containerStyle={{
-                  paddingTop: 3,
-                  flex: 2,
-                  height: 50,
-                  marginTop: 20,
-                  borderRadius: 15,
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 7,
-                  },
-                  shadowOpacity: 0.41,
-                  shadowRadius: 9.11,
-                  marginBottom: 20,
-
-                  elevation: 6,
-                  backgroundColor: '#ffffff',
-                  borderTopLeftRadius: 0,
-                  borderBottomLeftRadius: 0,
-
-                }}
-                color={'green'}
-                onPress={() => {
-                  if (this.state.showExtend == 0) {
-                    this.setState({ showExtend: 1 })
-                  } else {
-                    this.setState({ showExtend: 0 })
-
-                  }
-                }
-
-                }
-                type='ionicon'
-                backgroundColor='silver'
-                name='caret-down-circle-outline'
-              ></Icon>
-            </View>
-            <View style={{}}>
-              <RenderExtend />
-            </View>
-            <View style={{ flexDirection: 'row', marginTop: 5 }}>
-              <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
-
-                this.setState({ page: 0 })
-                this.setState({ externalData: [] })
-
-                this.fetchData(0);
-
-              }} underlayColor="white">
+          <ScrollView>
+            <View style={{ flexDirection: 'column' }}>
+              <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 10, marginRight: 10 }}>
                 <View style={{
-                  flex: 3, flexDirection: "row",
-                  alignItems: "center",
-                  backgroundColor: "white",
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 7,
-                  },
-                  shadowOpacity: 0.41,
-                  shadowRadius: 9.11,
-                  elevation: 6,
-                  marginLeft: 15, marginRight: 10, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
-                  padding: 10
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
                 }}>
-                  <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
-                    <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
-                      size={30}
-                      containerStyle={{
-                        backgroundColor: '#ebebeb',
-                        padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
-                      }}
-                      color={'green'}
-                      onPress={() => {
-                        this.setState({ page: 0 })
-                        this.setState({ externalData: [] })
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '1').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
 
-                        this.fetchData(0);
-                      }
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Салати</Text>
+                    </View>
+                  </TouchableOpacity>
 
-                      }
-                      type='ionicon'
-                      backgroundColor='silver'
-                      name='checkmark-outline'
-                    ></Icon>
-
-                  </View>
-                  <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
-                    <Text style={{ flex: 3, marginTop: 15 }}>Търси</Text>
-                  </View>
                 </View>
-              </TouchableHighlight>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '2').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Супи</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+              </View>
+
+              <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 10, marginRight: 10 }}>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '3').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Предястия</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '4').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Сосове</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 10, marginRight: 10 }}>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '5').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Ястия с месо</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '6').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Ястия без месо</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 10, marginRight: 10 }}>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '7').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Тестени</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '8').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Десерти</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 10, marginRight: 10 }}>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '9').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Напитки</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '10').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Зимнина</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 10, marginRight: 10 }}>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '11').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Бебешки и детски храни</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+                <View style={{
+                  flex: 1,
+                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
+                }}>
+                  <TouchableOpacity onPress={() => {
+                    AsyncStorage.setItem('categoryId', '12').then(data => {
+                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
+                    });
+                  }}>
+                    <View>
+                      <Image
+                        source={require('../../../Image/meal.jpg')}
+                        style={{
+                          width: (WINDOW.width / 2) - 37,
+                          height: (WINDOW.width / 2) - 37,
+                          marginTop: 0,
+                          marginLeft: 0,
+                          borderRadius: 10,
+                          borderBottomLeftRadius: 0,
+                          borderBottomRightRadius: 0,
+                          resizeMode: 'cover',
+
+                        }}
+                      />
+                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>
+</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                </View>
+              </View>
+              
+
             </View>
-            <FlatList
-              contentContainerStyle={{ paddingBottom: 350 }}
-              data={this.state.externalData}
-
-              renderItem={data => {
-
-                return (
-
-                  <Card item={data.item} />
-                );
-              }}
-              keyExtractor={item => item.id}
-
-              ListFooterComponent={() => <ListFooterComponent />}
-            />
-            <ScrollView>
 
 
 
-
-            </ScrollView>
-
+          </ScrollView>
 
 
-          </SafeAreaView>
-        </View >)
-    };
+
+        </SafeAreaView>
+      </View >)
     // }
   }
 }

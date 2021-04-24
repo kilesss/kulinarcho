@@ -15,6 +15,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import DropdownAlert from 'react-native-dropdownalert';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { BackHandler } from 'react-native';
+import { BottomSheet } from 'react-native-btr';
 
 import {
   StyleSheet,
@@ -23,7 +24,9 @@ import {
   TextInput,
   Image,
   ScrollView,
-  TouchableHighlight
+  TouchableHighlight,
+  TouchableOpacity,
+
 } from "react-native";
 import { Icon } from 'react-native-elements'
 import SearchableDropdown from 'react-native-searchable-dropdown';
@@ -92,8 +95,7 @@ class AddRecipes extends React.Component {
       arr2['productId'] = productId;
       arr2['amount'] = amount;
       arr2['hint'] = this.state.hint;
-console.log(arr);
-console.log(arr2);
+
       arr.push(arr2);
       this.setState({ textInputIngridients: arr })
     } else {
@@ -368,20 +370,7 @@ console.log(arr2);
   async submitRecipe() {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    console.log(JSON.stringify({
-      id: this.state.id,
-      title: this.state.title,
-      portions: this.state.portions,
-      time1: this.state.time1,
-      time2: this.state.time2,
-      time3: this.state.time3,
-      description:this.state.description,
-      textInputIngridients: this.state.textInputIngridients,
-      textInput: this.state.textInput,
-      photo: this.state.image64,
 
-      image: this.state.image
-    }))
     await fetch('http://167.172.110.234/api/recipesEdit', {
       method: 'POST',
       body: JSON.stringify({
@@ -484,11 +473,7 @@ console.log(arr2);
     let t = await AsyncStorage.getItem('recipeId');
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    console.log(DEMO_TOKEN);
-    console.log(JSON.stringify({
-      type: 'recipe',
-      productId: t,
-    }));
+
   await fetch("http://167.172.110.234/api/deleteImage", {
       method: "POST",
       body: JSON.stringify({
@@ -517,14 +502,20 @@ console.log(arr2);
   };
 
 
+
   async pickImage() {
+    this.setState({checkCamera:true})
+  };
+  
+  async launchGalery(){
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
-
-
+  
+  
+  
     if (result.width > 1024) {
       let prop = result.width / 1024;
       const manipResult = await ImageManipulator.manipulateAsync(
@@ -544,7 +535,42 @@ console.log(arr2);
     if (!result.cancelled) {
       this.setImage(result.uri);
     }
-  };
+  
+  }
+  async launchCamera(){
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      // aspect: [4, 3],
+      quality: 1,
+    });
+
+
+   
+    if (result.width > 1024) {
+      let prop = result.width / 1024;
+      const manipResult = await ImageManipulator.manipulateAsync(
+        result.localUri || result.uri,
+        [{ resize: { width: result.width / prop, height: result.height / prop } }],
+        { format: 'jpeg' }
+      );
+      const base64 = await FileSystem.readAsStringAsync(manipResult.uri, { encoding: 'base64' });
+      this.setState({ image64: base64 })
+
+    } else {
+      const base64 = await FileSystem.readAsStringAsync(result.uri, { encoding: 'base64' });
+      this.setState({ image64: base64 })
+    }
+
+
+    if (!result.cancelled) {
+      this.setImage(result.uri);
+    }
+  }
+
+
+
+
   constructor(props) {
     super(props);
     this.didFocus = props.navigation.addListener("didFocus", (payload) =>
@@ -589,7 +615,92 @@ console.log(arr2);
     return (
       <View style={styles.MainContainer}>
         <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
+        <BottomSheet
+            animationType="slide"
+            transparent={true}
+            visible={this.state.checkCamera}
+            onBackdropPress={() => {
+              this.setState({checkCamera: false})
+              }}
+            onRequestClose={() => {
+            this.setState({checkCamera: false})
+            }}
+          >
 
+<View style={{
+              backgroundColor: '#fff',
+              width: '100%',
+              height: 120,
+              justifyContent: 'center',
+              borderTopRightRadius: 15,
+              borderTopLeftRadius: 15,
+            }}>
+              <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
+
+                <TouchableOpacity onPress={() => {
+                        this.launchCamera()
+
+                }
+                }>
+                  <View style={{ flexDirection: 'row' }}>
+
+                    <Icon style={styles.icon}
+                      containerStyle={{
+                        backgroundColor: '#ebebeb',
+                        borderRadius: 20,
+                        padding: 5
+                      }}
+                      size={25}
+                      color={'black'}
+
+                      onPress={() => {
+                        this.launchCamera()
+
+
+                      }
+
+                      }
+                      type='ionicon'
+                      backgroundColor='silver'
+                      name='camera-outline'
+                    >Редактирай</Icon>
+                    <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Камера</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
+
+                <TouchableOpacity onPress={() => {
+                        this.launchGalery()
+
+                }
+                }>
+                  <View style={{ flexDirection: 'row' }}>
+
+                    <Icon style={styles.icon}
+                      containerStyle={{
+                        backgroundColor: '#ebebeb',
+                        borderRadius: 20,
+                        padding: 5
+                      }}
+                      size={25}
+                      color={'black'}
+
+                      onPress={() => {
+                        this.launchGalery()
+                      }
+
+                      }
+                      type='ionicon'
+                      name='images-outline'
+                    >Редактирай</Icon>
+                    <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Галерия</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+            </View>
+            </BottomSheet>
         <ScrollView style={styles.scrollView} contentContainerStyle={{ flexGrow: 1 }} >
 
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

@@ -55,9 +55,21 @@ class GenerateShoppingList extends React.Component {
 
     async fetchData() {
         var DEMO_TOKEN2 = await AsyncStorage.getItem('productsGenerate');
-        console.log(DEMO_TOKEN2);
+       
+
+        // this.setState({filledProducts:ar2});
+
         this.setState({ externalData: JSON.parse(DEMO_TOKEN2) })
+        
         this.setState({title:this.state.externalData.title})
+        let t = JSON.parse(DEMO_TOKEN2);
+        let arr = {}
+        Object.keys(t.products).map((keyche, index) => {
+            arr[keyche] = 0;
+        })
+        this.setState({filledProducts:arr});
+
+
 
     }
 
@@ -96,23 +108,20 @@ class GenerateShoppingList extends React.Component {
           ar2[keyche] = arr[keyche];
         })    
         ar2[id.key] = amount;
-    this.setState({filledProducts:ar2});
+        this.state.filledProducts = ar2;
+        console.log(this.state.filledProducts)
+    // this.setState({filledProducts:ar2});
 
     }
   async  generateList(){
-        if(Object.keys(this.state.filledProducts).length !== Object.keys(this.state.externalData.products).length){
-            console.log('ne otgovarqt')
-            this.setState({alertFields:1}); 
-
-            this.setState({ state: this.state });
-
-        }else{ 
+  
             var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
             await fetch('http://167.172.110.234/api/generateShoppingList', {
                 method: 'POST',
                 body: JSON.stringify({
                     title:this.state.title,
-                    products: this.state.filledProducts
+                    products: this.state.filledProducts,
+                    filledProducts: this.state.externalData
                   }),
                 headers: {
                   "Content-Type": "application/json",
@@ -143,7 +152,7 @@ class GenerateShoppingList extends React.Component {
           
                     
                   }else{
-                    this.props.navigation.navigate('ListWeekMenu');
+                    this.props.navigation.navigate('ShoppingLists');
                     
                   }
           
@@ -157,11 +166,11 @@ class GenerateShoppingList extends React.Component {
                 throw error;
               });
           
-        }
         // if(Object.keys(myObject).length)
     }
     deleteProduct(id){
         delete(this.state.externalData.products[id]);
+        delete(this.state.filledProducts[id]);
         this.setState({ state: this.state });
     }
     componentWillUnmount() {
@@ -182,7 +191,7 @@ class GenerateShoppingList extends React.Component {
 
 
             const Card = ({ item }) => {
-
+console.log('sasssssssssssssssssssss');
                 let data = this.state.externalData;
 
                 let renderHtml = [];
@@ -198,38 +207,45 @@ class GenerateShoppingList extends React.Component {
                     }
 
                     Object.keys(data.products[key].unitsRecipes).map((ukey, uindex) => {
-                units.push(
-                    <View style={{flexDirection:'row'}}>
-                    <Text style={{ textAlign: 'center',paddingLeft: 10 , marginRight:3}}>{data.products[key].unitsRecipes[ukey].volume}</Text>
-                    <Text style={{ textAlign: 'center',fontStyle: 'italic',paddingLeft: 5}}>{data.products[key].unitsRecipes[ukey].name}</Text>
-                    </View>
-                    )
-
+                        units.push(
+                            <Text style={{marginRight:3, flex: 1}}>{data.products[key].unitsRecipes[ukey].volume}    
+                                                     <Text style={{fontStyle: 'italic',paddingLeft: 5}}>{data.products[key].unitsRecipes[ukey].name}</Text></Text>
+                        )
+                        units.push(
+                            <Text style={{marginRight:3, flex: 1}}>{data.products[key].unitsRecipes[ukey].volume}    
+                                                     <Text style={{fontStyle: 'italic',paddingLeft: 5}}>{data.products[key].unitsRecipes[ukey].name}</Text></Text>
+                        )
+                                        
                 })
                   
                     renderHtml.push(<View style={{
-                        borderRadius: 15,
                         marginRight: 9,
-                        shadowColor: "#000",
-                        shadowOffset: {
-                            width: 0,
-                            height: 7,
-                        },
+
     
-                        shadowOpacity: 0.41,
-                        shadowRadius: 9.11,
-                        marginBottom: 20,
+                        marginBottom: 15,
                         flexDirection: 'column',
                         flex: 1,
-                        elevation: 6,
-                        backgroundColor: '#ffffff',
-                        width: '90%',
-                        marginTop: 15,
+                        width: '95%',
                         marginRight: 10,
                         marginLeft: 15,
-                        borderWidth: 1,
-                        borderLeftWidth: 4, borderLeftColor: '#689F38', borderBottomColor: 'silver', borderTopColor: 'silver', borderRightColor: 'silver'
-    
+                            // borderBottomWidth:4, borderBottomColor:'#689F38',
+            
+                            shadowColor: '#000000',
+                            shadowOffset: {
+                              width: 0,
+                              height: 2,
+                            },
+                            shadowRadius: 3,
+                            shadowOpacity: 0.5,
+                            marginLeft: 15,
+                            borderBottomWidth:5,
+                            borderRightWidth:5,
+                            borderBottomColor:'silver', 
+                            borderRightColor:'silver',
+                            alignItems: 'center',
+                            backgroundColor: '#ffffff',
+                            borderRadius: 15,
+                        
                     }}>
                         <View style={{
                             maxHeight: 30,
@@ -237,9 +253,11 @@ class GenerateShoppingList extends React.Component {
                             marginBottom: 0,
                             paddingBottom: 0,
                             flexDirection: 'row',
-                            borderColor: 'silver', borderBottomWidth: 1
+                            marginTop:10
+                            
                         }}>
-                            <Text style={{ flex: 5, fontSize: 18, textAlign: 'center', }}>{data.products[key].name}</Text>
+                            <Text style={{ flex: 5,fontWeight: 'bold',
+                        fontSize: 22,textAlign: 'center', }}>{data.products[key].name}</Text>
                             <View style={{flex: 1, }}>
                             <Icon
                       color={'silver'}
@@ -256,24 +274,20 @@ class GenerateShoppingList extends React.Component {
                         </View>
                         <View style={{
                             flex: 1,
-                            flexDirection: "row",
+                            flexDirection: "column",
                         }}>
-                            <View style={{ flex: 1, height: 120, borderRightColor: 'silver', borderRightWidth: 1,  }}>
-                                <Text style={{fontSize:12}}>Сбор на продуктите от рецептите в седмичното меню</Text>
-                                <ScrollView>
-                                {units}
-                                </ScrollView>
-                            </View>
-                            <View style={{ flex: 1, height: 120, }}>
-                            <Text style={{fontSize:12}}>Количество на продукта в списъка за пазар</Text>
+                            <View style={{flexDirection:'row', flex: 1, width: '100%'}}>
     
                                 <TextInput 
-                                defaultValue ={settedValued}
-                                onChangeText={(test)=>{      
-                                    this.fillPRoductAmount(test, {key})
-                                }}
+                                onChangeText={UserEmail => this.fillPRoductAmount(UserEmail, {key})}
 
+                               
+                                blurOnSubmit={false} 
+                                autoFocus={false} 
+                                autoCorrect={false} 
+                                autoCapitalize="none" 
                                 style={{
+                                    flex: 1,
                                     borderRadius: 15,
                                     marginLeft: 5, marginRight: 5,
                                     shadowColor: "#000",
@@ -296,6 +310,13 @@ class GenerateShoppingList extends React.Component {
                                 ></TextInput>
                             </View>
                         </View>
+                            <View style={{ flex: 1  }}>
+                                <Text style={{fontSize:12}}>Сбор на продуктите от рецептите в седмичното меню</Text>
+                                <View style={{flexDirection:'row', marginBottom: 10}}>
+                                {units}
+                                </View>
+                            </View>
+                            
                     </View>)
 
         })

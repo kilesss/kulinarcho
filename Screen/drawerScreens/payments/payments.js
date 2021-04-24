@@ -235,6 +235,91 @@ async makepayment(){
           backgroundColor: '#ffffff',
         }}>
           <View style={{ borderBottomBottom: 1, borderBottomColor: 'silver', width: '100%' }}>
+            <Text style={{ fontSize: 21, textAlign: 'center', marginBottom: 5, marginTop: 10 }}>Безплатен абонамент</Text>
+          </View>
+          <View style={{ borderBottomBottom: 1, borderBottomWidth: 1, borderBottomColor: 'silver', width: '100%' }}>
+            <Text style={{ fontSize: 18, textAlign: 'center', color: 'green', marginBottom: 5, marginTop: 10 }}>
+              За всяка ваша рецепта публикувана като публична получавате по 7 дена премиум.
+            </Text>
+          </View>
+          <View>
+            <View style={{
+              alignItems: 'center', padding: 0, margin: 0,
+              height: 200
+            }}>
+              <Image
+                source={require('../../../Image/regImg.jpg')}
+                style={{
+                  width: '50%',
+                  height: '100%'
+                }}
+              />
+            </View>
+          </View>
+
+          <View>
+            <View style={{ flexDirection: 'row', borderBottomBottom: 1, borderBottomWidth: 1, borderBottomColor: 'silver', width: '100%', marginBottom: 20 }}>
+              <Text style={{ textAlign: 'center', fontSize: 16 }}>Неограничено ползване от теб и цялата група</Text>
+            </View>
+            <View style={{ paddingLeft: 20, paddingBottom: 10 }}>
+              <Text style={{ flex: 1 }}>* Персонален съпорт</Text>
+              <Text style={{ flex: 1 }}>* Неограничен брой седмични менюта</Text>
+              <Text style={{ flex: 1 }}>* Неограничено добавяне на рецепти</Text>
+              <Text style={{ flex: 1 }}>* Неограничен брой списъци за пазар</Text>
+              <Text style={{ flex: 1 }}>* Неограничен брой продукти и персонални снимки на всеки продукт</Text>
+              <Text style={{ flex: 1 }}>* Възможност за създаване на група с членовете на вашето семейство</Text>
+              <Text style={{ flex: 1 }}>* Възможност за използване на проложението с личен профил и групов профил</Text>
+
+            </View>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#7DE24E',
+                borderWidth: 0,
+                color: '#FFFFFF',
+                borderColor: '#7DE24E',
+                height: 40,
+                flex: 1,
+                justifyContent: 'center',
+
+                alignItems: 'center',
+                borderRadius: 30,
+                marginLeft: 35,
+                marginRight: 35,
+                marginTop: 20,
+                marginBottom: 20,
+              }}
+              activeOpacity={0.5}
+              onPress={() =>    {                    this.props.navigation.navigate('ListRecipes');
+            }}
+            >
+              <Text style={{
+                color: '#FFFFFF',
+                paddingVertical: 10,
+                fontSize: 16,
+              }}>Възползвай се</Text>
+            </TouchableOpacity>
+          </View>
+
+
+        </View>
+        <View style={{
+          borderRadius: 15,
+          marginLeft: 9, marginRight: 9,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 7,
+          },
+          shadowOpacity: 0.41,
+          shadowRadius: 9.11,
+          marginBottom: 20,
+          marginTop: 20,
+          elevation: 6,
+          backgroundColor: '#ffffff',
+        }}>
+          <View style={{ borderBottomBottom: 1, borderBottomColor: 'silver', width: '100%' }}>
             <Text style={{ fontSize: 21, textAlign: 'center', marginBottom: 5, marginTop: 10 }}>6 месечен план</Text>
           </View>
           <View style={{ borderBottomBottom: 1, borderBottomWidth: 1, borderBottomColor: 'silver', width: '100%' }}>
@@ -400,7 +485,7 @@ async makepayment(){
           backgroundColor: '#ffffff',
         }}>
           <View style={{ borderBottomBottom: 1, borderBottomColor: 'silver', width: '100%' }}>
-            <Text style={{ fontSize: 21, textAlign: 'center', marginBottom: 5, marginTop: 10 }}>3 годишен план</Text>
+            <Text style={{ fontSize: 21, textAlign: 'center', marginBottom: 5, marginTop: 10 }}>Перманентен план</Text>
           </View>
           <View style={{ borderBottomBottom: 1, borderBottomWidth: 1, borderBottomColor: 'silver', width: '100%' }}>
             <Text style={{ fontSize: 21, textAlign: 'center', color: 'green', marginBottom: 5, marginTop: 10 }}>19.99 лв</Text>

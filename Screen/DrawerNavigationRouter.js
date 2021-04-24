@@ -40,7 +40,7 @@ import ArchiveWeekMenu from './drawerScreens/weekMenu/weekMenuArchive'
 import weekMenuArchiveDetailed from './drawerScreens/weekMenu/weekMenuArchiveDetailed'
 import Accounts from './drawerScreens/finnances/Accounts';
 import GenerateShoppingList from './drawerScreens/weekMenu/GenerateShoppingList'
-
+import showCategory from './drawerScreens/searchRecipe/showCategory'
 
 import searchRecipe from './drawerScreens/searchRecipe/searchRecipe'
 import showPublicRecipes from './drawerScreens/showPublicRecipes/showPublicRecipes'
@@ -147,6 +147,21 @@ const searchRecipe_StackNavigator = createStackNavigator({
         }),
     },
 });
+const showCategory_StackNavigator = createStackNavigator({
+    First: {
+        screen: showCategory,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Търси рецепта',
+            headerLeft: () => <NavigationDrawerHeader navigationProps={navigation} />,
+            headerStyle: {
+                backgroundColor: '#689F38',
+            },
+            headerTintColor: '#fff',
+        }),
+    },
+});
+
+
 const payments_StackNavigator = createStackNavigator({
     First: {
         screen: payments,
@@ -507,6 +522,14 @@ const DrawerNavigatorRoutes = createDrawerNavigator(
                 drawerLabel: 'Добави рецепта',
             },
         },
+        showCategory: {
+            screen: showCategory_StackNavigator,
+            navigationOptions: {
+                drawerLabel: 'Добави рецепта',
+            },
+        },
+
+        
         payments: {
             screen: payments_StackNavigator,
             navigationOptions: {

@@ -160,124 +160,64 @@ class UserProfile extends React.Component {
             let profileBtn = [];
 
             const Card = ({ item }) => {
-                let photo = '';
-                if (item.photo != null) {
-                    photo = <ImageModal
-                        borderRadius={80}
-                        resizeMode="cover"
-                        imageBackgroundColor="#fff"
-                        source={{ uri: "https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/" + item.photo + '?time' + (new Date()).getTime() }}
-                        style={{
-                            marginLeft: 10, marginBottom: 10,
-                            marginTop: 15,
-                            width: 80,
-                            height: 80,
-                            alignSelf: 'center',
-                        }}
-                    />
-                } else {
-                    photo = <ImageModal
-                        borderRadius={80}
-                        resizeMode="cover"
-                        imageBackgroundColor="#fff"
-                        source={{ uri: 'https://s.clipartkey.com/mpngs/s/35-354348_cook-clipart-food-recipe-recipe-clipart.png' + '?time' + (new Date()).getTime() }}
-                        style={{
-                            marginLeft: 10, marginBottom: 10,
-                            marginTop: 15,
-                            width: 80,
-                            height: 80,
-                            alignSelf: 'center',
-                        }}
-                    />
-                }
                 return (
-                    <TouchableHighlight style={{ width: '100%' }} onPress={() => {
-                        AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
-                            this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
-                        });
+                  <TouchableHighlight style={{ width:'100%'}} onPress={() => {AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
+                    this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
+                  });}}> 
+          
+                  <View
+                    style={{
                     }}>
-                        <View
+                    <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
+                      <View style={{ flex: 1, flexDirection: 'row', borderRadius:15 }}>
+                        <ImageModal
+                          resizeMode="cover"
+                          source={{ uri: 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/roast-beef-recipes-536cd86.jpg' + '?time' + (new Date()).getTime() }}
+                          style={{
+                            borderRadius:15,
+                            marginLeft: 10, marginBottom: 10,
+                            width: 80,
+                            height: 80,
+                            alignSelf: 'center',
+                          }}
+                        />
+                        <TouchableOpacity style={{
+                          width: '100%',
+                          paddingLeft: 9,
+                          flex: 2,
+                          flexDirection: 'column',
+                          height:80
+                        }} onPress={() => {
+                          AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
+                            this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
+                          });
+                        }}>
+                                      <Text style={{ fontSize: 20, borderBottomColor: 'silver',
+                                       borderBottomWidth: 1,  fontWeight: '400', color: '#000' }}>{item.title}</Text>
+          
+                          <Text style={{
+                            alignItems: 'flex-end', color: 'green', marginBottom: 10
+                          }}>
+                            {item.catTitle}                    </Text>
+                          <View
                             style={{
-                                borderLeftWidth: 4, borderLeftColor: '#689F38',
-                                // borderBottomWidth:4, borderBottomColor:'#689F38',
-                                height: 160,
-                                width: '93%',
-                                shadowColor: '#000000',
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 2,
-                                },
-                                shadowRadius: 3,
-                                shadowOpacity: 0.5,
-                                marginLeft: 15,
-                                marginTop: 20,
-                                alignItems: 'center',
-                                backgroundColor: '#ffffff',
-                                borderRadius: 6,
+                              width: '100%',
+                              // flex: 1,
+          
+                              height: 80,
+          
                             }}>
-                            <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
-                                <Text style={{ fontSize: 20, borderBottomColor: 'silver', borderBottomWidth: 1, textAlign: 'center', fontWeight: '400', color: 'silver' }}>{item.title}</Text>
-                                <View style={{ flex: 1, flexDirection: 'row' }}>
-                                    {photo}
-                                    <View style={{
-                                        width: '100%',
-                                        paddingLeft: 9,
-                                        flex: 2,
-                                        flexDirection: 'column',
-
-                                    }} >
-                                        <Text style={{
-                                            alignItems: 'flex-end', color: 'green',
-                                        }}>
-                                            {item.cat}                    </Text>
-                                        <View
-                                            style={{
-                                                width: '100%',
-                                                // flex: 1,
-
-                                                height: 80,
-
-                                            }}>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text style={{
-
-                                                    height: 35,
-                                                    fontSize: 14,
-                                                    fontWeight: '200',
-                                                    // fontFamily: 'sans-serif',
-                                                    marginBottom: 4,
-                                                    color: '#808080',
-                                                }}>{item.description}</Text>
-                                            </View>
-
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text style={{ marginRight: 10 }}>Порции: </Text>
-                                                <Text style={{
-                                                    fontSize: 16,
-                                                    fontWeight: '200',
-                                                    // fontFamily: 'sans-serif',
-                                                    marginBottom: 4,
-                                                    color: '#808080',
-                                                }}>{item.portion}</Text>
-                                            </View>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text style={{ marginRight: 10 }}>Време за приготвяне: </Text>
-                                                <Text style={{
-                                                    fontSize: 16,
-                                                    fontWeight: '200',
-                                                    // fontFamily: 'sans-serif',
-                                                    marginBottom: 4,
-                                                    color: '#808080',
-                                                }}>{item.all_time}</Text>
-                                            </View>
-                                        </View>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                    </TouchableHighlight>
+          
+                            
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                  </TouchableHighlight>
+          
                 )
-            }
+              }
 
             profileBtn.push(<View><Text style={{ backgroundColor: 'white', color: '#77d169' }} >Follow</Text></View>)
             let promocodeText = <Text></Text>

@@ -24,7 +24,13 @@ import {
 } from "react-native";
 import { Icon } from 'react-native-elements'
 import { BottomSheet } from 'react-native-btr';
-
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded,
+  setTestDeviceIDAsync,
+} from 'expo-ads-admob';
 class ProductsSettings extends React.Component {
 
 
@@ -32,7 +38,6 @@ class ProductsSettings extends React.Component {
 
     super(props);
     this.didFocus = props.navigation.addListener("didFocus", (payload) =>{
-      console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
 
     BackHandler.addEventListener("hardwareBackPress",async () => {
       let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
@@ -170,7 +175,6 @@ class ProductsSettings extends React.Component {
     // this.props.navigation.setParams({ handleSave: this._saveDetails });
 
     this.focusListener = navigation.addListener('didFocus', async () => {
-      console.log('ffffffffffffffffffffffffffffffffffff');
 
       let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
       let arrRoute = [];
@@ -187,6 +191,11 @@ class ProductsSettings extends React.Component {
 
       this.fetchData();
       this.setState({ visible: false });
+      AdMobInterstitial.setAdUnitID("ca-app-pub-5428132222163769/6908897742");
+      await AdMobInterstitial.requestAdAsync({servePersonalizedAds:false});
+      await AdMobInterstitial.showAdAsync().then(data => {
+        console.log(data);
+      })
       // this.fetchDataUnits()
       // this.fetchDataTypes();
     });
@@ -552,6 +561,11 @@ class ProductsSettings extends React.Component {
               </View>
             </View>
           </BottomSheet>
+          <AdMobBanner
+       bannerSize="smartBannerLandscape" 
+       adUnitID={'ca-app-pub-5428132222163769/6481630131'} 
+         onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         servePersonalizedAds={true}/>
           <ActionButton
             buttonColor='#689F38'
             onPress={() => { this._saveDetails() }}

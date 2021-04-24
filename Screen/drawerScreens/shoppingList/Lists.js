@@ -11,7 +11,13 @@
 import * as React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import ActionButton from 'react-native-action-button';
-
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded,
+  setTestDeviceIDAsync,
+} from 'expo-ads-admob';
 import DropdownAlert from 'react-native-dropdownalert';
 import { BottomSheet } from 'react-native-btr';
 
@@ -66,7 +72,7 @@ class Lists extends React.Component {
     typeid: '',
     modalEditTitle: 'Редактиране на списък',
     count: false,
-
+    premium:0
   };
 
   setTypeTitle = (title) => {
@@ -115,6 +121,9 @@ class Lists extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
+
+        this.state.premium = data.premium;
+        delete data.premium;
 
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
@@ -263,7 +272,9 @@ class Lists extends React.Component {
     const { navigation } = this.props;
     this.props.navigation.setParams({ handleSave: this._saveDetails });
 
+  
     this.focusListener = navigation.addListener('didFocus', async () => {
+      
       let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
       let arrRoute = [];
 
@@ -275,12 +286,13 @@ class Lists extends React.Component {
       if (arrRoute[arrRoute - 1] != 'ShoppingLists') {
         arrRoute.push('ShoppingLists')
       }
+      
       AsyncStorage.setItem('backRoute', JSON.stringify(arrRoute));
-
       this.fetchData();
       this.checkPremium();
       this.setState({editList2:false})
       this.setState({editList:false})
+     
     });
   }
 
@@ -386,13 +398,22 @@ class Lists extends React.Component {
         </View>
       )
     } else {
-
+      
 
       const { modalVisible2 } = this.state;
       const { modalVisible } = this.state;
 
       const { typeTitle } = this.state;
 
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
       const renderItem = ({ item }) => (
 
         <View style={{ borderLeftWidth: 4, borderLeftColor: '#689F38',
@@ -460,7 +481,7 @@ class Lists extends React.Component {
       return (
         <View style={styles.MainContainer}>
           <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
-
+               {Add}
 
           <BottomSheet
             visible={this.state.editList}
@@ -593,14 +614,15 @@ class Lists extends React.Component {
                       >Запази</Icon>
 
                     </View>
-                    <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                    <View style={{ flex: 3, backgroundColor: 'white', height: 50,
+                     borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
                       <Text style={{ flex: 3, marginTop: 15 }}>Отказ</Text>
                     </View>
                   </View>
                 </TouchableHighlight>
 
               </View>
-
+              
             </View>
           </BottomSheet>
           <BottomSheet
@@ -613,8 +635,7 @@ class Lists extends React.Component {
                 backgroundColor:'white',
                   borderTopRightRadius: 15,
                   borderTopLeftRadius: 15,
-                  justifyContent: "center",
-                  alignItems: "center",
+                 
                   height:170
                 }}
             >
@@ -722,6 +743,8 @@ class Lists extends React.Component {
               renderItem={renderItem}
               keyExtractor={item => item.id}
             />
+                          {Add}
+
           </View>
 
           <Modal

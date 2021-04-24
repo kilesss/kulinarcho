@@ -17,10 +17,12 @@ import {
     Keyboard,
     TouchableOpacity,
     KeyboardAvoidingView,
+    Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Loader from './Components/loader';
 import * as Facebook from 'expo-facebook';
+import * as Google from 'expo-google-app-auth';
 
     const LoginScreen = props => {
     let [userEmail, setUserEmail] = useState('');
@@ -28,36 +30,102 @@ import * as Facebook from 'expo-facebook';
     let [loading, setLoading] = useState(false);
     let [errortext, setErrortext] = useState('');
     state = { user: null };
+    const [user, setUser] = useState(null);
+    const [client, setClient] = useState(null);
 
   
 
     facebookLogIn = async() => {
-          await Facebook.logInWithReadPermissionsAsync({
-            appId: '452356719408301',
-          });
-          const {
-            type,
-            token,
-            expirationDate,
-            permissions,
-            declinedPermissions,
-          } = await Facebook.logInWithReadPermissionsAsync({
-            permissions: ['public_profile'],
-          }).catch(function (error) {
-            console.log('There has been a problem with your fetch operation: ' + error.message);
-            // ADD THIS THROW error
-            throw error;
-          });
-          console.log(type);
-          if (type === 'success') {
-            // Get the user's name using Facebook's Graph API
-            const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
 
-            Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
-          } else {
-            // type === 'cancel'
+        
+        try {
+            await Facebook.initializeAsync(
+                {
+                    appId: '1106295049885077',
+                  }
+                );
+            const {
+              type,
+              token,
+            } = await Facebook.logInWithReadPermissionsAsync({
+              permissions: ['public_profile', 'email'],
+            });
+            if (type === 'success') {
+              // Get the user's name using Facebook's Graph API
+              const response = await fetch(`https://graph.facebook.com/me?fields=id,name,picture.type(large),email&access_token=${token}`);
+              // console.log(response);
+            //   Alert.alert('Logged in!', `Hi ${(await response.json()).name}`);
+              const data = await response.json();
+              console.log(data);
+              setUser(data);
+            //   username = user.name;
+              Alert.alert('Logged in with Facebook!', 'Name:' + ' ' + user.name + '\n' + 'Email:' + ' ' + user.email);
+            } else {
+              console.log(response.json())
+              // type === 'cancel'
+            }
+          } catch ({ message }) {
+            alert(`Facebook Login Error: ${message}`);
           }
+
+
+        //   await Facebook.logInWithReadPermissionsAsync({
+        //     appId: '922127875302804',
+        //   });
+        //   const {
+        //     type,
+        //     token,
+        //     expirationDate,
+        //     permissions,
+        //     declinedPermissions,
+        //   } = await Facebook.logInWithReadPermissionsAsync({
+        //     permissions: ['public_profile'],
+        //   }).catch(function (error) {
+        //     console.log('There has been a problem with your fetch operation: ' + error.message);
+        //     // ADD THIS THROW error
+        //     throw error;
+        //   });
+        //   console.log(type);
+        //   if (type === 'success') {
+        //     // Get the user's name using Facebook's Graph API
+        //     const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+
+        //     Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
+        //   } else {
+        //     // type === 'cancel'
+        //   }
        
+      };
+    
+       const run=() =>{
+        Alert.alert('Logged in with Google!', 'Name:' + ' ' + client.name + '\n' + 'Email:' + ' ' + client.email);
+       }
+
+
+       signInWithGoogleAsync = async() => {
+        try {
+          const result = await Google.logInAsync({
+            androidClientId: '1052999349908-kjhff3atsjdfdisrjetn08mh5gp2emqg.apps.googleusercontent.com',
+            // iosClientId: YOUR_CLIENT_ID_HERE,
+            scopes: ['profile', 'email'],
+          });
+      
+          if (result.type === 'success') {
+            const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${result.accessToken}`)
+            // console.log(response);
+            console.log(result);
+            const clientdata = await response.json();
+            setClient(clientdata)
+            // console.log(client);
+            // Alert.alert('Logged in with Google!', 'Name:' + ' ' + client.name + '\n' + 'Email:' + ' ' + client.email);
+            run();
+            return result.accessToken;
+          } else {
+            return { cancelled: true };
+          }
+        } catch (e) {
+          return { error: true };
+        }
       };
 
     handleSubmitPress = () => {
@@ -190,9 +258,21 @@ import * as Facebook from 'expo-facebook';
                             onPress={handleSubmitPress}>
                             <Text style={styles.buttonTextStyle}>Вход</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.loginBtn} onPress={facebookLogIn}>
-          <Text style={{ color: "red" }}>Login with Facebook</Text>
-        </TouchableOpacity>
+                        
+                        <View style={{flexDirection: 'row', justifyContent: 'space-evenly', paddingHorizontal:10}}>
+                        {/* Facebook LoginButton */}
+                        <View style={{flex:1}}>
+                        {/* <TouchableOpacity style={styles.fbloginBtn} onPress={facebookLogIn}>
+                          <Text style={{ flex:1, justifyContent: 'center', textAlign: 'center', color: '#ffffff', marginTop:5 }}>Login with Facebook</Text>
+                        </TouchableOpacity> */}
+                        </View>
+                        {/* Google LoginButton */}
+                        <View style={{flex:1}}>
+                        {/* <TouchableOpacity style={styles.googloginBtn} onPress={signInWithGoogleAsync}>
+                          <Text style={{flex:1, justifyContent: 'center', textAlign: 'center', color: '#ffffff', marginTop:5}}>Login with Google</Text>
+                        </TouchableOpacity> */}
+                        </View>
+                        </View>
                         <Text
                             style={styles.registerTextStyle}
                             onPress={() => props.navigation.navigate('RegisterScreen')}>
@@ -264,4 +344,16 @@ import * as Facebook from 'expo-facebook';
             textAlign: 'center',
             fontSize: 14,
         },
+        fbloginBtn: {
+            backgroundColor:'#3b5998',
+            height:30, 
+            borderRadius:50,
+            marginRight:5
+        },
+        googloginBtn: {
+            backgroundColor:'#db4a39',
+            height:30, 
+            borderRadius:50,
+            marginRight:5
+        }
     });

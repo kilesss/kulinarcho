@@ -132,12 +132,53 @@ console.log(data.response);
       }).done();
   }
 
+  async deleteFeedback(id){
+    var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+    await fetch('http://167.172.110.234/api/deleteFeedback', {
+      method: 'POST',
+      body: JSON.stringify({
+        id: id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        //Header Defination
+        'Authorization': 'Bearer ' + DEMO_TOKEN
+      },
+
+    }).then(
+      async response => {
+        const data = await response.json();
+
+
+        if (data.login && data.login == true) {
+          AsyncStorage.clear();
+          this.props.navigation.navigate('Auth');
+        }
+
+        if (data.new_token) {
+          AsyncStorage.setItem('access_token', data.new_token);
+          delete data.new_token;
+          delete data['new_token'];
+        }
+        if (data.errors) {
+          Object.keys(data.errors).map((key, index) => {
+            this.dropDownAlertRef.alertWithType('error', '', data.errors[key], {}, 3000);
+          })
+        } else {
+            this.fetchData();
+        }
+      }
+    ).catch(function (error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      // ADD THIS THROW error
+      throw error;
+    });
+    }
+
+
   async submitAddType() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    console.log(JSON.stringify({
-      description: this.state.description,
-      country: this.state.country
-    }))
     await fetch('http://167.172.110.234/api/submitFeedback', {
       method: 'POST',
       body: JSON.stringify({
@@ -196,10 +237,10 @@ console.log(data.response);
       // { name: 'Въпрос свързан с приложението', id: '3', icon: () => { } },
       item = this.state.externalData;
       Object.keys(item).map((key, index) => {
-          console.log(item[index])
       let statusColor = 'red';
       let status  = 'Необработено'
       let answerText = [];
+      let id = item[index].id;
       let typeFeedback = '';
       if(item[index].type == '1'){
           typeFeedback = 'Проблем с приложението';
@@ -235,14 +276,14 @@ console.log(data.response);
           flexDirection: 'row',
           marginTop: 15,
         }}>
-          <View style={{ marginLeft: 10, marginTop: 6, marginBottom: 5, width: '87%' }} onPress={() => {
+          <View style={{ marginLeft: 10, marginTop: 6, marginBottom: 5, width: '94%' }} onPress={() => {
 
           }}>
             <View style={{flexDirection:'row'}}>
             <Text style={{
               paddingLeft: 9,
               fontSize: 18,
-              flex: 4,
+              flex: 8,
               paddingBottom:-15,
               marginBottom:2
             }}>{item[key].messages}</Text>
@@ -251,8 +292,24 @@ console.log(data.response);
               paddingLeft: 9,
 
               fontSize: 16,
-              flex: 2, color: statusColor
+              flex: 4, color: statusColor
             }}>{status}</Text>
+             <Icon
+
+                                    containerStyle={{
+                                      flex: 1,
+                                    }}
+                                    size={25}
+                                    color={'silver'}
+                                    name='trash-outline'
+                                    color={'black'}
+                                    type='ionicon'
+
+                                    onPress={() => {
+                                       this.deleteFeedback(id)
+                                    }
+                                    }
+                                   ></Icon>
             </View>
             <Text style={{
               paddingLeft: 9,

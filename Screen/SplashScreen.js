@@ -23,14 +23,14 @@ const SplashScreen = props => {
                         value === null ? 'Auth' : 'DrawerNavigationRoutes'
                     )
             );
-        }, 5000);
+        }, 3000);
     }, []);
 
     return (
         <View style={styles.container}>
             <Image
-                source={require('../Image/splash.jpg')}
-                style={{height:'70%', width:'60%' , marginTop:30,marginBottom:15 }}
+                source={require('../Image/splash3.png')}
+                style={{height:'70%', width:'89%' , marginTop:30,marginBottom:15 }}
                 />
                  <Image
                 source={require('../Image/aboutreact.png')}

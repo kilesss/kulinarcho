@@ -10,6 +10,7 @@
 import * as React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { StyleSheet } from 'react-native';
+import SearchableDropdown from 'react-native-searchable-dropdown';
 
 import DropdownAlert from 'react-native-dropdownalert';
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -38,7 +39,9 @@ class ListRecipes extends React.Component {
         recipeId: '',
         recipeName: '',
         userId: 0,
-        groupId: 0
+        groupId: 0,
+        placeholder: 'Всички',
+        typeId: '0'
     }
 
 
@@ -46,20 +49,20 @@ class ListRecipes extends React.Component {
         const { navigation } = this.props;
         this.props.navigation.setParams({ handleSave: this._saveDetails });
         this.focusListener = navigation.addListener('didFocus', async () => {
-            let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
+            let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
             let arrRoute = [];
-      
+
             if (route === null) {
-              arrRoute.push('ListRecipes')
+                arrRoute.push('ListRecipes')
             } else {
-              arrRoute = route
+                arrRoute = route
             }
             if (arrRoute[arrRoute - 1] != 'ListRecipes') {
-              arrRoute.push('ListRecipes')
+                arrRoute.push('ListRecipes')
             }
             AsyncStorage.setItem('backRoute', JSON.stringify(arrRoute));
 
-                  await this.fetchData();
+            await this.fetchData();
 
         });
     }
@@ -95,23 +98,23 @@ class ListRecipes extends React.Component {
     constructor(props) {
         super(props);
         this.didFocus = props.navigation.addListener("didFocus", (payload) =>
-        BackHandler.addEventListener("hardwareBackPress",async () => {
-          let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
-          let lastRoute = route.pop();
-          if(lastRoute != 'ListRecipes'){
-              route.push(lastRoute);
-          }
-          let goRoute = route.pop();
-             console.log(goRoute);
-      console.log(route);
-      if(goRoute != undefined){
-        AsyncStorage.setItem('backRoute', JSON.stringify(route));
-        this.props.navigation.navigate(goRoute);
-      }
-        })
-      );
-      
-      }
+            BackHandler.addEventListener("hardwareBackPress", async () => {
+                let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
+                let lastRoute = route.pop();
+                if (lastRoute != 'ListRecipes') {
+                    route.push(lastRoute);
+                }
+                let goRoute = route.pop();
+                console.log(goRoute);
+                console.log(route);
+                if (goRoute != undefined) {
+                    AsyncStorage.setItem('backRoute', JSON.stringify(route));
+                    this.props.navigation.navigate(goRoute);
+                }
+            })
+        );
+
+    }
 
     async deleteRecipe(id) {
 
@@ -159,7 +162,7 @@ class ListRecipes extends React.Component {
         var decoded = jwt_decode(DEMO_TOKEN);
         this.setState({ userId: decoded.oldId })
 
-        fetch("http://167.172.110.234/api/recipes", {
+        fetch("http://167.172.110.234/api/recipes?id=" + this.state.typeId, {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -214,12 +217,12 @@ class ListRecipes extends React.Component {
             const Card = ({ item }) => {
                 let publicRec = '';
                 let publicRecColor = ''
-                if(item.public == 1){
+                if (item.public == 1) {
                     publicRec = 'Публична рецепта'
                     publicRecColor = 'green';
-                }else if(item.public == 2){
+                } else if (item.public == 2) {
                     publicRec = 'В процес на одобрение'
-                    publicRecColor="blue"
+                    publicRecColor = "blue"
                 }
                 console.log(item);
                 let { width } = Dimensions.get('window');
@@ -243,139 +246,115 @@ class ListRecipes extends React.Component {
                 if (item.photo !== null) {
                     img = 'https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/' + item.photo;
                 } else {
-                    img = 'https://s.clipartkey.com/mpngs/s/35-354348_cook-clipart-food-recipe-recipe-clipart.png'
+                    img = 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/roast-beef-recipes-536cd86.jpg'
+                }
+                let autor = item.name;
+                if (item.oldName != null) {
+                    autor = item.oldName
                 }
                 return (
                     <View>
                         {fields}
 
                         <View
-                            elevation={5}
                             style={{
-                                borderLeftWidth: 4, borderLeftColor: buyedColor,
-                                // borderBottomWidth:4, borderBottomColor:'#689F38',
 
-                                shadowColor: '#000000',
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 2,
-                                },
-                                shadowRadius: 3,
-                                shadowOpacity: 0.5,
                                 width: width - 30,
                                 marginLeft: 15,
-                                marginTop: 20,
                                 alignItems: 'center',
-                                backgroundColor: '#ffffff',
                                 borderRadius: 6,
                             }}>
                             <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
-                                <View style={{
-                                    flex: 1, flexDirection: 'row', width: '100%', borderBottomWidth: 1,
-                                    borderBottomColor: 'silver',
-                                }}>
-                                    <TouchableOpacity style={{
-                                        width: '100%',
-                                        paddingLeft: 9,
-                                        flex: 2,
-                                        flexDirection: 'column',
 
-                                    }} onPress={() => {
-
-                                        AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
-                                            this.props.navigation.navigate('ShowRecipe', { name: 'kuyr' });
-
-                                        });
-                                    }}>
-
-
-                                        <Text
-                                            style={{
-                                                marginLeft: 20,
-                                                flex: 1,
-                                                fontSize: 19,
-                                                fontWeight: '200',
-                                                // fontFamily: 'sans-serif',
-                                                marginBottom: 4,
-                                                textDecorationLine: buyedDesign
-                                            }}>
-                                            {item.title}
-                                        </Text>
-                                    </TouchableOpacity>
-
-                                    <Icon style={styles.icon}
-                                        size={30}
-                                        color={'silver'}
-                                        onPress={() => {
-                                            // this.setState({modalEditTitle: 'Редактиране на списък'})
-                                            this.setState({ 'recipeId': item.id });
-                                            this.setState({ 'recipeName': item.title });
-                                            this.setState({ 'groupId': item.user_id });
-                                            this.RBSheet2.open();
-                                            // this.RBSheet.open()
-
-                                        }
-
-                                        }
-                                        type='font-awesome-5'
-
-                                        name='pencil-alt'                                    >Редактирай</Icon>
-                                </View>
                                 <View style={{ flex: 1, flexDirection: 'row' }}>
                                     <ImageModal
-                                        borderRadius={60}
                                         resizeMode="cover"
-                                        imageBackgroundColor="#ffffff"
                                         source={{ uri: img + '?time' + (new Date()).getTime() }}
                                         style={{
-                                            marginTop: 15,
-                                            width: 60,
-                                            height: 60,
+                                            borderRadius:15,
+                                            marginLeft: 10, 
+                                            width: 80,
+                                            height: 80,
                                             alignSelf: 'center',
-                                        }}
+                                          }}
                                     />
-
-                                    <TouchableOpacity style={{
-                                        width: '100%',
-                                        paddingLeft: 9,
-                                        flex: 2,
-                                        flexDirection: 'column',
-
-                                    }} onPress={() => {
-
-                                        AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
-                                            this.props.navigation.navigate('ShowRecipe', { name: 'kuyr' });
-
-                                        });
+                                    <View style={{
+                                        flex: 1, flexDirection: 'row', width: '100%', 
                                     }}>
+                                        <View style={{ flex: 1, flexDirection: 'column' }}>
+                                            <View style={{ flex: 1, flexDirection: 'row', }}>
+                                            <TouchableOpacity style={{
+                                                paddingLeft: 9,
+                                                flex: 1,
+                                                
+                                            }} onPress={() => {
 
+                                                AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
+                                                    this.props.navigation.navigate('ShowRecipe', { name: 'kuyr' });
 
-<Text style={{
-                                            alignItems: 'flex-end', marginLeft:15, color: publicRecColor, textDecorationLine: buyedDesign
-                                        }}>
-                                           {publicRec}
-                                        </Text>
-                                        <Text
-                                            style={{
-                                                width: '100%',
-                                                // flex: 1,
-                                                fontSize: 16,
-                                                fontWeight: '200',
-                                                // fontFamily: 'sans-serif',
-                                                marginBottom: 4,
-                                                color: '#808080',
-                                                textDecorationLine: buyedDesign
-
+                                                });
                                             }}>
-                                            {item.description}
-                                        </Text>
+                                                <Text
+                                                    style={{
+                                                        fontSize: 20, borderBottomColor: 'silver',
+                                                        borderBottomWidth: 1,  fontWeight: '400', color: '#000'
+                                                    }}>
+                                                    {item.title}
+                                                </Text>
+                                            </TouchableOpacity>
 
-                                        <Text style={{
-                                            alignItems: 'flex-end', marginLeft:15, color: categoryColor, textDecorationLine: buyedDesign
+                                            <Icon style={{
+        backgroundColor:'green',
+        flex: 1}}
+                                                size={30}
+                                                color={'silver'}
+                                                onPress={() => {
+                                                    // this.setState({modalEditTitle: 'Редактиране на списък'})
+                                                    this.setState({ 'recipeId': item.id });
+                                                    this.setState({ 'recipeName': item.title });
+                                                    this.setState({ 'groupId': item.user_id });
+                                                    this.RBSheet2.open();
+                                                    // this.RBSheet.open()
+
+                                                }
+
+                                                }
+                                                type='font-awesome-5'
+
+                                                name='pencil-alt'  >Редактирай</Icon>
+                                                </View>
+                                                <TouchableOpacity style={{
+                                            paddingLeft: 5,
+                                            flex: 2,
+                                            flexDirection: 'column',
+                                            marginTop: -15
+                                        }} onPress={() => {
+
+                                            AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
+                                                this.props.navigation.navigate('ShowRecipe', { name: 'kuyr' });
+
+                                            });
                                         }}>
-                                           Автор: {item.name}
-                                        </Text>
-                                    </TouchableOpacity>
+
+
+                                            <Text style={{
+                                                alignItems: 'flex-end', marginLeft: 5, color: publicRecColor, textDecorationLine: buyedDesign
+                                            }}>
+                                                {publicRec}
+                                            </Text>
+                                            
+
+                                            <Text style={{
+                                                alignItems: 'flex-end', marginLeft: 5, color: categoryColor, textDecorationLine: buyedDesign
+                                            }}>
+                                                Автор: {autor}
+                                            </Text>
+                                        </TouchableOpacity>
+                                        </View>
+
+                                        
+                                    </View>
+
 
                                 </View>
 
@@ -581,6 +560,73 @@ class ListRecipes extends React.Component {
 
                     </RBSheet2>
                     <SafeAreaView >
+                        <SearchableDropdown
+                            style={{}}
+                            onTextChange={(text) => this.setState({ newProdTitle: text })}
+                            //On text change listner on the searchable input
+                            //onItemSelect called after the selection from the dropdown
+                            containerStyle={{ padding: 5, marginBottom: 10, marginTop: 5, paddingLeft: 10 }}
+                            //suggestion container style
+                            textInputStyle={{
+                                borderRadius: 7,
+                                padding: 10,
+                                height: 40,
+                                borderWidth: 1, borderColor: 'silver',
+                                //inserted text style
+                                borderBottomWidth: 1,
+                                borderColor: '#ccc',
+                                width: '99%',
+                                backgroundColor: 'white'
+                            }}
+                            itemStyle={{
+                                //single dropdown item style
+                                padding: 10,
+                                borderBottomWidth: 1,
+                                borderColor: '#ccc',
+                                width: '100%'
+                            }}
+
+                            itemTextStyle={{
+
+                                //text style of a single dropdown item
+                                color: '#222',
+                            }}
+                            showNoResultDefault={'false'}
+
+                            onItemSelect={(item) => {
+                                this.setState({ placeholder: item.name }); this.setState({
+                                    typeId: item.id
+                                });
+                                this.fetchData();
+                            }}
+
+                            itemsContainerStyle={{
+                                //items container style you can pass maxHeight
+                                //to restrict the items dropdown hieght
+                                maxHeight: '100%',
+                                paddingBottom: 0,
+                                marginBottom: 0
+                            }}
+                            items={[
+                                { name: 'Всички', id: '0', icon: () => { } },
+                                { name: 'Публични', id: '1', icon: () => { } },
+                                { name: 'Лични', id: '2', icon: () => { } },
+                                { name: 'Запазени', id: '3', icon: () => { } },
+
+                            ]}
+                            showNoResultDefault={'false'}
+
+                            //mapping of item array
+                            defaultIndex={0}
+                            //default selected item index
+                            placeholder={this.state.placeholder}
+                            //place holder for the search input
+                            resetValue={false}
+                            //reset textInput Value with true and false state
+                            underlineColorAndroid="transparent"
+                        //To remove the underline from the android input
+                        />
+
                         <FlatList
                             contentContainerStyle={{ paddingBottom: 70 }}
 

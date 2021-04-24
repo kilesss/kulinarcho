@@ -24,7 +24,6 @@ import DropdownAlert from 'react-native-dropdownalert';
 
 const ForgottenPassword = props => {
     let [userEmail, setUserEmail] = useState('');
-    let [userPassword, setUserPassword] = useState('');
     let [loading, setLoading] = useState(false);
     let [errortext, setErrortext] = useState('');
 
@@ -34,26 +33,22 @@ const ForgottenPassword = props => {
             alert('Имейла е задължителен');
             return;
         }
-        if (!userPassword) {
-            alert('Паролата е задължителна');
-            return;
-        }
+       
         setLoading(true);
-        var dataToSend = { email: userEmail, password: userPassword };
-        var formBody = [];
-        for (var key in dataToSend) {
-            var encodedKey = encodeURIComponent(key);
-            var encodedValue = encodeURIComponent(dataToSend[key]);
-            formBody.push(encodedKey + '=' + encodedValue);
-        }
-        formBody = formBody.join('&');
-        fetch('http://167.172.110.234/api/login', {
+        console.log( JSON.stringify({
+            email: userEmail,
+        }))
+        fetch('http://167.172.110.234/api/forgotenPassword', {
             method: 'POST',
-            body: formBody,
+            body: JSON.stringify({
+                email: userEmail,
+            }),
             headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
                 //Header Defination
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
             },
+
         }).then(response => response.json())
             .then(responseJson => {
                 //Hide Loader

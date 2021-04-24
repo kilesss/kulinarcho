@@ -122,6 +122,7 @@ class AddWeekMenu extends React.Component {
   }
   async checkPremium() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+    console.log(DEMO_TOKEN);
     await fetch('http://167.172.110.234/api/checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'menu' }),
@@ -700,6 +701,8 @@ class AddWeekMenu extends React.Component {
                 <View style={{ maxHeight: 200 }}>
 
                   <SearchableDropdown
+                                              showNoResultDefault={'false'}
+
                     style={{}}
                     onTextChange={(text) => console.log(text)}
                     //On text change listner on the searchable input

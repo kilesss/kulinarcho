@@ -33,6 +33,7 @@ class ShowProfile extends React.Component {
         externalData: null,
         typeDisplay: 0,
         repPass: '',
+        newPass: '',
         pass: '',
         name: '',
         expire: '',
@@ -48,45 +49,46 @@ class ShowProfile extends React.Component {
         externalDataFollowers: null,
         username: '',
         premium: 0,
-        group :0,
-        userId:0,
+        groupUser:0,
+        group: 0,
+        userId: 0,
 
     }
-  constructor(props) {
-    super(props);
-    this.didFocus = props.navigation.addListener("didFocus", (payload) =>
-    BackHandler.addEventListener("hardwareBackPress",async () => {
-      let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
-      let lastRoute = route.pop();
-      if(lastRoute != 'ShowProfile'){
-          route.push(lastRoute);
-      }
-      let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
-              AsyncStorage.setItem('backRoute', JSON.stringify(route));
-        this.props.navigation.navigate(goRoute);
-    })
-  );
-  
-  }
+    constructor(props) {
+        super(props);
+        this.didFocus = props.navigation.addListener("didFocus", (payload) =>
+            BackHandler.addEventListener("hardwareBackPress", async () => {
+                let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
+                let lastRoute = route.pop();
+                if (lastRoute != 'ShowProfile') {
+                    route.push(lastRoute);
+                }
+                let goRoute = route.pop();
+                console.log(goRoute);
+                console.log(route);
+                AsyncStorage.setItem('backRoute', JSON.stringify(route));
+                this.props.navigation.navigate(goRoute);
+            })
+        );
+
+    }
     async componentDidMount() {
         const { navigation } = this.props;
         this.focusListener = navigation.addListener('didFocus', async () => {
-            let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
+            let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
             let arrRoute = [];
-      
+
             if (route === null) {
-              arrRoute.push('ShowProfile')
+                arrRoute.push('ShowProfile')
             } else {
-              arrRoute = route
+                arrRoute = route
             }
             if (arrRoute[arrRoute - 1] != 'ShowProfile') {
-              arrRoute.push('ShowProfile')
+                arrRoute.push('ShowProfile')
             }
             AsyncStorage.setItem('backRoute', JSON.stringify(arrRoute));
 
-                  // await this.fetchDataShoppingLists();
+            // await this.fetchDataShoppingLists();
             await this.fetchData();
             await this.fetchFollowers();
             await this.checkPremium();
@@ -96,10 +98,11 @@ class ShowProfile extends React.Component {
     async checkPremium() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
         var decoded = jwt_decode(DEMO_TOKEN);
-        if(decoded.userid != decoded.oldId){
-            this.setState({group:1})
-        }else{
-            this.setState({group:0})
+        console.log(decoded);
+        if (decoded.userid != decoded.oldId) {
+            this.setState({ groupUser: 1 })
+        } else {
+            this.setState({ groupUser: 0 })
 
         }
 
@@ -214,7 +217,7 @@ class ShowProfile extends React.Component {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
         if (this.state.newPass != '' || this.state.repPass != '') {
-            if (this.state.newPass !== this.state.repPass) {
+            if (this.state.newPass != this.state.repPass) {
                 alert('Паролите са различни')
             } else {
                 password = this.state.newPass;
@@ -478,7 +481,7 @@ class ShowProfile extends React.Component {
 
         }).then(
             async response => {
-                this.setState({group:0})
+                this.setState({ group: 0 })
                 if (response.errors !== undefined) {
                     Object.keys(response.errors).map((key, index) => {
                         this.dropDownAlertRef.alertWithType('error', '', response.errors[key], {}, 2000);
@@ -487,11 +490,11 @@ class ShowProfile extends React.Component {
 
 
                 } else {
-                    if(id == this.state.userId){
+                    if (id == this.state.userId) {
                         this.dropDownAlertRef.alertWithType('success', '', 'Вие напуснахте групата', {}, 2000);
 
-                    }else{
-                    this.dropDownAlertRef.alertWithType('success', '', 'Успешно изтрит потребител', {}, 2000);
+                    } else {
+                        this.dropDownAlertRef.alertWithType('success', '', 'Успешно изтрит потребител', {}, 2000);
 
                     }
 
@@ -616,14 +619,15 @@ class ShowProfile extends React.Component {
             let PageView = [];
             let page1, page2, page3
             if (this.state.pageView == 1) {
-                page1 = { borderColor: '#85cc47', borderBottomWidth: 1, paddingBottom: 3, marginBottom: 2 };
-                page2 = {};
-                page3 = {};
+                page1 = { borderColor: '#85cc47', borderBottomWidth: 1, paddingBottom: 3, marginBottom: 2, flex: 1 };
+                page2 = { flex: 1 };
+                page3 = { flex: 1 };
                 PageView.push(<ScrollView style={{ height: 350, }}>
-                    <View style={{ marginBottom: 50 }}>
+                    <View style={{ marginBottom: 50, borderColor: '#689F38', paddingBottom: 15, borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, paddingTop: 15 }}>
                         <TextInput
                             placeholder={this.state.name}
-
+                            blurOnSubmit={false}
+                            onSubmitEditing={() => { this.secondTextInput.focus(); }}
                             style={{
                                 borderRadius: 15,
                                 marginLeft: 9, marginRight: 9,
@@ -646,7 +650,9 @@ class ShowProfile extends React.Component {
 
                         <TextInput
                             placeholder={'Нова парола'}
-
+                            ref={(input) => { this.secondTextInput = input; }}
+                            blurOnSubmit={false}
+                            onSubmitEditing={() => { this.thirdTextInput.focus(); }}
                             style={{
                                 borderRadius: 15,
                                 marginLeft: 9, marginRight: 9,
@@ -668,7 +674,9 @@ class ShowProfile extends React.Component {
                         />
                         <TextInput
                             placeholder={'Повтори нова парола'}
-
+                            ref={(input) => { this.thirdTextInput = input; }}
+                            blurOnSubmit={false}
+                            onSubmitEditing={() => { this.updateProfile() }}
                             style={{
                                 borderRadius: 15,
                                 marginLeft: 9, marginRight: 9,
@@ -732,7 +740,14 @@ class ShowProfile extends React.Component {
                                 </View>
                             </View>
                         </TouchableHighlight>
-                        <Text style={{ fontSize: 18, color: 'silver' }}>Изпрати заявка за присъединяване в група</Text>
+                    </View>
+                    <View style={{
+                        marginBottom: 50, borderColor: '#689F38', borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5,
+                        paddingBottom: 15,
+                        paddingTop: 15
+                    }}>
+
+                        <Text style={{ fontSize: 18, color: 'silver', textAlign: 'center', marginBottom: 6 }}>Изпрати заявка за присъединяване в група</Text>
                         <TextInput
                             placeholder={'Имейл на собственика на групата'}
                             style={{
@@ -752,6 +767,8 @@ class ShowProfile extends React.Component {
                                 backgroundColor: '#ffffff',
                                 paddingLeft: 10
                             }}
+                            blurOnSubmit={false}
+                            onSubmitEditing={() => { this.submitNewRequest() }}
                             defaultValue={this.state.requestJoinEmail}
                             onChangeText={typeTitle => this.setState({ requestJoinEmail: typeTitle })}
                         />
@@ -803,9 +820,9 @@ class ShowProfile extends React.Component {
 
                 </ScrollView>)
             } else if (this.state.pageView === 2) {
-                page2 = { borderColor: '#85cc47', borderBottomWidth: 1, paddingBottom: 3, marginBottom: 2 };
-                page1 = {};
-                page3 = {};
+                page2 = { borderColor: '#85cc47', borderBottomWidth: 1, paddingBottom: 3, marginBottom: 2, flex: 1 };
+                page1 = { flex: 1 };
+                page3 = { flex: 1 };
                 let pageFoll = [];
                 if (Object.keys(this.state.externalDataFollowers).length == 0) {
                     PageView.push(<Text style={{ marginLeft: 10, color: 'silver', fontSize: 16 }}>Все още нямате профили който следвате. Може да разгледате публичните профили от секцията нашите готвачи.</Text>)
@@ -827,9 +844,9 @@ class ShowProfile extends React.Component {
                 }
 
             } else if (this.state.pageView == 3) {
-                page3 = { borderColor: '#85cc47', borderBottomWidth: 1, paddingBottom: 3, marginBottom: 2 };
-                page2 = {};
-                page1 = {};
+                page3 = { borderColor: '#85cc47', borderBottomWidth: 1, paddingBottom: 3, marginBottom: 2, flex: 1 };
+                page2 = { flex: 1 };
+                page1 = { flex: 1 };
                 var persons = [];
                 var activeProfile2 = [];
                 var setGroupProfile = [];
@@ -882,7 +899,7 @@ class ShowProfile extends React.Component {
                                     );
 
 
-                                }} ><Text style={{ borderBottomWidth: 1, alignContent: 'flex-end' }}>Изтрий </Text></TouchableOpacity>
+                                }} ><Text style={{ alignContent: 'flex-end' }}>Изтрий </Text></TouchableOpacity>
                             </View>
                         )
                     });
@@ -952,39 +969,21 @@ class ShowProfile extends React.Component {
                             <View style={{
                                 borderRadius: 15,
                                 marginLeft: 9, marginRight: 9,
-                                shadowColor: "#000",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 7,
-                                },
-                                shadowOpacity: 0.41,
-                                shadowRadius: 9.11,
-                                marginBottom: 20,
 
-                                elevation: 6,
-                                backgroundColor: '#ffffff',
                                 paddingLeft: 10
                             }}>
-                                <Text style={{ flex: 3, borderBottomColor: 'silver', borderBottomWidth: 1, marginBottom: 15 }}>Получени заявки: </Text>
+                                <Text style={{ flex: 3, borderBottomColor: 'silver', fontSize: 18, borderBottomWidth: 1, marginBottom: 15 }}>Получени заявки: </Text>
                                 {requests}
                             </View>
                             <View style={{
                                 borderRadius: 15,
                                 marginLeft: 9, marginRight: 9,
-                                shadowColor: "#000",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 7,
-                                },
-                                shadowOpacity: 0.41,
-                                shadowRadius: 9.11,
+
                                 marginBottom: 20,
 
-                                elevation: 6,
-                                backgroundColor: '#ffffff',
                                 paddingLeft: 10
                             }}>
-                                <Text style={{ flex: 3, borderBottomColor: 'silver', borderBottomWidth: 1, marginBottom: 15 }}>Потребители в групата: </Text>
+                                <Text style={{ flex: 3, borderBottomColor: 'silver', fontSize: 18, borderBottomWidth: 1, marginBottom: 15 }}>Потребители в групата: </Text>
 
                                 {persons}
                             </View>
@@ -1019,42 +1018,66 @@ class ShowProfile extends React.Component {
 
             }
             let premiumBTN = '';
+            let premiumPeriod = '';
+
             if (this.state.premium == 0) {
-                premiumBTN = <Text style={{ flex: 1, fontSize: 18, color: '#828282' }}>Безплатен профил</Text>
+                premiumBTN = <Text style={{ flex: 1, fontSize: 18, color: 'red' }}>Безплатен профил</Text>
+                premiumPeriod = <View style={{ height: 50, marginBottom: 10 }}>
+                <TouchableOpacity
+                    onPress={() => { this.props.navigation.navigate('payments'); }}
+                    style={{
+                        flex: 1, backgroundColor: '#689F38', borderColor: 'white', borderWidth: 2, height: 20,
+                        alignItems: 'center', paddingTop: 3, borderRadius: 16, width: '80%',
+                    }}>
+                    <Text style={{ backgroundColor: '#689F38', color: 'white', marginTop: 10}} >Купи премиум  </Text>
+                </TouchableOpacity>
+            </View>;
             } else {
                 premiumBTN = <Text style={{ flex: 1, fontSize: 18, color: 'gold' }}>Премиум профил</Text>
-
-            }
+                premiumPeriod = <View style={{ height: 50, marginBottom: 10 }}>
+                <TouchableOpacity
+                    onPress={() => { this.props.navigation.navigate('payments'); }}
+                    style={{
+                        flex: 1, backgroundColor: '#689F38', borderColor: 'white', borderWidth: 2, height: 20,
+                        alignItems: 'center', paddingTop: 3, borderRadius: 16, width: '80%',
+                    }}>
+                    <Text style={{ backgroundColor: '#689F38', color: 'white' }} >{this.state.expire} оставащи дни  </Text>
+                    <Text style={{ backgroundColor: '#689F38', color: 'white' }} >{this.state.expire_date}</Text>
+                </TouchableOpacity>
+               
+            </View>
+            }   
+            
             let leaveGroup = <Text></Text>;
-           
-            if(this.state.group == 1 && this.state.premium == 1){
-            leaveGroup = <TouchableOpacity
-            onPress={() => Alert.alert(
-                "Напускане на групата",
-                "Наистина ли искате да напуснете групата",
-                [
-                    {
-                        text: "Напусни",
-                        onPress: () => { this.deleteUser(this.state.userId) },
-                        style: "cancel"
-                    },
-                    { text: "Остани", onPress: () => console.log("Cancel Pressed") }
-                ],
-                { cancelable: false }
-            )}
-            style={{
-                flex: 1, backgroundColor: 'white', marginTop: 20, borderColor: '#fa8484', borderWidth: 2, height: 40,
-                width: '60%', alignItems: 'center', paddingTop: 8, borderRadius: 16, marginRight: 20
-            }}>
-            <Text style={{ backgroundColor: 'white', color: '#fa8484' }} >Напусни групата</Text>
-        </TouchableOpacity>
+
+            if (this.state.groupUser == 1 && this.state.premium == 1) {
+                leaveGroup = <TouchableOpacity
+                    onPress={() => Alert.alert(
+                        "Напускане на групата",
+                        "Наистина ли искате да напуснете групата",
+                        [
+                            {
+                                text: "Напусни",
+                                onPress: () => { this.deleteUser(this.state.userId) },
+                                style: "cancel"
+                            },
+                            { text: "Остани", onPress: () => console.log("Cancel Pressed") }
+                        ],
+                        { cancelable: false }
+                    )}
+                    style={{
+                        flex: 1, backgroundColor: 'white', marginTop: 10, borderColor: '#fa8484', borderWidth: 2, height: 40,
+                        width: '60%', alignItems: 'center', paddingTop: 8, borderRadius: 16, marginRight: 20
+                    }}>
+                    <Text style={{ backgroundColor: 'white', color: '#fa8484' }} >Напусни групата</Text>
+                </TouchableOpacity>
             }
             return (
                 <View>
                     <View style={{}}>
                         <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
 
-                        <View style={{ flexDirection: 'row', backgroundColor: '#689F38', height: 200 }}>
+                        <View style={{ flexDirection: 'row', backgroundColor: '#689F38', }}>
                             <View style={{ flex: 1, }}>
                                 <Image source={require('../../../Image/circle-profile.png')}
 
@@ -1069,20 +1092,10 @@ class ShowProfile extends React.Component {
                                     {premiumBTN}
                                 </View>
 
-                                <View style={{ height: 50, marginBottom: 10 }}>
-                                    <TouchableOpacity
-                                        onPress={() => { this.props.navigation.navigate('payments'); }}
-                                        style={{
-                                            flex: 1, backgroundColor: '#689F38', borderColor: 'white', borderWidth: 2, height: 20,
-                                            alignItems: 'center', paddingTop: 3, borderRadius: 16, width: '80%',
-                                        }}>
-                                        <Text style={{ backgroundColor: '#689F38', color: 'white' }} >{this.state.expire} оставащи дни  </Text>
-                                        <Text style={{ backgroundColor: '#689F38', color: 'white' }} >{this.state.expire_date}</Text>
-                                    </TouchableOpacity>
-                                </View>
+                               {premiumPeriod}
                             </View>
                         </View>
-                        <View style={{ backgroundColor: '#e6e6e6', alignItems: 'center', flexDirection: 'row', paddingLeft: 10, paddingBottom: 20 }}>
+                        <View style={{ backgroundColor: '#e6e6e6', alignItems: 'center', flexDirection: 'row', paddingLeft: 10, paddingBottom: 10 }}>
                             <TouchableOpacity
                                 onPress={() => {
                                     if (this.state.activeProfile == 1) {
@@ -1090,7 +1103,7 @@ class ShowProfile extends React.Component {
                                             this.setState({ activeProfile: 0 });
                                             this.switchProfile(2);
                                             this.dropDownAlertRef.alertWithType('success', 'Преминахте на групов профил', 'Вече може да управлявате всичко което е в групата', {}, 2000);
-                                        }else{
+                                        } else {
                                             Alert.alert(
                                                 'Недостъпна функция',
                                                 'Групов профил е възможен само за премиум потребителите',
@@ -1109,7 +1122,8 @@ class ShowProfile extends React.Component {
                                                     },
                                                 ],
                                                 { cancelable: false }
-                                            );                                    }
+                                            );
+                                        }
 
                                     } else {
                                         this.switchProfile(1);
@@ -1120,46 +1134,50 @@ class ShowProfile extends React.Component {
                                     }
                                 }}
                                 style={{
-                                    flex: 1, backgroundColor: 'white', marginTop: 20, borderColor: '#77d169', borderWidth: 2, height: 40,
+                                    flex: 1, backgroundColor: 'white', marginTop: 10, borderColor: '#77d169', borderWidth: 2, height: 40,
                                     width: '60%', alignItems: 'center', paddingTop: 8, borderRadius: 16, marginRight: 20
                                 }}>
                                 {profileBtn}
                             </TouchableOpacity>
                             {leaveGroup}
                         </View>
-                        <View style={{ height: 40, backgroundColor: '#e6e6e6', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <View style={{ flex: 1, }}>
+                        <View style={{ height: 50, backgroundColor: '#e6e6e6', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            <View style={page1}>
                                 <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
-                                    size={30}
-                                    containerStyle={page1}
+                                    size={25}
+                                    // containerStyle={page1}
                                     color={'green'}
                                     onPress={() => { this.setState({ pageView: 1 }) }}
                                     type='font-awesome-5'
                                     name='user'
                                     backgroundColor='silver'
                                 ></Icon>
+                                <Text style={{ textAlign: 'center', marginTop: -2 }} onPress={() => { this.setState({ pageView: 1 })}}> Настройки</Text>
+
                             </View>
-                            <View style={{ flex: 1, }}>
+                            <View style={page2}>
                                 <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                                     size={30}
-                                    containerStyle={page2}
                                     color={'green'}
                                     onPress={() => { this.setState({ pageView: 2 }) }}
                                     type='font-awesome-5'
                                     name='users'
                                     backgroundColor='silver'
                                 ></Icon>
+                                <Text style={{ textAlign: 'center', marginTop: -4 }} onPress={() => { this.setState({ pageView: 2 }) }}>Последвани</Text>
+
                             </View>
-                            <View style={{ flex: 1, }}>
+                            <View style={page3}>
                                 <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                                     size={30}
-                                    containerStyle={page3}
                                     color={'green'}
                                     onPress={() => { this.setState({ pageView: 3 }) }}
                                     type='font-awesome-5'
                                     name='user-cog'
                                     backgroundColor='silver'
                                 ></Icon>
+                                <Text style={{ textAlign: 'center', marginTop: -4 }} onPress={() => { this.setState({ pageView: 3 }) }}> Настройки група</Text>
+
                             </View>
                         </View>
                         <View style={{ paddingTop: 20 }}>

@@ -19,7 +19,7 @@ import {
     KeyboardAvoidingView,
     TouchableOpacity,
     ScrollView,
-    } from 'react-native';
+} from 'react-native';
 import Loader from './Components/loader';
 
 const RegisterScreen = props => {
@@ -31,6 +31,8 @@ const RegisterScreen = props => {
     let [isRegistraionSuccess, setIsRegistraionSuccess] = useState(false);
 
     const handleSubmitButton = () => {
+        Keyboard.dismiss()
+
         setErrortext('');
         if (!userName) {
             setErrortext('Името е задължително');
@@ -44,7 +46,7 @@ const RegisterScreen = props => {
             setErrortext('Паролата е задължителен');
             return;
         }
-    
+
         //Show Loader
         setLoading(true);
         var dataToSend = JSON.stringify({
@@ -61,7 +63,7 @@ const RegisterScreen = props => {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
                 //Header Defination
-              },
+            },
         })
             .then(response => response.json())
             .then(responseJson => {
@@ -70,7 +72,7 @@ const RegisterScreen = props => {
                         setErrortext(responseJson.errors[key]);
 
                     })
-                  }
+                }
                 //Hide Loader
                 setLoading(false);
                 if (responseJson.access_token) {
@@ -90,129 +92,145 @@ const RegisterScreen = props => {
         return (
             <View
                 style={{
-          flex: 1,
-          backgroundColor: 'white',
-          justifyContent: 'center',
-        }}>
+                    flex: 1,
+                    backgroundColor: 'white',
+                    justifyContent: 'center',
+                }}>
 
                 <Image
                     source={require('../Image/successReg.jpg')}
-                    style={{ width:'100%',height:'60%', resizeMode: 'contain', alignSelf: 'center' }}
-                    />
+                    style={{ width: '100%', height: '60%', resizeMode: 'contain', alignSelf: 'center' }}
+                />
                 <Text style={styles.successTextStyle}>Регистртацията е успешна</Text>
-                <Text style={{ color: 'silver',
-        textAlign: 'center',
-        fontSize: 11,
-        padding: 30,
-        paddingTop:5}}>Проверете емайла си за емайл за потвърждение на регистрацията ви</Text>
-                <View style={{  justifyContent: 'center',
-    alignItems: 'center'}}>
-                <TouchableOpacity
-                    style={styles.buttonStyle}
-                    activeOpacity={0.5}
-                    onPress={() => props.navigation.navigate('LoginScreen')}>
-                    <Text style={styles.buttonTextStyle}>Вход</Text>
-                </TouchableOpacity>
+                <Text style={{
+                    color: 'silver',
+                    textAlign: 'center',
+                    fontSize: 11,
+                    padding: 30,
+                    paddingTop: 5
+                }}>Проверете емайла си за емайл за потвърждение на регистрацията ви</Text>
+                <View style={{
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <TouchableOpacity
+                        style={styles.buttonStyle}
+                        activeOpacity={0.5}
+                        onPress={() => props.navigation.navigate('LoginScreen')}>
+                        <Text style={styles.buttonTextStyle}>Вход</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         );
     }
     return (
-        <ScrollView style={{   flex: 1,
+        <ScrollView style={{
+            flex: 1,
             marginBottom: 60,
-    
+
             width: '100%',
-            height: '50%'}}>
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
-            <Loader loading={loading} />
-            
-            <View style={{marginTop:50}}>
-                <View style={{ alignItems: 'center' }}>
-                    <Image
-                        source={require('../Image/aboutreact.png')}
-                        style={{
-              width: '50%',
-              height: 100,
-              resizeMode: 'contain',
-            }}
+            height: '50%'
+        }}>
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
+                <Loader loading={loading} />
+
+                <View style={{ marginTop: 50 }}>
+                    <View style={{ alignItems: 'center' }}>
+                        <Image
+                            source={require('../Image/aboutreact.png')}
+                            style={{
+                                width: '50%',
+                                height: 100,
+                                resizeMode: 'contain',
+                            }}
                         />
-                </View>
-                <View style={{ alignItems: 'center', padding:0, margin:0,
-              height: 200}}>
-                    <Image 
-                        source={require('../Image/regImg.jpg')}
-                        style={{ backgroundColor: 'green',
-              width: '50%',
-              height: '100%'
-            }}
+                    </View>
+                    <View style={{
+                        alignItems: 'center', padding: 0, margin: 0,
+                        height: 200
+                    }}>
+                        <Image
+                            source={require('../Image/regImg.jpg')}
+                            style={{
+                                backgroundColor: 'green',
+                                width: '50%',
+                                height: '100%'
+                            }}
                         />
-                </View>
-                <KeyboardAvoidingView enabled style={{borderColor:'black',borderWidth:1,width:'90%',
-                borderRadius:10,alignItems: 'center',marginLeft:15, marginTop:-1, paddingBottom:30}}>
-                    <View style={styles.SectionStyle}>
-                        <TextInput
-                            style={styles.inputStyle}
-                            onChangeText={UserName => setUserName(UserName)}
-                            underlineColorAndroid="#FFFFFF"
-                            placeholder="Име"
-                            placeholderTextColor="black"
-                            autoCapitalize="sentences"
-                            returnKeyType="next"
-                            onSubmitEditing={() =>{
-                // this._emailinput && this._emailinput.focus()
-              }}
-                            blurOnSubmit={false}
-                            />
                     </View>
-                    <View style={styles.SectionStyle}>
-                        <TextInput
-                            style={styles.inputStyle}
-                            onChangeText={UserEmail => setUserEmail(UserEmail)}
-                            underlineColorAndroid="#F6F6F7"
-                            placeholder="Имейл"
-                            placeholderTextColor="black"
-                            keyboardType="email-address"
-                            ref={ref => {
-                // this._emailinput = ref;
-              }}
-                            returnKeyType="next"
-                            onSubmitEditing={() => this._ageinput && this._ageinput.focus()}
-                            blurOnSubmit={false}
+                    <KeyboardAvoidingView enabled style={{
+                        borderColor: 'black', borderWidth: 1, width: '90%',
+                        borderRadius: 10, alignItems: 'center', marginLeft: 15, marginTop: -1, paddingBottom: 30
+                    }}>
+                        <View style={styles.SectionStyle}>
+                            <TextInput
+                                style={styles.inputStyle}
+                                onChangeText={UserName => setUserName(UserName)}
+                                underlineColorAndroid="#FFFFFF"
+                                placeholder="Име"
+                                placeholderTextColor="black"
+                                autoCapitalize="sentences"
+                                blurOnSubmit={false}
+                                onSubmitEditing={() => { this.secondTextInput.focus(); }}
+
                             />
-                    </View>
-                    <View style={styles.SectionStyle}>
-                     
-                              <TextInput
+                        </View>
+                        <View style={styles.SectionStyle}>
+                            <TextInput
+                                style={styles.inputStyle}
+                                onChangeText={UserEmail => setUserEmail(UserEmail)}
+                                underlineColorAndroid="#F6F6F7"
+                                placeholder="Имейл"
+                                placeholderTextColor="black"
+                                keyboardType="email-address"
+
+                                ref={(input) => { this.secondTextInput = input; }}
+                                blurOnSubmit={false}
+                                onSubmitEditing={() => { this.thirdTextInput.focus(); }}
+                            />
+                        </View>
+                        <View style={styles.SectionStyle}>
+
+                            <TextInput
                                 style={styles.inputStyle}
                                 onChangeText={UserPassword => setPassword(UserPassword)}
                                 underlineColorAndroid="#FFFFFF"
                                 placeholder="Парола" //12345
                                 placeholderTextColor="black"
                                 keyboardType="default"
-                                ref={ref => {
-                //   this._passwordinput = ref;
-                }}
-                                onSubmitEditing={Keyboard.dismiss}
-                                blurOnSubmit={false}
+
                                 secureTextEntry={true}
-                                />
-                    </View>
-                   
-                    
-                    {errortext != '' ? (
-                        <Text style={styles.errorTextStyle}> {errortext} </Text>
-                    ) : null}
-                    <TouchableOpacity
-                        style={styles.buttonStyle}
-                        activeOpacity={0.5}
-                        onPress={handleSubmitButton}>
-                        <Text style={styles.buttonTextStyle}>Регистртация</Text>
-                    </TouchableOpacity>
-                </KeyboardAvoidingView>
+
+                                ref={(input) => { this.thirdTextInput = input; }}
+                                blurOnSubmit={false}
+                                onSubmitEditing={handleSubmitButton}
+                            />
+                        </View>
+
+
+                        {errortext != '' ? (
+                            <Text style={styles.errorTextStyle}> {errortext} </Text>
+                        ) : null}
+                        <TouchableOpacity
+                            style={styles.buttonStyle}
+                            activeOpacity={0.5}
+                            onPress={handleSubmitButton}>
+                            <Text style={styles.buttonTextStyle}>Регистрация</Text>
+                        </TouchableOpacity>
+                     
+                        <Text
+                            style={{  color: 'black',
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            fontSize: 14, color:'silver'}}
+                            onPress={() => props.navigation.navigate('LoginScreen')}>
+                            Вход
+                        </Text>
+                    </KeyboardAvoidingView>
+                </View>
             </View>
-        </View>
         </ScrollView>
-            );
+    );
 };
 export default RegisterScreen;
 
@@ -237,7 +255,7 @@ const styles = StyleSheet.create({
         marginRight: 35,
         marginTop: 20,
         marginBottom: 20,
-        width:200,
+        width: 200,
         justifyContent: 'center',
 
     },
@@ -266,6 +284,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20,
         padding: 30,
-        paddingBottom:10
+        paddingBottom: 10
     },
 });

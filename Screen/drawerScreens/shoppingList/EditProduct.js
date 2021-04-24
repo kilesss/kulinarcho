@@ -10,12 +10,13 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import {
   View,
   Text,
+  TouchableOpacity,
   TouchableHighlight,
 } from "react-native";
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
-
+import { BottomSheet } from 'react-native-btr';
 
 
 
@@ -84,7 +85,8 @@ class EditProduct extends React.Component {
     unbuyedProduct: 0,
     placeholderType: 'Тип',
     placeholderUnits: 'Разфасофка',
-    imagebtnText: 'Направи снимка'
+    imagebtnText: 'Направи снимка',
+    checkCamera:false,
   };
 
 
@@ -323,8 +325,41 @@ setTypeTitle = (title) => {
 }
 
 async pickImage() {
+  this.setState({checkCamera:true})
   this.checkName();
+};
 
+async launchGalery(){
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    quality: 1,
+  });
+
+
+
+  if (result.width > 640) {
+    let prop = result.width / 640;
+    const manipResult = await ImageManipulator.manipulateAsync(
+      result.localUri || result.uri,
+      [{ resize: { width: result.width / prop, height: result.height / prop } }],
+      { format: 'jpeg' }
+    );
+    const base64 = await FileSystem.readAsStringAsync(manipResult.uri, { encoding: 'base64' });
+    this.setState({ image64: base64 })
+
+  } else {
+    const base64 = await FileSystem.readAsStringAsync(result.uri, { encoding: 'base64' });
+    this.setState({ image64: base64 })
+  }
+
+
+  if (!result.cancelled) {
+    this.setImage(result.uri);
+  }
+
+}
+async launchCamera(){
   let result = await ImagePicker.launchCameraAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
@@ -351,7 +386,7 @@ async pickImage() {
   if (!result.cancelled) {
     this.setImage(result.uri);
   }
-};
+}
 async setImage(img) {
 
   this.setState({ image: img })
@@ -428,7 +463,95 @@ render(props) {
     return (
 
       <View style={styles.MainContainer}>
+
         <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
+
+        <BottomSheet
+            animationType="slide"
+            transparent={true}
+            visible={this.state.checkCamera}
+            onBackdropPress={() => {
+              this.setState({checkCamera: false})
+              }}
+            onRequestClose={() => {
+            this.setState({checkCamera: false})
+            }}
+          >
+
+<View style={{
+              backgroundColor: '#fff',
+              width: '100%',
+              height: 120,
+              justifyContent: 'center',
+              borderTopRightRadius: 15,
+              borderTopLeftRadius: 15,
+            }}>
+              <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
+
+                <TouchableOpacity onPress={() => {
+                        this.launchCamera()
+
+                }
+                }>
+                  <View style={{ flexDirection: 'row' }}>
+
+                    <Icon style={styles.icon}
+                      containerStyle={{
+                        backgroundColor: '#ebebeb',
+                        borderRadius: 20,
+                        padding: 5
+                      }}
+                      size={25}
+                      color={'black'}
+
+                      onPress={() => {
+                        this.launchCamera()
+
+
+                      }
+
+                      }
+                      type='ionicon'
+                      backgroundColor='silver'
+                      name='camera-outline'
+                    >Редактирай</Icon>
+                    <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Камера</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
+
+                <TouchableOpacity onPress={() => {
+                        this.launchGalery()
+
+                }
+                }>
+                  <View style={{ flexDirection: 'row' }}>
+
+                    <Icon style={styles.icon}
+                      containerStyle={{
+                        backgroundColor: '#ebebeb',
+                        borderRadius: 20,
+                        padding: 5
+                      }}
+                      size={25}
+                      color={'black'}
+
+                      onPress={() => {
+                        this.launchGalery()
+                      }
+
+                      }
+                      type='ionicon'
+                      name='images-outline'
+                    >Редактирай</Icon>
+                    <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Галерия</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+            </View>
+            </BottomSheet>
         <View style={{ height: '7%' }}>
          
         </View>
@@ -454,7 +577,7 @@ render(props) {
             marginLeft: 15,
 
             backgroundColor: '#ffffff',
-            paddingLeft: 10
+            paddingLeft: 15, paddingTop:15,
           }}>{this.state.newProdTitle}</Text>
 
 

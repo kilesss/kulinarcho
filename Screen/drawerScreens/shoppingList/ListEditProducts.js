@@ -295,7 +295,7 @@ class ListEditProducts extends React.Component {
 
           }
         })
-        this.setState({externalData:arr})
+        this.setState({ externalData: arr })
         if (data.errors) {
           Object.keys(data.errors).map((key, index) => {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
@@ -477,12 +477,32 @@ class ListEditProducts extends React.Component {
           buyedDesign = 'line-through'
           buyedColor = 'silver';
         }
-        let categoryColor = 'silver';
+        let categoryColor = '#689F38';
         var img = ''
-        if (item.photo !== null) {
-          img = 'https://kulinarcho.s3.eu-central-1.amazonaws.com/products/' + item.photo;
-        } else {
-          img = 'https://comps.canstockphoto.com/wicker-picnic-basket-eps-vector_csp48110640.jpg'
+        var imgPer = <ImageModal
+          borderRadius={60}
+          imageBackgroundColor="#ffffff"
+          source={require('../../../Image/recipeImg.png')}
+          style={{
+
+            width: 60,
+            height: 60,
+            alignSelf: 'center',
+          }}
+        />
+        if (item.photo !== null && item.photo !== "") {
+          console.log(item.photo);
+          imgPer = <ImageModal
+            borderRadius={60}
+            imageBackgroundColor="#ffffff"
+            source={{ uri: 'https://kulinarcho.s3.eu-central-1.amazonaws.com/products/' + item.photo + '?time' + (new Date()).getTime() }}
+            style={{
+
+              width: 60,
+              height: 60,
+              alignSelf: 'center',
+            }}
+          />
         }
         return (
           <View>
@@ -491,7 +511,6 @@ class ListEditProducts extends React.Component {
             <View
               elevation={5}
               style={{
-                borderLeftWidth: 4, borderLeftColor: buyedColor,
                 // borderBottomWidth:4, borderBottomColor:'#689F38',
 
                 shadowColor: '#000000',
@@ -504,14 +523,17 @@ class ListEditProducts extends React.Component {
                 width: width - 30,
                 marginLeft: 15,
                 marginTop: 20,
+                borderBottomWidth: 5,
+                borderRightWidth: 5,
+                borderBottomColor: 'silver',
+                borderRightColor: 'silver',
                 alignItems: 'center',
                 backgroundColor: '#ffffff',
-                borderRadius: 6,
+                borderRadius: 15,
               }}>
               <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
                 <View style={{
-                  flex: 1, flexDirection: 'row', width: '100%', borderBottomWidth: 1,
-                  borderBottomColor: 'silver',
+                  flex: 1, flexDirection: 'row', width: '95%', marginTop: 10,
                 }}>
                   <TouchableOpacity style={{
                     marginLeft: 30,
@@ -519,7 +541,6 @@ class ListEditProducts extends React.Component {
                     fontSize: 19,
                     fontWeight: '200',
                     // fontFamily: 'sans-serif',
-                    marginBottom: 4,
                     alignSelf: 'center',
                     textDecorationLine: buyedDesign
                   }}
@@ -544,8 +565,8 @@ class ListEditProducts extends React.Component {
                       style={{
                         marginLeft: 30,
                         flex: 1,
-                        fontSize: 19,
-                        fontWeight: '200',
+                        fontWeight: 'bold',
+                        fontSize: 22,
                         // fontFamily: 'sans-serif',
                         marginBottom: 4,
                         alignSelf: 'center',
@@ -575,21 +596,13 @@ class ListEditProducts extends React.Component {
                   >Редактирай</Icon>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
-                  <ImageModal
-                    borderRadius={60}
-                    resizeMode="cover" imageBackgroundColor="#ffffff"
-                    source={{ uri: img + '?time' + (new Date()).getTime() }}
-                    style={{
-                      marginTop: 15,
-                      width: 60,
-                      height: 60,
-                      alignSelf: 'center',
-                    }}
-                  />
+                  {imgPer}
 
                   <TouchableOpacity style={{
                     width: '100%',
                     paddingLeft: 9,
+                    height: 60,
+
                     flex: 2,
                     flexDirection: 'column',
 
@@ -618,7 +631,6 @@ class ListEditProducts extends React.Component {
                         fontSize: 16,
                         fontWeight: '200',
                         // fontFamily: 'sans-serif',
-                        marginBottom: 4,
                         color: '#808080',
                         textDecorationLine: buyedDesign
 
@@ -626,14 +638,10 @@ class ListEditProducts extends React.Component {
                       {item.description}
                     </Text>
 
-                    <Text style={{
-                      alignItems: 'flex-end', color: categoryColor, textDecorationLine: buyedDesign
-                    }}>
-                      {item.type}
-                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={{
                     flex: 1,
+                    height: 50,
                     flexDirection: 'column',
                     paddingRight: 5,
                     paddingTop: 5,
@@ -662,20 +670,61 @@ class ListEditProducts extends React.Component {
                     <Text
                       style={{
                         // flex: 1,
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: '100',
+                        textDecorationLine: buyedDesign
                         // fontFamily: 'roboto',
                       }}>
                       {item.price} лв.
-                </Text>
-                    <Text style={{ alignItems: 'flex-end', color: '#808080', fontSize: 12 }}>
+                    </Text>
+                    <Text style={{ alignItems: 'flex-end', color: 'black', fontSize: 14, color: categoryColor, textDecorationLine: buyedDesign }}>
+                      <Text style={{ marginRight: 5 }}> X</Text>
                       {item.value} {item.unitsName}
                     </Text>
-                    <Text style={{ alignItems: 'flex-end', color: '#808080', fontSize: 18, borderTopWidth: 1, borderColor: 'black' }}>
-                      {item.finalPrice} лв.
-                </Text>
+
                   </TouchableOpacity>
                 </View>
+                <TouchableOpacity style={{
+                    
+                  }}
+                    onPress={() => {
+                      this.setState({ typeid: item.id });
+
+                      if (item.price > 0) {
+                        this.setState({ price: item.price });
+                      } else {
+                        this.setState({ price: '' });
+                      }
+                      if (item.value > 0) {
+                        this.setState({ amount: item.value });
+                      } else {
+                        this.setState({ amount: '' });
+                      }
+
+                      this.RBSheet.open()
+                    }}>
+                <View style={{ flexDirection: 'row', height: 40 }}>
+                
+                  <View style={{
+                    marginTop: -10,
+                    height: 50,
+                    backgroundColor: 'transparent',
+                    borderStyle: 'solid',
+                    borderRightWidth: 50,
+                    borderBottomWidth: 50,
+                    borderRightColor: 'transparent',
+                    borderBottomColor: buyedColor,
+                    borderBottomLeftRadius: 15, marginLeft: -2
+                  }}></View>
+                  <View style={{ flex: 2, color: categoryColor, textDecorationLine: buyedDesign, alignContent: 'flex-start', height: 50 }} >
+                    <Text style={{ marginTop: 5, textAlign: 'left', color: categoryColor, textDecorationLine: buyedDesign }}>
+                      {item.type}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ textAlign: 'right', marginRight: 10, marginTop: 5, fontSize: 20, fontWeight: 'bold', 
+                    textDecorationLine: buyedDesign }}>{item.finalPrice} лв.</Text></View>
+                </View>
+                </TouchableOpacity>
 
               </View>
             </View>
@@ -699,7 +748,8 @@ class ListEditProducts extends React.Component {
                 borderTopRightRadius: 15,
                 borderTopLeftRadius: 15,
                 justifyContent: "center",
-                alignItems: "center"
+                alignItems: "center", 
+                borderWidth:1
               }
             }}
           >
@@ -768,7 +818,7 @@ class ListEditProducts extends React.Component {
                   marginLeft: 15, marginRight: 10, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
                   padding: 10
                 }}>
-                  <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
+                  <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1,borderColor: 'silver' }}>
                     <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                       size={30}
                       containerStyle={{
@@ -893,7 +943,7 @@ class ListEditProducts extends React.Component {
 
             <TouchableOpacity onPress={() => {
 
-              this.setModalVisible3(true)
+this.submitDeleteType();
             }
             }>
               <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
@@ -912,8 +962,8 @@ class ListEditProducts extends React.Component {
 
                   onPress={() => {
 
-                    this.setModalVisible3(true)
-                  }
+                    this.submitDeleteType();
+                                    }
                   }
                   size={25}
                   style={styles.icon} ></Icon><Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Изтрий продукта</Text>
@@ -1023,52 +1073,7 @@ class ListEditProducts extends React.Component {
               flex: 1, marginTop: 15, textAlign: 'center', alignItems: 'center',
               fontSize: 16, fontWeight: '300', color: '#8c8c8c',
             }} >Общо: {this.state.sum} лв. </Text>
-
-
           </View>
-
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible3}
-            onRequestClose={() => {
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.titlem}>Изтриване на продукт</Text>
-                  <View style={styles.dividerm}></View>
-                </View>
-                <Text style={{
-                  justifyContent: "center",
-                  alignItems: "center", marginLeft: 20
-                }}>Сигурни ли сте че искате да изтриете продукта
-                                     <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>{this.state.deleteType}</Text></Text>
-                <View style={styles.modalBtn}>
-                  <TouchableHighlight
-                    style={{ ...styles.openButton, backgroundColor: "#00cf0e" }}
-                    onPress={() => {
-                      this.submitDeleteType();
-                      this.setModalVisible3(!modalVisible3);
-                    }}
-                  >
-                    <Text style={styles.textStyle}>Да</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight
-                    style={{ ...styles.openButton, backgroundColor: "#f00000" }}
-                    onPress={() => {
-                      this.setModalVisible3(!modalVisible3);
-                    }}
-                  >
-                    <Text style={styles.textStyle}>Не</Text>
-                  </TouchableHighlight>
-                </View>
-
-              </View>
-            </View>
-          </Modal>
-
           <ActionButton
             buttonColor='#689F38'
             offsetY={65}
@@ -1328,6 +1333,8 @@ const styles = StyleSheet.create({
   icon: {
     height: 30,
     width: 30,
+    marginRight: 10,
+    marginTop: 10,
     flex: 1
   },
   container: {
