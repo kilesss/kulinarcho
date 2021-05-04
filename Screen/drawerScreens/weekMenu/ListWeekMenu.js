@@ -20,6 +20,10 @@ import {
     Text,
     ScrollView,
 } from "react-native";
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+  } from 'expo-ads-admob';
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
 
@@ -27,6 +31,7 @@ class ListWeekMenu extends React.Component {
 
     state = {
         externalData: null,
+        premium:0,
     }
 
 
@@ -141,6 +146,8 @@ class ListWeekMenu extends React.Component {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
                 }
+                this.state.premium = data.premium;
+                delete data.premium;
 
                 if (data.new_token) {
                     AsyncStorage.setItem('access_token', data.new_token);
@@ -149,6 +156,7 @@ class ListWeekMenu extends React.Component {
                     delete data['new_token'];
 
                 }
+                
                 let newData = [];
                 Object.keys(data).map((key, index) => {
                     newData.push(data[index]);
@@ -303,6 +311,16 @@ class ListWeekMenu extends React.Component {
                 </View>
             )
         } else {
+            console.log(this.state.premium);
+            let Add =  <AdMobBanner
+            bannerSize="smartBannerLandscape" 
+            adUnitID={'ca-app-pub-5428132222163769/9836413609'} 
+              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+              servePersonalizedAds={true}/>;
+              if(this.state.premium != 0){
+                Add = <View></View>;
+              }
+      
             return (
 
                 <View style={styles.MainContainer}>
@@ -310,6 +328,7 @@ class ListWeekMenu extends React.Component {
                         {renderItem()}
 
                     </ScrollView>
+                    {Add}
                 </View>
             );
         }

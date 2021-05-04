@@ -15,13 +15,16 @@ import {
     StyleSheet,
     View,
     Text,
-    TextInput,
+    TextInput,Alert,
     TouchableHighlight
 } from "react-native";
 import { Icon } from 'react-native-elements'
 import { ScrollView } from 'react-native';
 import { BackHandler } from 'react-native';
-
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+  } from 'expo-ads-admob';
 class GenerateShoppingList extends React.Component {
 
     constructor(props) {
@@ -50,7 +53,9 @@ class GenerateShoppingList extends React.Component {
         count:0,
         filledProducts:[],
         alertFields:0,
-        title:''
+        title:'',
+        premium:0,
+
     };
 
     async fetchData() {
@@ -114,8 +119,33 @@ class GenerateShoppingList extends React.Component {
 
     }
   async  generateList(){
-  
-            var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+    var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+    await fetch('http://167.172.110.234/api/checkPremium', {
+      method: 'POST',
+      body: JSON.stringify({ types: 'shopping' }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        //Header Defination
+        'Authorization': 'Bearer ' + DEMO_TOKEN
+      },
+
+    }).then(
+      async response => {
+        const data = await response.json();
+
+        if (data.login && data.login == true) {
+          AsyncStorage.clear();
+          this.props.navigation.navigate('Auth');
+        }
+
+        if (data.new_token) {
+          AsyncStorage.setItem('access_token', data.new_token);
+          delete data.new_token;
+          delete data['new_token'];
+        }
+        
+        if (data.response == 'ok' || data.response < 2) {
             await fetch('http://167.172.110.234/api/generateShoppingList', {
                 method: 'POST',
                 body: JSON.stringify({
@@ -165,6 +195,35 @@ class GenerateShoppingList extends React.Component {
                 // ADD THIS THROW error
                 throw error;
               });
+        } else {
+          Alert.alert(
+            'Достигнат лимит',
+            'Достигнахте лимита си на безплатни списъци за пазар. Може да увеличите лимита като преминете на премиум план',
+            [
+              {
+                text: 'Отказ',
+                onPress: () => {
+                  return null;
+                },
+              },
+              {
+                text: 'Премиум',
+                onPress: () => {
+                  this.props.navigation.navigate('payments');
+                },
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+
+      }
+    ).catch(function (error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      // ADD THIS THROW error
+      throw error;
+    });
+            
           
         // if(Object.keys(myObject).length)
     }
@@ -189,9 +248,17 @@ class GenerateShoppingList extends React.Component {
             )
         } else {
 
-
+            console.log(this.state.premium);
+            let Add =  <AdMobBanner
+            bannerSize="smartBannerLandscape" 
+            adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+              servePersonalizedAds={true}/>;
+              if(this.state.premium != 0){
+                Add = <View></View>;
+              }
+      
             const Card = ({ item }) => {
-console.log('sasssssssssssssssssssss');
                 let data = this.state.externalData;
 
                 let renderHtml = [];

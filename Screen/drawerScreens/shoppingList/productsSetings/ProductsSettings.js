@@ -27,9 +27,6 @@ import { BottomSheet } from 'react-native-btr';
 import {
   AdMobBanner,
   AdMobInterstitial,
-  PublisherBanner,
-  AdMobRewarded,
-  setTestDeviceIDAsync,
 } from 'expo-ads-admob';
 class ProductsSettings extends React.Component {
 
@@ -96,7 +93,9 @@ class ProductsSettings extends React.Component {
       },
     ],
     placeholderType: 'Тип',
-    placeholderUnits: 'Разфасофка'
+    placeholderUnits: 'Разфасофка',
+    premium:0,
+
   };
 
   setTypeTitle = (title) => {
@@ -150,6 +149,8 @@ class ProductsSettings extends React.Component {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
           })
         }
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -191,11 +192,13 @@ class ProductsSettings extends React.Component {
 
       this.fetchData();
       this.setState({ visible: false });
-      AdMobInterstitial.setAdUnitID("ca-app-pub-5428132222163769/6908897742");
-      await AdMobInterstitial.requestAdAsync({servePersonalizedAds:false});
-      await AdMobInterstitial.showAdAsync().then(data => {
-        console.log(data);
-      })
+    //   if(this.state.premium == 0){
+    //   AdMobInterstitial.setAdUnitID("ca-app-pub-5428132222163769/6908897742");
+    //   await AdMobInterstitial.requestAdAsync({servePersonalizedAds:false});
+    //   await AdMobInterstitial.showAdAsync().then(data => {
+    //     console.log(data);
+    //   })
+    // }
       // this.fetchDataUnits()
       // this.fetchDataTypes();
     });
@@ -275,6 +278,15 @@ class ProductsSettings extends React.Component {
         </View>
       )
     } else {
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/6481630131'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
 
       this.inputRefs = {};
 
@@ -561,15 +573,14 @@ class ProductsSettings extends React.Component {
               </View>
             </View>
           </BottomSheet>
-          <AdMobBanner
-       bannerSize="smartBannerLandscape" 
-       adUnitID={'ca-app-pub-5428132222163769/6481630131'} 
-         onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
-         servePersonalizedAds={true}/>
+       
+                      {Add}
+
           <ActionButton
             buttonColor='#689F38'
             onPress={() => { this._saveDetails() }}
           />
+
         </View>
       );
     }

@@ -26,9 +26,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Modal,
   TouchableHighlight
 } from "react-native";
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
 
@@ -97,7 +100,8 @@ class ListEditProducts extends React.Component {
     typesID: 0,
     newProdTitle: '',
     unbuyedProduct: 0,
-    time: 60 * 20 // 20 minutes
+    time: 60 * 20, // 20 minutes,
+    premium:0,
 
   };
 
@@ -166,6 +170,8 @@ class ListEditProducts extends React.Component {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
           })
         }
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -454,6 +460,15 @@ class ListEditProducts extends React.Component {
         </View>
       )
     } else {
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/9394695947'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
 
 
       const { modalVisible3 } = this.state;
@@ -482,7 +497,7 @@ class ListEditProducts extends React.Component {
         var imgPer = <ImageModal
           borderRadius={60}
           imageBackgroundColor="#ffffff"
-          source={require('../../../Image/recipeImg.png')}
+          source={require('../../../Image/rsz_basket.png')}
           style={{
 
             width: 60,
@@ -989,6 +1004,20 @@ this.submitDeleteType();
               keyExtractor={item => item.id}
             />
           </SafeAreaView >
+          <View style={{
+            position: 'absolute',
+            flex: 1,
+            flexDirection: 'row',
+            left: 0,
+            right: 0,
+            bottom: 70,
+            borderTopWidth: 1,
+            borderTopColor: 'silver',
+            flexDirection: 'row',
+            backgroundColor: 'white',
+          }}>{Add}</View>
+          
+
           <View style={{
             position: 'absolute',
             flex: 1,

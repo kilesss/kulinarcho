@@ -12,7 +12,10 @@ import * as React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Icon } from 'react-native-elements'
 import ImageModal from 'react-native-image-modal';
-
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+  } from 'expo-ads-admob';
 import {
     StyleSheet,
     View,
@@ -101,7 +104,51 @@ class UserProfile extends React.Component {
     }
 
 
+    async addFollow() {
 
+        var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+        
+        var userId = await AsyncStorage.getItem('userId');
+
+        
+        await fetch('http://167.172.110.234/api/addFollower', {
+          method: 'POST',
+          body: JSON.stringify({
+            follow_id: userId
+          }),
+    
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            //Header Defination
+            'Authorization': 'Bearer ' + DEMO_TOKEN
+          },
+    
+        }).then(
+          async response => {
+            const data = await response.json();
+         
+            if (data.login && data.login == true) {
+              AsyncStorage.clear();
+              this.props.navigation.navigate('Auth');
+            }
+    
+    
+            if (data.new_token) {
+              AsyncStorage.setItem('access_token', data.new_token);
+    
+              delete data.new_token;
+              delete data['new_token'];
+    
+            }
+            this.fetchData('');
+          }
+        ).catch(function (error) {
+          console.log('There has been a problem with your fetch operation: ' + error.message);
+          // ADD THIS THROW error
+          throw error;
+        });
+      }
 
     async fetchData() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
@@ -117,7 +164,8 @@ class UserProfile extends React.Component {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
                 }
-
+                this.state.premium = data.premium;
+                delete data.premium;
                 if (data.new_token) {
                     AsyncStorage.setItem('access_token', data.new_token);
 
@@ -125,6 +173,7 @@ class UserProfile extends React.Component {
                     delete data['new_token'];
 
                 }
+                console.log(data.user);
                 this.setState({ description: data.user.description });
                 this.setState({ username: data.user.name });
                 this.setState({ profilePicture: data.user.profilePicture });
@@ -132,7 +181,6 @@ class UserProfile extends React.Component {
                 this.setState({ role: data.user.role });
                 this.setState({ youtube: data.user.youtube });
                 let newData = [];
-
 
                 Object.keys(data.recipe).map((key, index) => {
                     newData.push(data.recipe[key]);
@@ -156,10 +204,149 @@ class UserProfile extends React.Component {
                 </View>
             )
         } else {
-
+            console.log(this.state.premium);
+            let Add =  <AdMobBanner
+            bannerSize="smartBannerLandscape" 
+            adUnitID={'ca-app-pub-5428132222163769/5378293840'} 
+              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+              servePersonalizedAds={true}/>;
+              if(this.state.premium != 0){
+                Add = <View></View>;
+              }
+      
             let profileBtn = [];
 
             const Card = ({ item }) => {
+                var img = ''
+                if (item.photo !== null) {
+                    img =  <ImageModal
+                    source={{ uri: 'https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/' + item.photo + '?time' + (new Date()).getTime() }}
+                    style={{
+                        borderRadius:15,
+                        marginLeft: 10, 
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                />;
+                } else {
+                    img = <ImageModal
+                    resizeMode="cover"
+                    source={require('../../../Image/rsz_plate.png')}
+                    style={{
+                      borderRadius: 15,
+                      marginLeft: 10, marginBottom: 10,
+                      width: 80,
+                      height: 80,
+                      alignSelf: 'center',
+                    }}
+                  />
+                  if (item.cat_id == 1) {
+                    img = <ImageModal
+                      resizeMode="cover"
+                      source={require('../../../Image/salad.jpg')}
+                      style={{
+                        borderRadius: 15,
+                        marginLeft: 10, marginBottom: 10,
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  }
+                  if (item.cat_id == 2) {
+                    img = <ImageModal
+                      resizeMode="cover"
+                      source={require('../../../Image/supa.jpg')}
+                      style={{
+                        borderRadius: 15,
+                        marginLeft: 10, marginBottom: 10,
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  }
+                  if (item.cat_id == 3) {
+                    img = <ImageModal
+                      resizeMode="cover"
+                      source={require('../../../Image/predqstie.jpg')}
+                      style={{
+                        borderRadius: 15,
+                        marginLeft: 10, marginBottom: 10,
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  }
+                  if (item.cat_id == 4) {
+                    img = <ImageModal
+                      resizeMode="cover"
+                      source={require('../../../Image/souse.jpg')}
+                      style={{
+                        borderRadius: 15,
+                        marginLeft: 10, marginBottom: 10,
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  }
+                  if (item.cat_id == 5) {
+                    img = <ImageModal
+                      resizeMode="cover"
+                      source={require('../../../Image/meal.jpg')}
+                      style={{
+                        borderRadius: 15,
+                        marginLeft: 10, marginBottom: 10,
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  }
+                  if (item.cat_id == 6) {
+                    img = <ImageModal
+                      resizeMode="cover"
+                      source={require('../../../Image/vege.jpg')}
+                      style={{
+                        borderRadius: 15,
+                        marginLeft: 10, marginBottom: 10,
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  }
+                  if (item.cat_id == 7) {
+                    img = <ImageModal
+                      resizeMode="cover"
+                      source={require('../../../Image/bread.jpg')}
+                      style={{
+                        borderRadius: 15,
+                        marginLeft: 10, marginBottom: 10,
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  }
+                  if (item.cat_id == 8) {
+                    img = <ImageModal
+                      resizeMode="cover"
+                      source={require('../../../Image/dessert.jpg')}
+                      style={{
+                        borderRadius: 15,
+                        marginLeft: 10, marginBottom: 10,
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                    />
+                  }
+
+                }
                 return (
                   <TouchableHighlight style={{ width:'100%'}} onPress={() => {AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
                     this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
@@ -170,17 +357,7 @@ class UserProfile extends React.Component {
                     }}>
                     <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
                       <View style={{ flex: 1, flexDirection: 'row', borderRadius:15 }}>
-                        <ImageModal
-                          resizeMode="cover"
-                          source={{ uri: 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/roast-beef-recipes-536cd86.jpg' + '?time' + (new Date()).getTime() }}
-                          style={{
-                            borderRadius:15,
-                            marginLeft: 10, marginBottom: 10,
-                            width: 80,
-                            height: 80,
-                            alignSelf: 'center',
-                          }}
-                        />
+                        {img}
                         <TouchableOpacity style={{
                           width: '100%',
                           paddingLeft: 9,
@@ -198,7 +375,7 @@ class UserProfile extends React.Component {
                           <Text style={{
                             alignItems: 'flex-end', color: 'green', marginBottom: 10
                           }}>
-                            {item.catTitle}                    </Text>
+                            {item.cat}                    </Text>
                           <View
                             style={{
                               width: '100%',
@@ -249,7 +426,7 @@ class UserProfile extends React.Component {
                     borderTopLeftRadius={120}
                     resizeMode="cover"
                     imageBackgroundColor="#689F38"
-                    source={require('../../../Image/circle-profile.png')}
+                    source={require('../../../Image/circle-cropped.png')}
                     style={{
                         width: 120, marginTop: 10, marginLeft: 10, marginTop: 30, height: 120,
                         alignSelf: 'center', borderRadius: 150
@@ -285,8 +462,9 @@ class UserProfile extends React.Component {
                             <View style={{ flex: 2, height: 55 }}>
                                 <TouchableOpacity
                                     onPress={() => {
-
-                                        this.dropDownAlertRef.alertWithType('success', 'Преминахте на личен профил', 'Вече може да управлявате нещата който са лично ваши', {}, 2000);
+                                        this.addFollow();
+                                        this.dropDownAlertRef.alertWithType('success', 'Успешно последване',
+                                         'Вече може да преглеждате рецептите на потребителя от собствения си профил', {}, 2000);
 
                                     }}
                                     style={{
@@ -304,22 +482,12 @@ class UserProfile extends React.Component {
                             </View>
 
                         </View>
+                        {Add}
 
                         <View style={{ paddingTop: 20 }}>
-                            <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
-
-                                <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
-                                    this.submitAddType();
-
-                                }} underlayColor="white">
-                                    <View >
-
-
-                                    </View>
-                                </TouchableHighlight>
-                            </View>
+                            
                             <FlatList
-                                contentContainerStyle={{ paddingBottom: 220 }}
+                                contentContainerStyle={{ paddingBottom: 700 }}
 
                                 data={this.state.externalData}
                                 renderItem={data => {
@@ -331,7 +499,6 @@ class UserProfile extends React.Component {
                                 }}
                                 keyExtractor={item => item.id}
                             />
-
                         </View>
                     </View>
 

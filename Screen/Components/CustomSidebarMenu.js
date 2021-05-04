@@ -147,7 +147,7 @@ class CustomSidebarMenu extends Component {
                         color: 'white',
                         backgroundColor:
                             global.currentScreenIndex === section.screenToNavigate
-                                ? '#96d18c'
+                                ? '#689F38'
                                 : '#689F38',
                     }}
                     onStartShouldSetResponder={() =>
@@ -237,7 +237,7 @@ class CustomSidebarMenu extends Component {
                                 color: 'white',
                                 backgroundColor:
                                     global.currentScreenIndex === item.screenToNavigate
-                                        ? '#96d18c'
+                                        ? '#689F38'
                                         : '#689F38',
                             }}
                             key={key}
@@ -275,7 +275,7 @@ class CustomSidebarMenu extends Component {
                         }}
                     >
                         <View style={{ flexDirection: 'row' }}>
-                            <Image source={require('../../Image/circle-profile.png')}
+                            <Image source={require('../../Image/circle-cropped.png')}
 
                                 style={{ width: 60, height: 60 }}
                             />

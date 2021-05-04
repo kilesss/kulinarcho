@@ -27,7 +27,10 @@ import {
   TouchableHighlight
 } from "react-native";
 import { Icon } from 'react-native-elements'
-
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 import { BackHandler } from 'react-native';
 
 class TypesSettings extends React.Component {
@@ -42,7 +45,9 @@ class TypesSettings extends React.Component {
     data: [],
     externalData: null,
     typeid: '',
-    modalEditTitle: 'Редактиране на тип'
+    modalEditTitle: 'Редактиране на тип',
+    premium:0,
+
   };
 
   constructor(props) {
@@ -106,6 +111,9 @@ class TypesSettings extends React.Component {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
           })
         }
+
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -265,6 +273,15 @@ class TypesSettings extends React.Component {
         </View>
       )
     } else {
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/3859336229'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
 
       this.inputRefs = {};
 
@@ -711,11 +728,12 @@ class TypesSettings extends React.Component {
             </View>
           </BottomSheet>
           
-          
+          {Add}
           <ActionButton
             buttonColor='#689F38'
             onPress={() => { this._saveDetails() }}
           />
+
         </View>
       );
     }

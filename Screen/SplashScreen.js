@@ -3,7 +3,7 @@
 
 //Import React and Hooks we needed
 import React, { useState, useEffect } from 'react';
-
+import * as Linking from "expo-linking";
 //Import all required component
 import { ActivityIndicator, View, StyleSheet, Image } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -12,7 +12,14 @@ const SplashScreen = props => {
     //State for ActivityIndicator animation
     let [animating, setAnimating] = useState(true);
 
+
+    function handleDeepLink(event){
+        let data = Linking.parse(event.url)
+        console.log(data);
+    }
     useEffect(() => {
+        Linking.addEventListener('url', handleDeepLink);
+       
         setTimeout(() => {
             setAnimating(false);
             //Check if user_id is set or not
@@ -29,13 +36,10 @@ const SplashScreen = props => {
     return (
         <View style={styles.container}>
             <Image
-                source={require('../Image/splash3.png')}
-                style={{height:'70%', width:'89%' , marginTop:30,marginBottom:15 }}
+                source={require('../Image/splash.jpg')}
+                style={{height:'90%', width:'100%', marginTop: 30}}
                 />
-                 <Image
-                source={require('../Image/aboutreact.png')}
-                style={{ width: '100%', height:100 }}
-                />
+               
             
         </View>
     );

@@ -17,6 +17,9 @@ import { BackHandler } from 'react-native';
 import { BottomSheet } from 'react-native-btr';
 
 import {
+  AdMobBanner,
+} from 'expo-ads-admob';
+import {
   StyleSheet,
   View,
   Text,
@@ -60,6 +63,9 @@ class EditRecipes extends React.Component {
     count: false,
     RBSheet2: false,
     RBSheet: false,
+    premium:0,
+    categoryplaceholder:'Категория',
+    catIndex:0
   }
 
   setModalVisible = (visible) => {
@@ -246,6 +252,9 @@ class EditRecipes extends React.Component {
 
       .then(data => {
 
+        this.state.premium = data.premium;
+        delete data.premium;
+
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -257,7 +266,8 @@ class EditRecipes extends React.Component {
           delete data['new_token'];
         }
         let newData = [];
-
+        this.state.premium = data.premium;
+        delete data.premium;
         Object.keys(data).map((key, index) => {
 
           newData.push(data[index]);
@@ -290,7 +300,8 @@ class EditRecipes extends React.Component {
           delete data['new_token'];
         }
         let newData = [];
-
+        this.state.premium = data.premium;
+        delete data.premium;
         Object.keys(data).map((key, index) => {
 
           newData.push(data[index]);
@@ -595,6 +606,15 @@ class EditRecipes extends React.Component {
         </View>
       )
     } else {
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
 
       if (this.state.count == 'ok' || this.state.count < 10) {
         return (
@@ -686,7 +706,7 @@ class EditRecipes extends React.Component {
 
             </View>
             </BottomSheet>
-            <ScrollView style={styles.scrollView} contentContainerStyle={{ flexGrow: 1 }} >
+            <ScrollView keyboardShouldPersistTaps = 'always' style={styles.scrollView} contentContainerStyle={{ flexGrow: 1 }} >
 
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
               </View>
@@ -767,6 +787,7 @@ class EditRecipes extends React.Component {
                   </TouchableHighlight>
 
                 </View>
+               
                 <View style={{ borderColor: '#689F38', borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, marginBottom: 10 }}>
 
                   <Text style={{ flex: 1, marginBottom: 15, marginLeft: 20, textAlign: 'center', fontWeight: '200', fontSize: 18 }}>Описание</Text>
@@ -1062,7 +1083,7 @@ class EditRecipes extends React.Component {
                   <View style={{
                     flex: 3, flexDirection: "row",
                     alignItems: "center",
-                    backgroundColor: "white",
+                    backgroundColor: "#c1ffbd",
                     shadowColor: "#000",
                     shadowOffset: {
                       width: 0,
@@ -1074,11 +1095,12 @@ class EditRecipes extends React.Component {
                     marginLeft: 15, marginRight: 10, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
                     padding: 10
                   }}>
-                    <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
+                    <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1,
+                     borderColor: "silver", }}>
                       <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                         size={30}
                         containerStyle={{
-                          backgroundColor: '#ebebeb',
+                          backgroundColor: 'silver',
                           padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
                         }}
                         color={'green'}
@@ -1090,17 +1112,18 @@ class EditRecipes extends React.Component {
                         }
                         type='ionicon'
                         backgroundColor='silver'
-                        name='checkmark'
+                        name='add-outline'
                       ></Icon>
 
                     </View>
-                    <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                    <View style={{ flex: 3, backgroundColor: '#c1ffbd', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
                       <Text style={{ flex: 3, marginTop: 15 }}>Добави рецепта</Text>
                     </View>
                   </View>
                 </TouchableHighlight>
               </View>
             </ScrollView>
+            {Add}
             <BottomSheet
               visible={this.state.RBSheet2}
               onBackButtonPress={this.toggle}
@@ -1492,23 +1515,94 @@ class EditRecipes extends React.Component {
                   </View>
 
                   <View style={styles.modalBtn}>
-                    <TouchableHighlight
-                      style={{ ...styles.openButton, backgroundColor: "#00cf0e" }}
-                      onPress={() => {
+                  <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
+ this.setState({RBSheet:false});
+ this.submitEditType();
+            }} underlayColor="white">
+              <View style={{
+                flex: 3, flexDirection: "row",
+                alignItems: "center",
+                backgroundColor: "white",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 7,
+                },
+                shadowOpacity: 0.41,
+                shadowRadius: 9.11,
+                elevation: 6,
+                marginLeft: 15, marginRight: 10, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
+                padding: 10
+              }}>
+                <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
+                  <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
+                    size={30}
+                    containerStyle={{
+                      backgroundColor: '#ebebeb',
+                      padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
+                    }}
+                    color={'green'}
+                    onPress={() => {
+                      this.setState({RBSheet:false});
+                      this.submitEditType();
+                    }
+
+                    }
+                    type='ionicon'
+                    backgroundColor='silver'
+                    name='checkmark-outline'
+                  ></Icon>
+
+                </View>
+                <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                  <Text style={{ flex: 3, marginTop: 15 }}>Запази</Text>
+                </View>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
                         this.setState({RBSheet:false});
-                        this.submitEditType();
-                      }}
-                    >
-                      <Text style={styles.textStyle}>Запази</Text>
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                      style={{ ...styles.openButton, backgroundColor: "#f00000" }}
-                      onPress={() => {
-                        this.setState({RBSheet:false});
-                      }}
-                    >
-                      <Text style={styles.textStyle}>Откажи</Text>
-                    </TouchableHighlight>
+                      }} underlayColor="white"
+            >
+              <View style={{
+                flex: 3, flexDirection: "row",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 7,
+                },
+                shadowOpacity: 0.41,
+                shadowRadius: 9.11,
+                elevation: 6,
+                alignItems: "center",
+                backgroundColor: "white",
+                marginLeft: 10, marginRight: 15, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
+                padding: 10
+              }}>
+                <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
+                  <Icon style={{ flex: 2, marginRight: 15, height: 40, borderRightWidth: 1, borderColor: 'silver' }}
+                    size={30}
+                    containerStyle={{
+                      backgroundColor: '#ebebeb',
+                      padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
+                    }}
+                    color={'red'}
+                    onPress={() => {
+                      this.setState({RBSheet:false});
+                    }
+
+                    }
+                    type='ionicon'
+                    backgroundColor='silver'
+                    name='close-outline'
+                  >Редактира��</Icon>
+
+                </View>
+                <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                  <Text style={{ flex: 3, marginTop: 15 }}>Откажи</Text>
+                </View>
+              </View>
+            </TouchableHighlight>
+                    
                   </View>
 
                 </View>

@@ -10,7 +10,6 @@
 
 import * as React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-// import Stripe from 'react-native-stripe-api';
 
 
 import {
@@ -120,6 +119,21 @@ async makepayment(){
     this.dropDownAlertRef.alertWithType('error', '', 'Данните са непълни или невалидни!', {}, 1000);
 
   }else{
+    // console.log(this.state.creditCart);
+    // Object {
+    //   "status": Object {
+    //     "cvc": "valid",
+    //     "expiry": "valid",
+    //     "number": "valid",
+    //   },
+    //   "valid": true,
+    //   "values": Object {
+    //     "cvc": "412",
+    //     "expiry": "03/24",
+    //     "number": "4170 9903 0367 3808",
+    //     "type": "visa",
+    //   },
+    // }
     this.setState({modalVisible:false});
     this.submitPayment();
 

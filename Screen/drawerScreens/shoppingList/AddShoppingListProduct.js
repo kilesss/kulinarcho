@@ -13,7 +13,10 @@ import {
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { Icon } from 'react-native-elements'
-
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 class AddShoppingListProduct extends React.Component {
 
   constructor(props) {
@@ -80,7 +83,9 @@ class AddShoppingListProduct extends React.Component {
     unitID: 0,
     typesID: 0,
     newProdTitle: '',
-    unbuyedProduct: 0
+    unbuyedProduct: 0,
+    premium:0,
+
   };
 
 
@@ -229,6 +234,8 @@ class AddShoppingListProduct extends React.Component {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
           })
         }
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -274,11 +281,14 @@ class AddShoppingListProduct extends React.Component {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
           })
         }
+
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
 
+        this.state.premium = data.premium;
+                delete data.premium;
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
           delete data.new_token;
@@ -311,7 +321,8 @@ class AddShoppingListProduct extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
-
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
           delete data.new_token;
@@ -386,6 +397,16 @@ class AddShoppingListProduct extends React.Component {
         </View>
       )
     } else {
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
+
       return (
 
         <View style={styles.MainContainer}>
@@ -435,6 +456,7 @@ class AddShoppingListProduct extends React.Component {
                   onTextChange={(text) => { return true; }}
                   //On text change listner on the searchable input
                   onItemSelect={(item) => {
+                    console.log(item);
                     this.setState({ categoryId: item.id });
                     this.setState({ typesPlaceholder: item.name })
                     this.setState({ placeholder: this.state.newProdTitle });
@@ -632,7 +654,6 @@ class AddShoppingListProduct extends React.Component {
                 onItemSelectNoResult={(item) => {
                   console.log('asdasd');
                   this.fetchDataTypes()
-                  this.fetchDataUnits();
                   this.setState({ unitsPlaceholder: 'Разфасовки' });
                   this.setState({ typesPlaceholder: 'Категория' });
                   this['RBSheet2'].open()

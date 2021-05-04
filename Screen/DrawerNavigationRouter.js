@@ -12,7 +12,6 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
 //Import External Screens
-import ShoppingList from './drawerScreens/shoppingList/ShoppingList';
 import CustomSidebarMenu from './Components/CustomSidebarMenu';
 import NavigationDrawerHeader from './Components/NavigationDrawerHeader';
 import NavigationDrawerHeader2 from './Components/NavigationDrawerHeader2';
@@ -38,7 +37,7 @@ import AddWeekMenu from './drawerScreens/weekMenu/AddWeekMenu'
 import ListWeekMenu from './drawerScreens/weekMenu/ListWeekMenu'
 import ArchiveWeekMenu from './drawerScreens/weekMenu/weekMenuArchive'
 import weekMenuArchiveDetailed from './drawerScreens/weekMenu/weekMenuArchiveDetailed'
-import Accounts from './drawerScreens/finnances/Accounts';
+// import Accounts from './drawerScreens/finnances/Accounts';
 import GenerateShoppingList from './drawerScreens/weekMenu/GenerateShoppingList'
 import showCategory from './drawerScreens/searchRecipe/showCategory'
 
@@ -207,7 +206,7 @@ const AddWeekMenu_StackNavigator = createStackNavigator({
     First: {
         screen: AddWeekMenu,
         navigationOptions: ({ navigation }) => ({
-            title: 'Ново седмично меню',
+            title: 'Седмично меню',
             headerLeft: () => <NavigationDrawerHeader navigationProps={navigation} />,
             headerStyle: {
                 backgroundColor: '#689F38',
@@ -230,19 +229,19 @@ const ListWeekMenu_StackNavigator = createStackNavigator({
         }),
     },
 });
-const Accounts_StackNavigator = createStackNavigator({
-    First: {
-        screen: Accounts,
-        navigationOptions: ({ navigation }) => ({
-            title: 'Сметки',
-            headerLeft: () => <NavigationDrawerHeader navigationProps={navigation} />,
-            headerStyle: {
-                backgroundColor: '#689F38',
-            },
-            headerTintColor: '#fff',
-        }),
-    },
-});
+// const Accounts_StackNavigator = createStackNavigator({
+//     First: {
+//         screen: Accounts,
+//         navigationOptions: ({ navigation }) => ({
+//             title: 'Сметки',
+//             headerLeft: () => <NavigationDrawerHeader navigationProps={navigation} />,
+//             headerStyle: {
+//                 backgroundColor: '#689F38',
+//             },
+//             headerTintColor: '#fff',
+//         }),
+//     },
+// });
 const ArchiveWeekMenu_StackNavigator = createStackNavigator({
     First: {
         screen: ArchiveWeekMenu,
@@ -549,12 +548,12 @@ const DrawerNavigatorRoutes = createDrawerNavigator(
                 drawerLabel: 'Добави рецепта',
             },
         }, 
-        Accounts: {
-            screen:Accounts_StackNavigator,
-            navigationOptions: {
-                drawerLabel: 'Добави рецепта',
-            },
-        }, 
+        // Accounts: {
+        //     screen:Accounts_StackNavigator,
+        //     navigationOptions: {
+        //         drawerLabel: 'Добави рецепта',
+        //     },
+        // }, 
         
         ArchiveWeekMenu: {
             screen:ArchiveWeekMenu_StackNavigator,

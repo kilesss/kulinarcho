@@ -13,6 +13,10 @@ import {
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
 
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 class EditShoppingListProduct extends React.Component {
 
   constructor(props) {
@@ -76,7 +80,9 @@ class EditShoppingListProduct extends React.Component {
     typesID: 0,
     newProdTitle: '',
     unbuyedProduct: 0,
-    titleProd: ''
+    titleProd: '',
+    premium:0,
+
   };
 
 
@@ -142,11 +148,14 @@ class EditShoppingListProduct extends React.Component {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
           })
         }
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
-
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
           delete data.new_token;
@@ -253,6 +262,8 @@ class EditShoppingListProduct extends React.Component {
           delete data.new_token;
           delete data['new_token'];
         }
+        this.state.premium = data.premium;
+                delete data.premium;
         let newData = [];
         Object.keys(data).map((key, index) => {
 
@@ -279,7 +290,8 @@ class EditShoppingListProduct extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
-
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
           delete data.new_token;
@@ -312,7 +324,8 @@ class EditShoppingListProduct extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
-
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
           delete data.new_token;
@@ -351,6 +364,16 @@ class EditShoppingListProduct extends React.Component {
         </View>
       )
     } else {
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
+
       return (
 
         <View style={styles.MainContainer}>

@@ -16,7 +16,10 @@ import DropdownAlert from 'react-native-dropdownalert';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { BackHandler } from 'react-native';
 import { BottomSheet } from 'react-native-btr';
-
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 import {
   StyleSheet,
   View,
@@ -55,7 +58,9 @@ class AddRecipes extends React.Component {
     textInput: '',
     id: 0,
     photoText: 'Избери',
-    havePhoto: 0
+    havePhoto: 0,
+    premium:0,
+
   }
 
   setModalVisible = (visible) => {
@@ -197,6 +202,8 @@ class AddRecipes extends React.Component {
           delete data.new_token;
           delete data['new_token'];
         }
+        this.state.premium = data.premium;
+        delete data.premium;
         let newData = [];
 
         Object.keys(data).map((key, index) => {
@@ -230,6 +237,8 @@ class AddRecipes extends React.Component {
           delete data.new_token;
           delete data['new_token'];
         }
+        this.state.premium = data.premium;
+                delete data.premium;
         let newData = [];
         Object.keys(data.recipe_products).map((key, index) => {
 
@@ -307,7 +316,7 @@ class AddRecipes extends React.Component {
         }else{
           this.setState({ havePhoto: 0 });
           this.setState({ photoText: 'Избери' });
-          this.setState({ image: 'https://s.clipartkey.com/mpngs/s/35-354348_cook-clipart-food-recipe-recipe-clipart.png' });
+          this.setState({ image: '' });
 
         }
 
@@ -357,7 +366,8 @@ class AddRecipes extends React.Component {
           delete data['new_token'];
         }
         let newData = [];
-
+        this.state.premium = data.premium;
+        delete data.premium;
         Object.keys(data).map((key, index) => {
 
           newData.push(data[index]);
@@ -594,7 +604,21 @@ class AddRecipes extends React.Component {
   render(props) {
     const { modalVisible } = this.state;
     var test = ''
-    if (this.state.image !== '') {
+    let img = '';
+    if(this.state.image !== ''){
+     img = <Image source={{ uri: this.state.image + '?time' + (new Date()).getTime() }} resizeMethod={'auto'} style={{
+        flex: 1,
+        aspectRatio: 0.7, marginTop: 5, width: '96%',
+        resizeMode: 'contain', borderRadius: 15, paddingBottom: 0,
+      }} />
+    }else{
+      img = <Image
+       source={require('../../../Image/rsz_plate.png')} resizeMethod={'auto'} style={{
+        flex: 1,
+        aspectRatio: 0.7, marginTop: 5, width: '96%',
+        resizeMode: 'contain', borderRadius: 15, paddingBottom: 0,
+      }} />
+    }
       test = <View style={{
         borderRadius: 15,
         marginLeft: 19, marginRight: 9,
@@ -602,16 +626,18 @@ class AddRecipes extends React.Component {
         marginBottom: 10,
         backgroundColor: '#f2f2f2',
       }}>
-        <Image source={{ uri: this.state.image + '?time' + (new Date()).getTime() }} resizeMethod={'auto'} style={{
-          flex: 1,
-          aspectRatio: 0.7, marginTop: 5, width: '96%',
-          resizeMode: 'contain', borderRadius: 15, paddingBottom: 0,
-        }} /></View>
+      {img}
+      </View>
 
-    } else {
-      test = <Text></Text>
+    let Add =  <AdMobBanner
+    bannerSize="smartBannerLandscape" 
+    adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+      onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+      servePersonalizedAds={true}/>;
+      if(this.state.premium != 0){
+        Add = <View></View>;
+      }
 
-    }
     return (
       <View style={styles.MainContainer}>
         <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />

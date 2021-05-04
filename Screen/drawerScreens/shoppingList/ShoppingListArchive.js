@@ -21,13 +21,18 @@ import {
 } from "react-native";
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 
 class ShoppingListArchive extends React.Component {
 
   state = {
     externalData: null,
     modalVisible2: false,
-    itemId: false
+    itemId: false,
+    premium:'',
 
   }
 
@@ -54,9 +59,19 @@ class ShoppingListArchive extends React.Component {
       let route2 = await AsyncStorage.getItem('backRoute');
       // await this.fetchDataShoppingLists();
       await this.fetchData();
+      
+      
+      // if(this.state.premium === 0){
+      //   AdMobInterstitial.setAdUnitID("ca-app-pub-5428132222163769/7210250269");
+      //   await AdMobInterstitial.requestAdAsync({servePersonalizedAds:false});
+      //   await AdMobInterstitial.showAdAsync().then(data => {
+      //     console.log(data);
+      //   })
+      // }
     });
   }
 
+ 
   componentDidUpdate() {
   }
 
@@ -162,6 +177,11 @@ class ShoppingListArchive extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
+        this.state.premium = data.premium;
+        this.setState({premium: data.premium});
+       
+
+        delete data.premium;
 
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
@@ -200,6 +220,15 @@ class ShoppingListArchive extends React.Component {
         </View>
       )
     } else {
+
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/6098486751'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
 
       var cat = '';
 
@@ -267,26 +296,6 @@ class ShoppingListArchive extends React.Component {
                     onPress={() => {
                       this.setModalVisible2(true)
                       this.setState({ itemId: item.id });
-
-                      // Alert.alert(
-                      //     'Изтиване '+item.title,
-                      //     'Сигурни ли сте че искате да изтриете менюто '+item.title+' от историята? Това действие е перманентно! ',
-                      //     [
-                      //         {
-                      //             text: 'Отказ',
-                      //             onPress: () => {
-                      //                 return null;
-                      //             },
-                      //         },
-                      //         {
-                      //             text: 'Потвърди',
-                      //             onPress: () => {
-                      //                 this.archiveShoppingList(item.id);
-                      //             },
-                      //         },
-                      //     ],
-                      //     { cancelable: false }
-                      // );
                     }}
                     name='delete-forever'
                   ></Icon>
@@ -382,6 +391,8 @@ class ShoppingListArchive extends React.Component {
               }}
               keyExtractor={item => item.id}
             />
+                      {Add}
+
           </SafeAreaView >
           <Modal
             animationType="slide"

@@ -17,7 +17,10 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import RBSheet2 from "react-native-raw-bottom-sheet";
 import ImageModal from 'react-native-image-modal';
 import jwt_decode from "jwt-decode";
-
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+  } from 'expo-ads-admob';
 import { BackHandler } from 'react-native';
 
 import {
@@ -41,7 +44,9 @@ class ListRecipes extends React.Component {
         userId: 0,
         groupId: 0,
         placeholder: 'Всички',
-        typeId: '0'
+        typeId: '0',
+        premium:0,
+
     }
 
 
@@ -173,7 +178,8 @@ class ListRecipes extends React.Component {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
                 }
-
+                this.state.premium = data.premium;
+                delete data.premium;
                 if (data.new_token) {
                     AsyncStorage.setItem('access_token', data.new_token);
 
@@ -209,7 +215,16 @@ class ListRecipes extends React.Component {
             )
         } else {
 
-
+            console.log(this.state.premium);
+            let Add =  <AdMobBanner
+            bannerSize="smartBannerLandscape" 
+            adUnitID={'ca-app-pub-5428132222163769/5691292646'} 
+              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+              servePersonalizedAds={true}/>;
+              if(this.state.premium != 0){
+                Add = <View></View>;
+              }
+      
             const { modalVisible3 } = this.state;
 
             var cat = '';
@@ -244,9 +259,29 @@ class ListRecipes extends React.Component {
                 let categoryColor = 'silver';
                 var img = ''
                 if (item.photo !== null) {
-                    img = 'https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/' + item.photo;
+                    img =  <ImageModal
+                    source={{ uri: 'https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/' + item.photo + '?time' + (new Date()).getTime() }}
+                    style={{
+                        borderRadius:15,
+                        marginLeft: 10, 
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                />;
                 } else {
-                    img = 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/roast-beef-recipes-536cd86.jpg'
+                    img =  <ImageModal
+                    source={require('../../../Image/rsz_plate.png')}
+
+                    style={{
+                        borderRadius:15,
+                        marginLeft: 10, 
+                        width: 80,
+                        height: 80,
+                        alignSelf: 'center',
+                      }}
+                />;
+
                 }
                 let autor = item.name;
                 if (item.oldName != null) {
@@ -267,17 +302,7 @@ class ListRecipes extends React.Component {
                             <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
 
                                 <View style={{ flex: 1, flexDirection: 'row' }}>
-                                    <ImageModal
-                                        resizeMode="cover"
-                                        source={{ uri: img + '?time' + (new Date()).getTime() }}
-                                        style={{
-                                            borderRadius:15,
-                                            marginLeft: 10, 
-                                            width: 80,
-                                            height: 80,
-                                            alignSelf: 'center',
-                                          }}
-                                    />
+                                   {img}
                                     <View style={{
                                         flex: 1, flexDirection: 'row', width: '100%', 
                                     }}>
@@ -640,49 +665,11 @@ class ListRecipes extends React.Component {
                             }}
                             keyExtractor={item => item.id}
                         />
-                    </SafeAreaView >
+                                                {Add}
 
-                    {/* <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible3}
-            onRequestClose={() => {
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.titlem}>Изтриване на продукт</Text>
-                  <View style={styles.dividerm}></View>
-                </View>
-                <Text style={{
-                  justifyContent: "center",
-                  alignItems: "center", marginLeft: 20
-                }}>Сигурни ли сте че искате да изтриете продукта
-                                     <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>{this.state.deleteType}</Text></Text>
-                <View style={styles.modalBtn}>
-                  <TouchableHighlight
-                    style={{ ...styles.openButton, backgroundColor: "#00cf0e" }}
-                    onPress={() => {
-                      this.submitDeleteType();
-                      this.setModalVisible3(!modalVisible3);
-                    }}
-                  >
-                    <Text style={styles.textStyle}>Да</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight
-                    style={{ ...styles.openButton, backgroundColor: "#f00000" }}
-                    onPress={() => {
-                      this.setModalVisible3(!modalVisible3);
-                    }}
-                  >
-                    <Text style={styles.textStyle}>Не</Text>
-                  </TouchableHighlight>
-                </View>
+                                            </SafeAreaView >
 
-              </View>
-            </View>
-          </Modal> */}
+             
 
                 </View>
             );

@@ -15,12 +15,17 @@ import { StyleSheet } from 'react-native';
 
 import DropdownAlert from 'react-native-dropdownalert';
 import ImageModal from 'react-native-image-modal';
-
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 import {
   Dimensions,
   SafeAreaView,
   TouchableHighlight,
   FlatList,
+  Alert,
+
   View,
   Text,
 } from "react-native";
@@ -31,6 +36,7 @@ class shoppingListArchiveDetailed extends React.Component {
 
   state = {
     externalData: null,
+    premium:0,
   }
 
 
@@ -130,6 +136,34 @@ class shoppingListArchiveDetailed extends React.Component {
 
   async restoreShoppingList() {
 
+    var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+    await fetch('http://167.172.110.234/api/checkPremium', {
+      method: 'POST',
+      body: JSON.stringify({ types: 'shopping' }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        //Header Defination
+        'Authorization': 'Bearer ' + DEMO_TOKEN
+      },
+
+    }).then(
+      async response => {
+        const data = await response.json();
+
+        if (data.login && data.login == true) {
+          AsyncStorage.clear();
+          this.props.navigation.navigate('Auth');
+        }
+
+        if (data.new_token) {
+          AsyncStorage.setItem('access_token', data.new_token);
+          delete data.new_token;
+          delete data['new_token'];
+        }
+        
+        if (data.response == 'ok' || data.response < 2) {
+          
     var active = 0;
     if (this.state.isActive == 1) {
       active = 1
@@ -185,6 +219,34 @@ class shoppingListArchiveDetailed extends React.Component {
       // ADD THIS THROW error
       throw error;
     });
+        } else {
+          Alert.alert(
+            'Достигнат лимит',
+            'Достигнахте лимита си на безплатни списъци за пазар. Може да увеличите лимита като преминете на премиум план',
+            [
+              {
+                text: 'Отказ',
+                onPress: () => {
+                  return null;
+                },
+              },
+              {
+                text: 'Премиум',
+                onPress: () => {
+                  this.props.navigation.navigate('payments');
+                },
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+
+      }
+    ).catch(function (error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      // ADD THIS THROW error
+      throw error;
+    });
   }
   
   async fetchData() {
@@ -212,7 +274,8 @@ class shoppingListArchiveDetailed extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
-
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
 
@@ -238,6 +301,15 @@ class shoppingListArchiveDetailed extends React.Component {
   }
   render(props) {
     var cat = '';
+    console.log(this.state.premium);
+    let Add =  <AdMobBanner
+    bannerSize="smartBannerLandscape" 
+    adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+      onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+      servePersonalizedAds={true}/>;
+      if(this.state.premium != 0){
+        Add = <View></View>;
+      }
 
     const Card = ({ item }) => {
       let { width } = Dimensions.get('window');
@@ -442,7 +514,20 @@ class shoppingListArchiveDetailed extends React.Component {
               keyExtractor={item => item.id}
             />
           </SafeAreaView >
+          <View style={{
+            position: 'absolute',
+            flex: 1,
+            flexDirection: 'row',
+            left: 0,
+            right: 0,
+            bottom: 70,
+            borderTopWidth: 1,
+            borderTopColor: 'silver',
+            flexDirection: 'row',
+            backgroundColor: 'white',
+          }}>{Add}</View>
           
+                
           <View style={{
             position: 'absolute',
             flex: 1,
@@ -494,6 +579,7 @@ class shoppingListArchiveDetailed extends React.Component {
                   ></Icon>
 
                 </View>
+                
                 <View style={{ flex: 3, backgroundColor: 'white', height: 45, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
                   <Text style={{ flex: 3, marginTop: 10 }}>Възстанови списък</Text>
                 </View>

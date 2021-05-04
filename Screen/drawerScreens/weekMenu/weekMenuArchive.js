@@ -22,11 +22,16 @@ import {
 } from "react-native";
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
-
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+  } from 'expo-ads-admob';
 class weekMenuArchive extends React.Component {
 
     state = {
         externalData: null,
+        premium:0,
+
     }
 
 
@@ -47,6 +52,13 @@ class weekMenuArchive extends React.Component {
             AsyncStorage.setItem('backRoute', JSON.stringify(arrRoute));
             // await this.fetchDataShoppingLists();
               await this.fetchData();
+            //   if(this.state.premium == 0){
+            //     AdMobInterstitial.setAdUnitID("ca-app-pub-5428132222163769/9125967166");
+            //     await AdMobInterstitial.requestAdAsync({servePersonalizedAds:false});
+            //     await AdMobInterstitial.showAdAsync().then(data => {
+            //       console.log(data);
+            //     })
+            //   } 
         });
     }
 
@@ -134,6 +146,8 @@ class weekMenuArchive extends React.Component {
             }
         }).then(response => response.json())
             .then(data => {
+                this.state.premium = data.premium;
+                delete data.premium;
                 if (data.login && data.login == true) {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
@@ -298,6 +312,16 @@ class weekMenuArchive extends React.Component {
           </View>
         )
       } else {
+        console.log(this.state.premium);
+        let Add =  <AdMobBanner
+        bannerSize="smartBannerLandscape" 
+        adUnitID={'ca-app-pub-5428132222163769/1957923589'} 
+          onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+          servePersonalizedAds={true}/>;
+          if(this.state.premium != 0){
+            Add = <View></View>;
+          }
+  
         return (
             
             <View style={styles.MainContainer}>
@@ -305,6 +329,7 @@ class weekMenuArchive extends React.Component {
 {renderItem()}
                     
                 </ScrollView>
+                {Add}
             </View>
         );
     }

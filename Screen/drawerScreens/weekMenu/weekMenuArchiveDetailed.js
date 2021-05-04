@@ -18,11 +18,16 @@ import {
     Text,
     ScrollView,
     Dimensions} from "react-native";
-
+    import {
+        AdMobBanner,
+        AdMobInterstitial,
+      } from 'expo-ads-admob';
 class weekMenuArchiveDetailed extends React.Component {
 
     state = {
         externalData: null,
+        premium:0,
+
     }
 
 
@@ -125,6 +130,9 @@ class weekMenuArchiveDetailed extends React.Component {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
                 }
+
+                this.state.premium = data.premium;
+                delete data.premium;
 
                 if (data.new_token) {
                     AsyncStorage.setItem('access_token', data.new_token);
@@ -255,6 +263,16 @@ class weekMenuArchiveDetailed extends React.Component {
                 </View>
             )
         } else {
+            console.log(this.state.premium);
+            let Add =  <AdMobBanner
+            bannerSize="smartBannerLandscape" 
+            adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+              servePersonalizedAds={true}/>;
+              if(this.state.premium != 0){
+                Add = <View></View>;
+              }
+      
             return (
 
                 <View style={styles.MainContainer}>

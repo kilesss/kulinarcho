@@ -21,12 +21,17 @@ import {
     ScrollView,
 } from "react-native";
 import { BackHandler } from 'react-native';
-
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+  } from 'expo-ads-admob';
 
 class ShowRecipe extends React.Component {
 
     state = {
         externalData: null,
+        premium:0,
+
     }
 
 
@@ -95,6 +100,8 @@ class ShowRecipe extends React.Component {
             }
         }).then(response => response.json())
             .then(data => {
+                this.state.premium = data.premium;
+                delete data.premium;
                 if (data.login && data.login == true) {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
@@ -174,7 +181,16 @@ class ShowRecipe extends React.Component {
                 </View>
             )
         } else {
-
+            console.log(this.state.premium);
+            let Add =  <AdMobBanner
+            bannerSize="smartBannerLandscape" 
+            adUnitID={'ca-app-pub-5428132222163769/4402261700'} 
+              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+              servePersonalizedAds={true}/>;
+              if(this.state.premium != 0){
+                Add = <View></View>;
+              }
+      
             const renderItemProducts = () => {
                 let finnal = [];
                 let data = this.state.externalData.recipe_products;
@@ -247,7 +263,7 @@ class ShowRecipe extends React.Component {
             height: 25, width: 200, flexDirection: 'row' }}></Text>
             if(this.state.externalData.recipe.public == 0 && (this.state.externalData.recipe.old_owner == null || this.state.externalData.recipe.old_owner == 0)){
                 publicRec =  <TouchableOpacity
-                style={{ paddingBottom: 5, marginRight: 10, marginBottom: 10, marginTop: 5, borderBottomWidth: 1, alignSelf: 'flex-end', 
+                style={{ paddingBottom: 5,flex: 1,marginRight: 10, marginBottom: 10, marginTop: 5, borderBottomWidth: 1, alignSelf: 'flex-end', 
                 height: 25, width: 140, flexDirection: 'row' }}
                 onPress={() => {
                     Alert.alert(
@@ -279,23 +295,26 @@ class ShowRecipe extends React.Component {
             height: 25, width: 160, flexDirection: 'row', color:'blue' }}>В процес на одобрение</Text>
             }
             let photo = '';
+            console.log(this.state.externalData.recipe.photo)
             if(this.state.externalData.recipe.photo != null){
               photo =  <Image source={{ uri: 'https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/' + this.state.externalData.recipe.photo+'?time'+(new Date()).getTime() }} resizeMethod={'auto'} style={{  flex: 1,
                 aspectRatio:0.9,width:'96%', 
                 resizeMode: 'contain', borderRadius: 15,  paddingBottom: 0,  }} />
             }else{
-                photo = <Image source={require('../../../Image/recipeImg.png')}
+                photo = <Image source={require('../../../Image/rsz_plate.png')}
                 resizeMethod={'auto'} style={{  flex: 1,
-                aspectRatio:0.9,width:'96%',
+                aspectRatio:0.8,width:'96%',
                 resizeMode: 'contain', borderRadius: 15,  paddingBottom: 0,  }} />
             }
 
             return (
 
                 <View style={styles.MainContainer}>
+                    <View style={{flexDirection: 'row'}}>
+                  
                    {publicRec}
                    
-
+                   </View>
                     <ScrollView style={styles.scrollView} contentContainerStyle={{ flexGrow: 1 }} >
                         <Text style={{
                             borderLeftWidth: 4, borderLeftColor: '#689F38',
@@ -408,7 +427,7 @@ class ShowRecipe extends React.Component {
                         </View>
                         
                     </ScrollView>
-
+{Add}
                 </View>
             );
         }

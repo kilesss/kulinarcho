@@ -98,10 +98,10 @@ const RegisterScreen = props => {
                 }}>
 
                 <Image
-                    source={require('../Image/successReg.jpg')}
+                    source={require('../Image/splash3.png')}
                     style={{ width: '100%', height: '60%', resizeMode: 'contain', alignSelf: 'center' }}
                 />
-                <Text style={styles.successTextStyle}>Регистртацията е успешна</Text>
+                <Text style={styles.successTextStyle}>Регистрацията е успешна</Text>
                 <Text style={{
                     color: 'silver',
                     textAlign: 'center',
@@ -222,7 +222,7 @@ const RegisterScreen = props => {
                             style={{  color: 'black',
                             textAlign: 'center',
                             fontWeight: 'bold',
-                            fontSize: 14, color:'silver'}}
+                            fontSize: 14}}
                             onPress={() => props.navigation.navigate('LoginScreen')}>
                             Вход
                         </Text>

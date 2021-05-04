@@ -19,7 +19,10 @@ import {
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
-
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 class CreateProduct extends React.Component {
 
   constructor(props) {
@@ -88,6 +91,8 @@ handleBackButtonClick() {
     placeholderType: 'Тип',
     placeholderUnits: 'Разфасофка',
     checkCamera:false,
+    premium:0,
+
 
   };
 
@@ -208,6 +213,8 @@ handleBackButtonClick() {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
           })
         }
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -354,6 +361,16 @@ handleBackButtonClick() {
         </View>
       )
     } else {
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
+
       var test = ''
       console.log(this.state.image);
       if (this.state.image !== '') {

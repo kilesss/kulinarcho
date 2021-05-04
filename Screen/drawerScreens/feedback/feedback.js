@@ -22,6 +22,10 @@ import {
   TextInput,
   TouchableHighlight
 } from "react-native";
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
 
@@ -53,7 +57,8 @@ class feeback extends React.Component {
     description: '',
     country: '0',
     placeholder: 'Изберете',
-    externalData:null
+    externalData:null,
+    premium:0,
   };
 
 
@@ -119,6 +124,8 @@ class feeback extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
+        this.state.premium = data.premium;
+        delete data.premium;
 
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
@@ -126,7 +133,6 @@ class feeback extends React.Component {
           delete data['new_token'];
         }
 
-console.log(data.response);
         this.setState({ externalData: data.response });
 
       }).done();
@@ -178,6 +184,10 @@ console.log(data.response);
 
 
   async submitAddType() {
+    console.log(JSON.stringify({
+      description: this.state.description,
+      type: this.state.country
+    }))
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     await fetch('http://167.172.110.234/api/submitFeedback', {
       method: 'POST',
@@ -215,6 +225,8 @@ console.log(data.response);
           this.dropDownAlertRef.alertWithType('success', '', 'Благодарим ви за обратната връзка', {}, 3000);
 
         }
+        this.fetchData();
+
       }
     ).catch(function (error) {
       console.log('There has been a problem with your fetch operation: ' + error.message);
@@ -282,7 +294,7 @@ console.log(data.response);
             <View style={{flexDirection:'row'}}>
             <Text style={{
               paddingLeft: 9,
-              fontSize: 18,
+              fontSize: 16,
               flex: 8,
               paddingBottom:-15,
               marginBottom:2
@@ -348,6 +360,17 @@ return html
         </View>
       )
     } else {
+
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/5705596900'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
+
     return (
       <View style={{ width: '100%', flexDirection:'column' }}>
         <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
@@ -493,6 +516,8 @@ return html
           {renderItem()}
            
           </ScrollView>
+          {Add}
+
         </View>
       </View>);
     }

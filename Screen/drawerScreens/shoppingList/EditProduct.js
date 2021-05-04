@@ -9,6 +9,7 @@ import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import {
   View,
+  Alert,
   Text,
   TouchableOpacity,
   TouchableHighlight,
@@ -17,7 +18,10 @@ import SearchableDropdown from 'react-native-searchable-dropdown';
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
 import { BottomSheet } from 'react-native-btr';
-
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 
 
 class EditProduct extends React.Component {
@@ -87,6 +91,8 @@ class EditProduct extends React.Component {
     placeholderUnits: 'Разфасофка',
     imagebtnText: 'Направи снимка',
     checkCamera:false,
+    premium:0,
+
   };
 
 
@@ -229,6 +235,8 @@ console.log(JSON.stringify({
           delete data.new_token;
           delete data['new_token'];
         }
+        this.state.premium = data.premium;
+        delete data.premium;
         let newData = [];
         Object.keys(data).map((key, index) => {
 
@@ -255,7 +263,8 @@ console.log(JSON.stringify({
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
-
+this.state.premium = data.premium;
+                delete data.premium;
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
           delete data.new_token;
@@ -325,8 +334,73 @@ setTypeTitle = (title) => {
 }
 
 async pickImage() {
+ 
+  if(this.state.premium !== 1){
+    var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+    await fetch('http://167.172.110.234/api/checkPremium', {
+      method: 'POST',
+      body: JSON.stringify({ types: 'images' }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        //Header Defination
+        'Authorization': 'Bearer ' + DEMO_TOKEN
+      },
+
+    }).then(
+      async response => {
+        const data = await response.json();
+
+        delete data.premium;
+        if (data.login && data.login == true) {
+          AsyncStorage.clear();
+          this.props.navigation.navigate('Auth');
+        }
+
+        if (data.new_token) {
+          AsyncStorage.setItem('access_token', data.new_token);
+          delete data.new_token;
+          delete data['new_token'];
+        }
+          if(data.premium <=20){
+             
   this.setState({checkCamera:true})
   this.checkName();
+          }else{
+            Alert.alert(
+              'Достигнат лимит',
+              'Достигнахте лимита си от 20 безплатни снимки в приложението. Може да увеличите лимита като преминете на премиум план',
+              [
+                {
+                  text: 'Отказ',
+                  onPress: () => {
+                    return null;
+                  },
+                },
+                {
+                  text: 'Премиум',
+                  onPress: () => {
+                    this.props.navigation.navigate('payments');
+                  },
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          
+      } 
+    ).catch(function (error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      // ADD THIS THROW error
+      throw error;
+    });
+
+  }else{
+    this.setState({checkCamera:true})
+    this.checkName();
+  
+  }
+  
 };
 
 async launchGalery(){
@@ -410,6 +484,16 @@ render(props) {
       </View>
     )
   } else {
+    console.log(this.state.premium);
+    let Add =  <AdMobBanner
+    bannerSize="smartBannerLandscape" 
+    adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+      onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+      servePersonalizedAds={true}/>;
+      if(this.state.premium != 0){
+        Add = <View></View>;
+      }
+
     var test = ''
     if (this.state.image !== '' && this.state.image !== null) {
       if (this.state.image64 !== '') {
@@ -557,34 +641,47 @@ render(props) {
         </View>
         {/* <Card style={{ flex: 1, marginLeft: 0, marginRight: 0 }}> */}
 
+        <View style={{ maxHeight: 200, marginTop: 20 }}>
+            <Text style={{borderLeftWidth: 4, borderLeftColor: '#689F38',
+                borderRadius: 15,
+                marginLeft: 15, marginRight: 9,
+                width: "92%",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 7,
+                },
+                height:40,
+                shadowOpacity: 0.41,
+                shadowRadius: 9.11,
+                elevation: 6,
+                backgroundColor: '#ffffff',
+                paddingTop:10,
+                paddingLeft: 20,
+                marginBottom: 10,color:'silver'}}>{this.state.newProdTitle}</Text>
+            
+
+          </View>
+
+
         <View style={{ maxHeight: 200 }}>
 
-
-          <Text style={{
-            width: "92%", height: 50, alignItems: 'center',
-            borderLeftWidth: 4, borderLeftColor: '#689F38',
-            borderRadius: 15,
-            marginLeft: 9, marginRight: 9,
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 7,
-            },
-            shadowOpacity: 0.41,
-            shadowRadius: 9.11,
-            elevation: 6,
-            marginTop: 15,
-            marginLeft: 15,
-
-            backgroundColor: '#ffffff',
-            paddingLeft: 15, paddingTop:15,
-          }}>{this.state.newProdTitle}</Text>
-
-
-
-          <View style={{ maxHeight: 200, marginTop: 20 }}>
-
-            <SearchableDropdown
+                        <View style={{borderLeftWidth: 4, borderLeftColor: '#689F38',
+                borderRadius: 15,
+                marginLeft: 15, marginRight: 9,
+                width: "92%",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 7,
+                },
+                shadowOpacity: 0.41,
+                shadowRadius: 9.11,
+                elevation: 6,
+                backgroundColor: '#ffffff',
+                 paddingLeft: 10,
+                marginBottom: 10,color:'silver'}}>
+        <SearchableDropdown
               style={{ width: 150 }}
               //On text change listner on the searchable input
               onTextChange={(text) => console.log(text)}
@@ -596,64 +693,51 @@ render(props) {
               }}
               placeholder={this.state.placeholderType}
               //onItemSelect called after the selection from the dropdown
-              containerStyle={{ padding: 5 }}
+              containerStyle={{ padding: 5, }}
               suggestion container style
-              textInputStyle={{
-                borderLeftWidth: 4, borderLeftColor: '#689F38',
-                borderRadius: 15,
-                marginLeft: 9, marginRight: 9,
+              
+                showNoResultDefault={'false'}
+                itemStyle={{
+                  backgroundColor: '#ffffff',
+                  marginLeft: 5, marginRight: 5,
+                  //single dropdown item style
+                  padding: 10,
+                  borderBottomWidth: 1,
+                  borderColor: '#ccc',
+                }}
+                itemTextStyle={{
+                  //text style of a single dropdown item
+                  color: '#222',
+                }}
+                itemTextStyle={{
+                  //text style of a single dropdown item
+                  color: '#222',
+                }}
+                itemsContainerStyle={{
+                  //items container style you can pass maxHeight
+                  //to restrict the items dropdown hieght
+                  maxHeight: '85%',
+                  width: '95%',
+                  marginLeft:10,
+                  paddingBottom: 0,
+                  marginBottom: 0,
+                  
+                }}
+                textInputStyle={{
+                 }}
+                items={this.state.externalDataTypes}
+                //mapping of item array
+                // defaultIndex={this.state.selectedIndex}
+                //default selected item index
+                //place holder for the search input
+                resetValue={false}
+                //reset textInput Value with true and false state
+                underlineColorAndroid="transparent"
+              //To remove the underline from the android input
+              /></View>
 
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 7,
-                },
-                shadowOpacity: 0.41,
-                shadowRadius: 9.11,
-                elevation: 6,
-                backgroundColor: '#ffffff',
-                height: 50, paddingLeft: 10,
-                marginBottom: 10,
-              }}
-              showNoResultDefault={'false'}
-              itemStyle={{
-                backgroundColor: '#ffffff',
-                marginLeft: 5, marginRight: 5,
-                //single dropdown item style
-                padding: 10,
-                borderBottomWidth: 1,
-                borderColor: '#ccc',
-              }}
-              itemTextStyle={{
-                //text style of a single dropdown item
-                color: '#222',
-              }}
-              itemTextStyle={{
-                //text style of a single dropdown item
-                color: '#222',
-              }}
-              itemsContainerStyle={{
-                //items container style you can pass maxHeight
-                //to restrict the items dropdown hieght
-                maxHeight: '85%',
-                width: '95%',
-                marginLeft:10,
-                paddingBottom: 0,
-                marginBottom: 0
-              }}
-              items={this.state.externalDataTypes}
-              //mapping of item array
-              // defaultIndex={this.state.selectedIndex}
-              //default selected item index
-              //place holder for the search input
-              resetValue={false}
-              //reset textInput Value with true and false state
-              underlineColorAndroid="transparent"
-            //To remove the underline from the android input
-            />
 
-          </View>
-
+         
 
           
           {test}

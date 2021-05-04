@@ -14,7 +14,10 @@ import DropdownAlert from 'react-native-dropdownalert';
 import { Icon } from 'react-native-elements'
 import jwt_decode from "jwt-decode";
 import { BackHandler } from 'react-native';
-
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+  } from 'expo-ads-admob';
 import {
     StyleSheet,
     ScrollView,
@@ -52,6 +55,7 @@ class ShowProfile extends React.Component {
         groupUser:0,
         group: 0,
         userId: 0,
+        premium:0,
 
     }
     constructor(props) {
@@ -140,7 +144,8 @@ class ShowProfile extends React.Component {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
                 }
-
+                this.state.premium = data.premium;
+                delete data.premium;
                 if (data.new_token) {
                     AsyncStorage.setItem('access_token', data.new_token);
 
@@ -189,7 +194,8 @@ class ShowProfile extends React.Component {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
                 }
-
+                this.state.premium = data.premium;
+                delete data.premium;
                 if (data.new_token) {
                     AsyncStorage.setItem('access_token', data.new_token);
 
@@ -197,6 +203,7 @@ class ShowProfile extends React.Component {
                     delete data['new_token'];
 
                 }
+                
                 let newData = [];
 
                 Object.keys(data.response).map((key, index) => {
@@ -285,7 +292,7 @@ class ShowProfile extends React.Component {
                     this.props.navigation.navigate('Auth');
                 }
 
-
+this.fetchData();
 
 
             }
@@ -350,7 +357,6 @@ class ShowProfile extends React.Component {
             async response => {
                 const data = await response.json();
                 this.dropDownAlertRef.alertWithType('success', '', 'Заявката е изтрита', {}, 1000);
-
                 if (data.login && data.login == true) {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
@@ -361,6 +367,7 @@ class ShowProfile extends React.Component {
                     delete data.new_token;
                     delete data['new_token'];
                 }
+            
 
 
                 await this.fetchData();
@@ -373,8 +380,10 @@ class ShowProfile extends React.Component {
     }
 
     async submitNewRequest() {
-        var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
+        var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+console.log(DEMO_TOKEN);
+console.log(this.state.requestJoinEmail);
         await fetch('http://167.172.110.234/api/newRequest', {
             method: 'POST',
             body: JSON.stringify({
@@ -497,6 +506,7 @@ class ShowProfile extends React.Component {
                         this.dropDownAlertRef.alertWithType('success', '', 'Успешно изтрит потребител', {}, 2000);
 
                     }
+                    this.fetchData();
 
                 }
 
@@ -532,7 +542,7 @@ class ShowProfile extends React.Component {
             />
 
         } else {
-            picture = <Image source={require('../../../Image/circle-profile.png')}
+            picture = <Image source={require('../../../Image/circle-cropped.png')}
                 style={{ width: 80, marginTop: 10, marginLeft: 10, height: 80, borderColor: 'silver', borderWidth: 1, borderRadius: 40, marginBottom: 5 }}
             />
         }
@@ -560,10 +570,7 @@ class ShowProfile extends React.Component {
                 }}>
                     <View style={{ flex: 2, }}>
                         {picture}
-                        {/* <Image source={require('../../../Image/circle-profile.png')}
-
-                    style={{ width: 80, marginTop: 10, marginLeft: 10, height: 80, borderColor: 'silver', borderWidth: 1, borderRadius: 40, marginBottom: 5 }}
-                /> */}
+                  
                     </View>
                     <View style={{ flex: 4, marginTop: 10 }}>
                         <Text style={{ fontSize: 18 }}>{name}</Text>
@@ -614,7 +621,16 @@ class ShowProfile extends React.Component {
                 </View>
             )
         } else {
-
+            console.log(this.state.premium);
+            let Add =  <AdMobBanner
+            bannerSize="smartBannerLandscape" 
+            adUnitID={'ca-app-pub-5428132222163769/5514025216'} 
+              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+              servePersonalizedAds={true}/>;
+              if(this.state.premium != 0){
+                Add = <View></View>;
+              }
+      
             let profileBtn = [];
             let PageView = [];
             let page1, page2, page3
@@ -624,6 +640,8 @@ class ShowProfile extends React.Component {
                 page3 = { flex: 1 };
                 PageView.push(<ScrollView style={{ height: 350, }}>
                     <View style={{ marginBottom: 50, borderColor: '#689F38', paddingBottom: 15, borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, paddingTop: 15 }}>
+                    {Add}
+
                         <TextInput
                             placeholder={this.state.name}
                             blurOnSubmit={false}
@@ -817,7 +835,6 @@ class ShowProfile extends React.Component {
                             </View>
                         </TouchableHighlight>
                     </View>
-
                 </ScrollView>)
             } else if (this.state.pageView === 2) {
                 page2 = { borderColor: '#85cc47', borderBottomWidth: 1, paddingBottom: 3, marginBottom: 2, flex: 1 };
@@ -838,6 +855,8 @@ class ShowProfile extends React.Component {
                     });
 
                     PageView.push(<ScrollView style={{ height: 350 }}>
+                                            {Add}
+
                         {pageFoll}
                     </ScrollView>)
 
@@ -1049,9 +1068,24 @@ class ShowProfile extends React.Component {
             }   
             
             let leaveGroup = <Text></Text>;
+            let groupSettings = <View></View>;
+                if (this.state.groupUser == 0 && this.state.premium == 1) {
+                    groupSettings = <View style={page3}>
+                    <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
+                        size={30}
+                        color={'green'}
+                        onPress={() => { this.setState({ pageView: 3 }) }}
+                        type='font-awesome-5'
+                        name='user-cog'
+                        backgroundColor='silver'
+                    ></Icon>
+                    <Text style={{ textAlign: 'center', marginTop: -4 }} onPress={() => { this.setState({ pageView: 3 }) }}> Настройки група</Text>
 
-            if (this.state.groupUser == 1 && this.state.premium == 1) {
-                leaveGroup = <TouchableOpacity
+                </View>
+                }
+                if (this.state.groupUser == 1 && this.state.premium == 1) {
+                    
+                    leaveGroup = <TouchableOpacity
                     onPress={() => Alert.alert(
                         "Напускане на групата",
                         "Наистина ли искате да напуснете групата",
@@ -1079,7 +1113,7 @@ class ShowProfile extends React.Component {
 
                         <View style={{ flexDirection: 'row', backgroundColor: '#689F38', }}>
                             <View style={{ flex: 1, }}>
-                                <Image source={require('../../../Image/circle-profile.png')}
+                                <Image source={require('../../../Image/circle-cropped.png')}
 
                                     style={{ width: 150, marginTop: 10, marginLeft: 10, height: 150 }}
                                 />
@@ -1167,18 +1201,7 @@ class ShowProfile extends React.Component {
                                 <Text style={{ textAlign: 'center', marginTop: -4 }} onPress={() => { this.setState({ pageView: 2 }) }}>Последвани</Text>
 
                             </View>
-                            <View style={page3}>
-                                <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
-                                    size={30}
-                                    color={'green'}
-                                    onPress={() => { this.setState({ pageView: 3 }) }}
-                                    type='font-awesome-5'
-                                    name='user-cog'
-                                    backgroundColor='silver'
-                                ></Icon>
-                                <Text style={{ textAlign: 'center', marginTop: -4 }} onPress={() => { this.setState({ pageView: 3 }) }}> Настройки група</Text>
-
-                            </View>
+                            {groupSettings}
                         </View>
                         <View style={{ paddingTop: 20 }}>
                             <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
@@ -1197,6 +1220,7 @@ class ShowProfile extends React.Component {
                             {PageView}
 
                         </View>
+
                     </View>
 
                 </View>

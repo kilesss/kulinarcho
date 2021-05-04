@@ -20,14 +20,15 @@ import {
   TextInput,
     FlatList,
   SafeAreaView,
-  TouchableHighlight
 } from "react-native";
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 class searchUser extends React.Component {
 
   constructor(props) {
@@ -58,7 +59,9 @@ class searchUser extends React.Component {
 
   state = {
     description: '',
-    country: '0'
+    country: '0',
+    premium:0,
+
   };
 
   processResponse(response) {
@@ -213,7 +216,8 @@ class searchUser extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
-
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
 
@@ -253,7 +257,7 @@ class searchUser extends React.Component {
       />
 
       }else{
-        picture = <Image source={require('../../../Image/circle-profile.png')}
+        picture = <Image source={require('../../../Image/circle-cropped.png')}
         style={{ width: 80, marginTop: 10, marginLeft: 10, height: 80, borderColor: 'silver', borderWidth: 1, borderRadius: 40, marginBottom: 5 }}
       />
       }
@@ -334,6 +338,16 @@ class searchUser extends React.Component {
         </View>
       )
     } else {
+      console.log(this.state.premium);
+      let Add =  <AdMobBanner
+      bannerSize="smartBannerLandscape" 
+      adUnitID={'ca-app-pub-5428132222163769/7976537020'} 
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+        servePersonalizedAds={true}/>;
+        if(this.state.premium != 0){
+          Add = <View></View>;
+        }
+
       return (
 
         <View style={{
@@ -432,7 +446,8 @@ class searchUser extends React.Component {
               <ShowUser youtube='0' ></ShowUser>
             </ScrollView> */}
           </SafeAreaView>
-        </View>
+          {Add}
+                  </View>
       );
     }
   }

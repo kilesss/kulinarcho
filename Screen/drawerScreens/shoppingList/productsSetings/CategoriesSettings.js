@@ -111,6 +111,8 @@ class CategoriesSettings extends React.Component {
         delete data.new_token;
         delete data['new_token'];
       }
+      this.state.premium = data.premium;
+                delete data.premium;
       let newData = [];
 
       Object.keys(data).map((key, index) => {

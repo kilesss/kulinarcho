@@ -13,10 +13,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import ActionButton from 'react-native-action-button';
 import {
   AdMobBanner,
-  AdMobInterstitial,
-  PublisherBanner,
-  AdMobRewarded,
-  setTestDeviceIDAsync,
 } from 'expo-ads-admob';
 import DropdownAlert from 'react-native-dropdownalert';
 import { BottomSheet } from 'react-native-btr';
@@ -46,9 +42,7 @@ class Lists extends React.Component {
       if(lastRoute != 'ShoppingLists'){
           route.push(lastRoute);
       }
-      let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+      let goRoute = route.pop();    
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -122,9 +116,9 @@ class Lists extends React.Component {
           this.props.navigation.navigate('Auth');
         }
 
+     
         this.state.premium = data.premium;
         delete data.premium;
-
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
           delete data.new_token;
@@ -295,38 +289,83 @@ class Lists extends React.Component {
      
     });
   }
-
-  _saveDetails = (prop) => {
-    if (this.state.count == 'ok' || this.state.count < 2) {
-      this.setTypeTitle('');
-      this.setTypeID('');
-      this.setActive(false);
-      this.setState({editList:true})
-
-      this.setState({ modalEditTitle: 'Добави нов списък' })
-    } else {
-      Alert.alert(
-        'Достигнат лимит',
-        'Достигнахте лимита си на безплатни списъци за пазар. Може да увеличите лимита като преминете на премиум план',
-        [
-          {
-            text: 'Отказ',
-            onPress: () => {
-              return null;
-            },
-          },
-          {
-            text: 'Премиум',
-            onPress: () => {
-              this.props.navigation.navigate('payments');
-            },
-          },
-        ],
-        { cancelable: false }
-      );
-    }
+  test(){
+    console.log(this.state.count);
+    console.log(this.state.count);
+    console.log(this.state.count);
+    console.log(this.state.count);
+    console.log(this.state.count);
+    console.log(this.state.count);
+    console.log(this.state.count);
+    console.log(this.state.count);
 
   }
+ async _saveDetails() {
+  var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+    await fetch('http://167.172.110.234/api/checkPremium', {
+      method: 'POST',
+      body: JSON.stringify({ types: 'shopping' }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        //Header Defination
+        'Authorization': 'Bearer ' + DEMO_TOKEN
+      },
+
+    }).then(
+      async response => {
+        const data = await response.json();
+
+        if (data.login && data.login == true) {
+          AsyncStorage.clear();
+          this.props.navigation.navigate('Auth');
+        }
+
+        if (data.new_token) {
+          AsyncStorage.setItem('access_token', data.new_token);
+          delete data.new_token;
+          delete data['new_token'];
+        }
+        
+        if (data.response == 'ok' || data.response < 2) {
+          this.setTypeTitle('');
+          this.setTypeID('');
+          this.setActive(false);
+          this.setState({editList:true})
+    
+          this.setState({ modalEditTitle: 'Добави нов списък' })
+        } else {
+          Alert.alert(
+            'Достигнат лимит',
+            'Достигнахте лимита си на безплатни списъци за пазар. Може да увеличите лимита като преминете на премиум план',
+            [
+              {
+                text: 'Отказ',
+                onPress: () => {
+                  return null;
+                },
+              },
+              {
+                text: 'Премиум',
+                onPress: () => {
+                  this.props.navigation.navigate('payments');
+                },
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+
+      }
+    ).catch(function (error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      // ADD THIS THROW error
+      throw error;
+    });
+  }
+  
+
+  
   componentDidUpdate() {
   }
 
@@ -405,7 +444,6 @@ class Lists extends React.Component {
 
       const { typeTitle } = this.state;
 
-      console.log(this.state.premium);
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
@@ -471,7 +509,6 @@ class Lists extends React.Component {
 
               name='pencil-alt'
             >Редактирай</Icon>
-
           </View>
         </View>
 

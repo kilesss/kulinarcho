@@ -18,13 +18,17 @@ import {
   View,
   Text,
   Image,
-  TextInput,
   SafeAreaView,
-  ScrollView, FlatList,
+  ScrollView, 
   TouchableOpacity,
   TouchableHighlight,
   Dimensions
 } from "react-native";
+
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
 
@@ -68,7 +72,9 @@ class searchRecipe extends React.Component {
     category: 0,
     categories: [],
     selectedCategories: [],
-    externalDataCat: null
+    externalDataCat: null,
+    premium:0,
+
   };
 
   processResponse(response) {
@@ -158,7 +164,8 @@ class searchRecipe extends React.Component {
           delete data['new_token'];
 
         }
-
+        this.state.premium = data.premium;
+        delete data.premium;
 
         let newData = [];
 
@@ -202,6 +209,8 @@ class searchRecipe extends React.Component {
     }).then(response => response.json())
       .then(data => {
 
+        this.state.premium = data.premium;
+        delete data.premium;
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -488,6 +497,15 @@ class searchRecipe extends React.Component {
     };
 
     const WINDOW = Dimensions.get('window')
+    console.log(this.state.premium);
+    let Add =  <AdMobBanner
+    bannerSize="smartBannerLandscape" 
+    adUnitID={'ca-app-pub-5428132222163769/2159241746'} 
+      onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+      servePersonalizedAds={true}/>;
+      if(this.state.premium != 0){
+        Add = <View></View>;
+      }
 
     return (
 
@@ -497,6 +515,7 @@ class searchRecipe extends React.Component {
 
         <DropdownAlert ref={ref => this.dropDownAlertRef = ref} startDelta={WINDOW.height - 150} endDelta={WINDOW.height - 200} />
 
+        {/* {Add} */}
 
         <SafeAreaView style={{ flexDirection: 'column' }}>
 
@@ -514,7 +533,7 @@ class searchRecipe extends React.Component {
                   }}>
                     <View>
                       <Image
-                        source={require('../../../Image/meal.jpg')}
+                        source={require('../../../Image/salad.jpg')}
                         style={{
                           width: (WINDOW.width / 2) - 37,
                           height: (WINDOW.width / 2) - 37,
@@ -543,7 +562,7 @@ class searchRecipe extends React.Component {
                   }}>
                     <View>
                       <Image
-                        source={require('../../../Image/meal.jpg')}
+                        source={require('../../../Image/supa.jpg')}
                         style={{
                           width: (WINDOW.width / 2) - 37,
                           height: (WINDOW.width / 2) - 37,
@@ -575,7 +594,7 @@ class searchRecipe extends React.Component {
                   }}>
                     <View>
                       <Image
-                        source={require('../../../Image/meal.jpg')}
+                        source={require('../../../Image/predqstie.jpg')}
                         style={{
                           width: (WINDOW.width / 2) - 37,
                           height: (WINDOW.width / 2) - 37,
@@ -604,7 +623,7 @@ class searchRecipe extends React.Component {
                   }}>
                     <View>
                       <Image
-                        source={require('../../../Image/meal.jpg')}
+                        source={require('../../../Image/souse.jpg')}
                         style={{
                           width: (WINDOW.width / 2) - 37,
                           height: (WINDOW.width / 2) - 37,
@@ -664,7 +683,7 @@ class searchRecipe extends React.Component {
                   }}>
                     <View>
                       <Image
-                        source={require('../../../Image/meal.jpg')}
+                        source={require('../../../Image/vege.jpg')}
                         style={{
                           width: (WINDOW.width / 2) - 37,
                           height: (WINDOW.width / 2) - 37,
@@ -695,7 +714,7 @@ class searchRecipe extends React.Component {
                   }}>
                     <View>
                       <Image
-                        source={require('../../../Image/meal.jpg')}
+                        source={require('../../../Image/bread.jpg')}
                         style={{
                           width: (WINDOW.width / 2) - 37,
                           height: (WINDOW.width / 2) - 37,
@@ -724,7 +743,7 @@ class searchRecipe extends React.Component {
                   }}>
                     <View>
                       <Image
-                        source={require('../../../Image/meal.jpg')}
+                        source={require('../../../Image/dessert.jpg')}
                         style={{
                           width: (WINDOW.width / 2) - 37,
                           height: (WINDOW.width / 2) - 37,
@@ -743,127 +762,8 @@ class searchRecipe extends React.Component {
 
                 </View>
               </View>
-              <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 10, marginRight: 10 }}>
-                <View style={{
-                  flex: 1,
-                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
-                }}>
-                  <TouchableOpacity onPress={() => {
-                    AsyncStorage.setItem('categoryId', '9').then(data => {
-                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
-                    });
-                  }}>
-                    <View>
-                      <Image
-                        source={require('../../../Image/meal.jpg')}
-                        style={{
-                          width: (WINDOW.width / 2) - 37,
-                          height: (WINDOW.width / 2) - 37,
-                          marginTop: 0,
-                          marginLeft: 0,
-                          borderRadius: 10,
-                          borderBottomLeftRadius: 0,
-                          borderBottomRightRadius: 0,
-                          resizeMode: 'cover',
-
-                        }}
-                      />
-                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Напитки</Text>
-                    </View>
-                  </TouchableOpacity>
-
-                </View>
-                <View style={{
-                  flex: 1,
-                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
-                }}>
-                  <TouchableOpacity onPress={() => {
-                    AsyncStorage.setItem('categoryId', '10').then(data => {
-                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
-                    });
-                  }}>
-                    <View>
-                      <Image
-                        source={require('../../../Image/meal.jpg')}
-                        style={{
-                          width: (WINDOW.width / 2) - 37,
-                          height: (WINDOW.width / 2) - 37,
-                          marginTop: 0,
-                          marginLeft: 0,
-                          borderRadius: 10,
-                          borderBottomLeftRadius: 0,
-                          borderBottomRightRadius: 0,
-                          resizeMode: 'cover',
-
-                        }}
-                      />
-                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Зимнина</Text>
-                    </View>
-                  </TouchableOpacity>
-
-                </View>
-              </View>
-              <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 10, marginRight: 10 }}>
-                <View style={{
-                  flex: 1,
-                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
-                }}>
-                  <TouchableOpacity onPress={() => {
-                    AsyncStorage.setItem('categoryId', '11').then(data => {
-                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
-                    });
-                  }}>
-                    <View>
-                      <Image
-                        source={require('../../../Image/meal.jpg')}
-                        style={{
-                          width: (WINDOW.width / 2) - 37,
-                          height: (WINDOW.width / 2) - 37,
-                          marginTop: 0,
-                          marginLeft: 0,
-                          borderRadius: 10,
-                          borderBottomLeftRadius: 0,
-                          borderBottomRightRadius: 0,
-                          resizeMode: 'cover',
-
-                        }}
-                      />
-                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>Бебешки и детски храни</Text>
-                    </View>
-                  </TouchableOpacity>
-
-                </View>
-                <View style={{
-                  flex: 1,
-                  backgroundColor: 'white', borderColor: 'silver', borderWidth: 1, borderRadius: 10, marginRight: 20, marginLeft: 5
-                }}>
-                  <TouchableOpacity onPress={() => {
-                    AsyncStorage.setItem('categoryId', '12').then(data => {
-                      this.props.navigation.navigate('showCategory', { name: 'kuyr' });
-                    });
-                  }}>
-                    <View>
-                      <Image
-                        source={require('../../../Image/meal.jpg')}
-                        style={{
-                          width: (WINDOW.width / 2) - 37,
-                          height: (WINDOW.width / 2) - 37,
-                          marginTop: 0,
-                          marginLeft: 0,
-                          borderRadius: 10,
-                          borderBottomLeftRadius: 0,
-                          borderBottomRightRadius: 0,
-                          resizeMode: 'cover',
-
-                        }}
-                      />
-                      <Text style={{ marginTop: 10, fontSize: 16, textAlign: 'center', marginBottom: 10 }}>
-</Text>
-                    </View>
-                  </TouchableOpacity>
-
-                </View>
-              </View>
+              
+              
               
 
             </View>
@@ -873,8 +773,8 @@ class searchRecipe extends React.Component {
           </ScrollView>
 
 
-
         </SafeAreaView>
+
       </View >)
     // }
   }

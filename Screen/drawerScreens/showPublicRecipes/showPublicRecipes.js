@@ -21,11 +21,16 @@ import {
     ScrollView,
 } from "react-native";
 import { BackHandler } from 'react-native';
-
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+  } from 'expo-ads-admob';
 class showPublicRecipes extends React.Component {
 
     state = {
         externalData: null,
+        premium:0,
+
     }
 
 
@@ -143,11 +148,14 @@ class showPublicRecipes extends React.Component {
             }
         }).then(response => response.json())
             .then(data => {
+                console.log(data);
                 if (data.login && data.login == true) {
                     AsyncStorage.clear();
                     this.props.navigation.navigate('Auth');
                 }
 
+                this.state.premium = data.premium;
+                delete data.premium;
                 if (data.new_token) {
                     AsyncStorage.setItem('access_token', data.new_token);
 
@@ -182,7 +190,16 @@ class showPublicRecipes extends React.Component {
                 </View>
             )
         } else {
-
+            console.log(this.state.premium);
+            let Add =  <AdMobBanner
+            bannerSize="smartBannerLandscape" 
+            adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
+              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+              servePersonalizedAds={true}/>;
+              if(this.state.premium != 0){
+                Add = <View></View>;
+              }
+      
             const renderItemProducts = () => {
                 let finnal = [];
                 let data = this.state.externalData.recipe_products;
@@ -252,17 +269,73 @@ class showPublicRecipes extends React.Component {
 
             };
             let photo = '';
-            console.log(this.state.externalData.recipe.photo)
             if(this.state.externalData.recipe.photo != null){
               photo =  <Image source={{ uri: 'https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/' + this.state.externalData.recipe.photo+'?time'+(new Date()).getTime() }} resizeMethod={'auto'} style={{  flex: 1,
                 aspectRatio:0.9,width:'96%', 
                 resizeMode: 'contain', borderRadius: 15,  paddingBottom: 0,  }} />
             }else{
-                photo = <Image source={require('../../../Image/recipeImg.png')}
-                resizeMethod={'auto'} style={{  flex: 1,
-                aspectRatio:0.9,width:'96%',
-                resizeMode: 'contain', borderRadius: 15,  paddingBottom: 0,  }} />
-            }
+                photo =<Image
+                source={require('../../../Image/rsz_plate.png')}
+                resizeMethod={'resize'} style={{  flex: 1,
+                width:'96%', height:300,
+                borderRadius: 15,  paddingBottom: 0,  }} />
+                if (this.state.externalData.recipe.categories == 1) {
+                    photo =<Image
+                    source={require('../../../Image/salad.jpg')}
+                    resizeMethod={'resize'} 
+                    style={{  flex: 1,
+                        width:'96%', height:300, borderRadius: 15,  paddingBottom: 0,  }} />
+                
+                }
+                if (this.state.externalData.recipe.categories == 2) {
+                    photo =<Image
+                    source={require('../../../Image/supa.jpg')}
+                    resizeMethod={'resize'} style={{  flex: 1,
+                        width:'96%', height:300, borderRadius: 15,  paddingBottom: 0,  }} />          
+                }
+                if (this.state.externalData.recipe.categories == 3) {
+                    photo =<Image
+                    source={require('../../../Image/predqstie.jpg')}
+                    resizeMethod={'resize'} style={{  flex: 1,
+                        width:'96%', height:300, borderRadius: 15,  paddingBottom: 0,  }} />
+                }
+                if (this.state.externalData.recipe.categories == 4) {
+                    photo =<Image
+                    source={require('../../../Image/souse.jpg')}
+                    resizeMethod={'resize'} style={{  flex: 1,
+                        width:'96%', height:300, borderRadius: 15,  paddingBottom: 0,  }} />
+                }
+                if (this.state.externalData.recipe.categories == 5) {
+                    photo =<Image
+                    source={require('../../../Image/meal.jpg')}
+                    resizeMethod={'resize'} style={{  flex: 1,
+                        width:'96%', height:300, borderRadius: 15,  paddingBottom: 0,  }} />
+                }
+                if (this.state.externalData.recipe.categories == 6) {
+
+                    photo =<Image
+                    source={require('../../../Image/vege.jpg')}
+                    resizeMethod={'resize'} style={{  flex: 1,
+                    aspectRatio:0.9,width:'96%', 
+                    resizeMode: 'contain', borderRadius: 15,  paddingBottom: 0,  }} />
+
+                }
+                if (this.state.externalData.recipe.categories == 7) {
+                    photo =<Image
+                    source={require('../../../Image/bread.jpg')}
+                    resizeMethod={'resize'} style={{  flex: 1,
+                        width:'96%', height:300, borderRadius: 15,  paddingBottom: 0,  }} />
+                }
+                if (this.state.externalData.recipe.categories == 8) {
+                    photo =<Image
+                    source={require('../../../Image/dessert.jpg')}
+                    resizeMethod={'resize'} style={{  flex: 1,
+                        width:'96%', height:300, borderRadius: 15,  paddingBottom: 0,  }} />
+                }
+
+
+      }
+            
             return (
 
                 <View style={styles.MainContainer}>
@@ -317,7 +390,8 @@ class showPublicRecipes extends React.Component {
                             shadowRadius: 9.11,
                             paddingBottom: 10,
                             elevation: 6,
-                            backgroundColor:'white'
+                            backgroundColor:'white',
+                            height:400, paddingLeft:10
                         }}>
                            {photo}
 

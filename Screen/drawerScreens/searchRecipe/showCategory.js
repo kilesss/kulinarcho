@@ -26,31 +26,34 @@ import {
 } from "react-native";
 import { Icon } from 'react-native-elements'
 import { BackHandler } from 'react-native';
-
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+} from 'expo-ads-admob';
 class showCategory extends React.Component {
 
   constructor(props) {
     super(props);
     this.didFocus = props.navigation.addListener("didFocus", (payload) =>
-    BackHandler.addEventListener("hardwareBackPress",async () => {
-      let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
-      let lastRoute = route.pop();
-      if(lastRoute != 'searchRecipe'){
+      BackHandler.addEventListener("hardwareBackPress", async () => {
+        let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
+        let lastRoute = route.pop();
+        if (lastRoute != 'searchRecipe') {
           route.push(lastRoute);
-      }
-      let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
-      if(goRoute != undefined){
-        AsyncStorage.setItem('backRoute', JSON.stringify(route));
-        this.props.navigation.navigate(goRoute);
-      }
-    })
-  );
-  
+        }
+        let goRoute = route.pop();
+        console.log(goRoute);
+        console.log(route);
+        if (goRoute != undefined) {
+          AsyncStorage.setItem('backRoute', JSON.stringify(route));
+          this.props.navigation.navigate(goRoute);
+        }
+      })
+    );
+
   }
 
- 
+
   handleBackButtonClick() {
     this.props.navigation.navigate('HomeScreen');
     return true;
@@ -64,9 +67,11 @@ class showCategory extends React.Component {
     page2: 0,
     onEndReachedCalledDuringMomentum: false,
     finnish: 0,
-    category: 0,
     categories: [],
     selectedCategories: [],
+    premium: 0,
+    category: 0,
+
   };
 
   processResponse(response) {
@@ -83,7 +88,7 @@ class showCategory extends React.Component {
     const { navigation } = this.props;
     this.props.navigation.setParams({ handleSave: this._saveDetails });
     this.focusListener = navigation.addListener('didFocus', async () => {
-      let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
+      let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
       let arrRoute = [];
 
       if (route === null) {
@@ -106,6 +111,7 @@ class showCategory extends React.Component {
       this.setState({ categories: [] });
       this.setState({ selectedCategories: [] });
       this.fetchData(0)
+
 
     });
   }
@@ -144,11 +150,8 @@ class showCategory extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     var category = await AsyncStorage.getItem('categoryId');
-    console.log(JSON.stringify({
-      page: p,
-      title: this.state.title,
-      category: category
-    }));
+    this.setState({ category: category })
+
     fetch("http://167.172.110.234/api/getPublicRecipes", {
       method: "POST",
       headers: {
@@ -169,6 +172,8 @@ class showCategory extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
+        this.state.premium = data.premium;
+        delete data.premium;
 
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
@@ -217,63 +222,189 @@ class showCategory extends React.Component {
 
 
   render(props) {
- 
+
 
     const Card = ({ item }) => {
-      return (
-        <TouchableHighlight style={{ width:'100%'}} onPress={() => {AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
-          this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
-        });}}> 
+      var img = ''
 
-        <View
+      if (item.photo !== null) {
+        img = <ImageModal
+          source={{ uri: 'https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/' + item.photo + '?time' + (new Date()).getTime() }}
           style={{
-          }}>
-          <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
-            <View style={{ flex: 1, flexDirection: 'row', borderRadius:15 }}>
-              <ImageModal
-                resizeMode="cover"
-                source={{ uri: 'https://images.immediate.co.uk/production/volatile/sites/30/2020/08/roast-beef-recipes-536cd86.jpg' + '?time' + (new Date()).getTime() }}
-                style={{
-                  borderRadius:15,
-                  marginLeft: 10, marginBottom: 10,
-                  width: 80,
-                  height: 80,
-                  alignSelf: 'center',
-                }}
-              />
-              <TouchableOpacity style={{
-                width: '100%',
-                paddingLeft: 9,
-                flex: 2,
-                flexDirection: 'column',
-                height:80
-              }} onPress={() => {
-                AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
-                  this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
-                });
-              }}>
-                            <Text style={{ fontSize: 20, borderBottomColor: 'silver',
-                             borderBottomWidth: 1,  fontWeight: '400', color: '#000' }}>{item.title}</Text>
+            borderRadius: 15,
+            marginLeft: 10,
+            width: 80,
+            height: 80,
+            alignSelf: 'center',
+          }}
+        />;
+      } else {
+        img = <ImageModal
+          resizeMode="cover"
+          source={require('../../../Image/rsz_plate.png')}
+          style={{
+            borderRadius: 15,
+            marginLeft: 10, marginBottom: 10,
+            width: 80,
+            height: 80,
+            alignSelf: 'center',
+          }}
+        />
+        if (this.state.category == 1) {
+          img = <ImageModal
+            resizeMode="cover"
+            source={require('../../../Image/salad.jpg')}
+            style={{
+              borderRadius: 15,
+              marginLeft: 10, marginBottom: 10,
+              width: 80,
+              height: 80,
+              alignSelf: 'center',
+            }}
+          />
+        }
+        if (this.state.category == 2) {
+          img = <ImageModal
+            resizeMode="cover"
+            source={require('../../../Image/supa.jpg')}
+            style={{
+              borderRadius: 15,
+              marginLeft: 10, marginBottom: 10,
+              width: 80,
+              height: 80,
+              alignSelf: 'center',
+            }}
+          />
+        }
+        if (this.state.category == 3) {
+          img = <ImageModal
+            resizeMode="cover"
+            source={require('../../../Image/predqstie.jpg')}
+            style={{
+              borderRadius: 15,
+              marginLeft: 10, marginBottom: 10,
+              width: 80,
+              height: 80,
+              alignSelf: 'center',
+            }}
+          />
+        }
+        if (this.state.category == 4) {
+          img = <ImageModal
+            resizeMode="cover"
+            source={require('../../../Image/souse.jpg')}
+            style={{
+              borderRadius: 15,
+              marginLeft: 10, marginBottom: 10,
+              width: 80,
+              height: 80,
+              alignSelf: 'center',
+            }}
+          />
+        }
+        if (this.state.category == 5) {
+          img = <ImageModal
+            resizeMode="cover"
+            source={require('../../../Image/meal.jpg')}
+            style={{
+              borderRadius: 15,
+              marginLeft: 10, marginBottom: 10,
+              width: 80,
+              height: 80,
+              alignSelf: 'center',
+            }}
+          />
+        }
+        if (this.state.category == 6) {
+          img = <ImageModal
+            resizeMode="cover"
+            source={require('../../../Image/vege.jpg')}
+            style={{
+              borderRadius: 15,
+              marginLeft: 10, marginBottom: 10,
+              width: 80,
+              height: 80,
+              alignSelf: 'center',
+            }}
+          />
+        }
+        if (this.state.category == 7) {
+          img = <ImageModal
+            resizeMode="cover"
+            source={require('../../../Image/bread.jpg')}
+            style={{
+              borderRadius: 15,
+              marginLeft: 10, marginBottom: 10,
+              width: 80,
+              height: 80,
+              alignSelf: 'center',
+            }}
+          />
+        }
+        if (this.state.category == 8) {
+          img = <ImageModal
+            resizeMode="cover"
+            source={require('../../../Image/dessert.jpg')}
+            style={{
+              borderRadius: 15,
+              marginLeft: 10, marginBottom: 10,
+              width: 80,
+              height: 80,
+              alignSelf: 'center',
+            }}
+          />
+        }
 
-                <Text style={{
-                  alignItems: 'flex-end', color: 'green', marginBottom: 10
+
+      }
+      return (
+        <TouchableHighlight style={{ width: '100%' }} onPress={() => {
+          AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
+            this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
+          });
+        }}>
+
+          <View
+            style={{
+            }}>
+            <View style={{ flex: 1, flexDirection: 'column', width: '100%' }}>
+              <View style={{ flex: 1, flexDirection: 'row', borderRadius: 15 }}>
+                {img}
+                <TouchableOpacity style={{
+                  width: '100%',
+                  paddingLeft: 9,
+                  flex: 2,
+                  flexDirection: 'column',
+                  height: 80
+                }} onPress={() => {
+                  AsyncStorage.setItem('recipeId', item.id.toString()).then(data => {
+                    this.props.navigation.navigate('showPublicRecipes', { name: 'kuyr' });
+                  });
                 }}>
-                  {item.catTitle}                    </Text>
-                <View
-                  style={{
-                    width: '100%',
-                    // flex: 1,
+                  <Text style={{
+                    fontSize: 20, borderBottomColor: 'silver',
+                    borderBottomWidth: 1, fontWeight: '400', color: '#000'
+                  }}>{item.title}</Text>
 
-                    height: 80,
-
+                  <Text style={{
+                    alignItems: 'flex-end', color: 'green', marginBottom: 10
                   }}>
+                    {item.catTitle}                    </Text>
+                  <View
+                    style={{
+                      width: '100%',
+                      // flex: 1,
 
-                  
-                </View>
-              </TouchableOpacity>
+                      height: 80,
+
+                    }}>
+
+
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
         </TouchableHighlight>
 
       )
@@ -343,6 +474,16 @@ class showCategory extends React.Component {
         </View>
       )
     } else {
+      console.log(this.state.premium);
+      let Add = <AdMobBanner
+        bannerSize="smartBannerLandscape"
+        adUnitID={'ca-app-pub-5428132222163769/7387517695'}
+        onDidFailToReceiveAdWithError={console.log(this.bannerError)}
+        servePersonalizedAds={true} />;
+      if (this.state.premium != 0) {
+        Add = <View></View>;
+      }
+
       const WINDOW = Dimensions.get('window')
 
       return (
@@ -408,7 +549,7 @@ class showCategory extends React.Component {
                 onPress={() => {
                   this.setState({ page: 0 })
                   this.setState({ externalData: [] })
-  
+
                   this.fetchData(0);
                 }
 
@@ -418,8 +559,9 @@ class showCategory extends React.Component {
                 name='search-circle-outline'
               ></Icon>
             </View>
-            
-            
+            {Add}
+
+
             <FlatList
               contentContainerStyle={{ paddingBottom: 350 }}
               data={this.state.externalData}
@@ -435,12 +577,7 @@ class showCategory extends React.Component {
 
               ListFooterComponent={() => <ListFooterComponent />}
             />
-            <ScrollView>
 
-
-
-
-            </ScrollView>
 
 
 
