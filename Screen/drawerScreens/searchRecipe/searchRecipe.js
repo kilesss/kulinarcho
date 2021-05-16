@@ -44,8 +44,8 @@ class searchRecipe extends React.Component {
           route.push(lastRoute);
         }
         let goRoute = route.pop();
-        console.log(goRoute);
-        console.log(route);
+        
+        
         if (goRoute != undefined) {
           AsyncStorage.setItem('backRoute', JSON.stringify(route));
           this.props.navigation.navigate(goRoute);
@@ -144,7 +144,7 @@ class searchRecipe extends React.Component {
 
   async fetchCategories() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getCategories", {
+    fetch("https://kulinarcho.com/api/getCategories", {
       method: "GET",
       headers: {
         'Cache-Control': 'no-cache',
@@ -177,7 +177,7 @@ class searchRecipe extends React.Component {
 
 
       }).catch(function (error) {
-        console.log('There has been a problem with your fetch operation: ' + error.message);
+        
         // ADD THIS THROW error
         throw error;
       }).done();
@@ -193,7 +193,7 @@ class searchRecipe extends React.Component {
     await this.setState({ page: r });
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getPublicRecipes", {
+    fetch("https://kulinarcho.com/api/getPublicRecipes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -253,7 +253,7 @@ class searchRecipe extends React.Component {
         }
 
       }).catch(function (error) {
-        console.log('There has been a problem with your fetch operation: ' + error.message);
+        
         // ADD THIS THROW error
         throw error;
       }).done();
@@ -497,11 +497,11 @@ class searchRecipe extends React.Component {
     };
 
     const WINDOW = Dimensions.get('window')
-    console.log(this.state.premium);
+    
     let Add =  <AdMobBanner
     bannerSize="smartBannerLandscape" 
     adUnitID={'ca-app-pub-5428132222163769/2159241746'} 
-      onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+       
       servePersonalizedAds={true}/>;
       if(this.state.premium != 0){
         Add = <View></View>;

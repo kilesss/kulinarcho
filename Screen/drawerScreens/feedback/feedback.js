@@ -18,7 +18,7 @@ import {
   View,
   ScrollView,
   Text,
-  TouchableOpacity,
+  TouchableOpacity,ActivityIndicator,
   TextInput,
   TouchableHighlight
 } from "react-native";
@@ -42,8 +42,8 @@ class feeback extends React.Component {
           route.push(lastRoute);
         }
         let goRoute = route.pop();
-        console.log(goRoute);
-        console.log(route);
+        
+        
         if (goRoute != undefined) {
           AsyncStorage.setItem('backRoute', JSON.stringify(route));
           this.props.navigation.navigate(goRoute);
@@ -60,6 +60,7 @@ class feeback extends React.Component {
     externalData:null,
     premium:0,
   };
+    lenght;
 
 
 
@@ -76,7 +77,7 @@ class feeback extends React.Component {
       } else {
         arrRoute = route
       }
-      if (arrRoute[arrRoute - 1] != 'feeback') {
+      if (arrRoute[arrRoute - 1] !== 'feeback') {
         arrRoute.push('feeback')
       }
 
@@ -111,7 +112,7 @@ class feeback extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("http://167.172.110.234/api/getFeedback", {
+    fetch("https://kulinarcho.com/api/getFeedback", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -140,7 +141,7 @@ class feeback extends React.Component {
 
   async deleteFeedback(id){
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/deleteFeedback', {
+    await fetch('https://kulinarcho.com/api/deleteFeedback', {
       method: 'POST',
       body: JSON.stringify({
         id: id,
@@ -176,7 +177,7 @@ class feeback extends React.Component {
         }
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -189,7 +190,7 @@ class feeback extends React.Component {
       type: this.state.country
     }))
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/submitFeedback', {
+    await fetch('https://kulinarcho.com/api/submitFeedback', {
       method: 'POST',
       body: JSON.stringify({
         description: this.state.description,
@@ -229,7 +230,7 @@ class feeback extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -355,17 +356,17 @@ return html
         top: 0,
         flexDirection: 'row',
         backgroundColor: '#689F38'}}>
-            <Text>Loading....</Text>
+<ActivityIndicator size="large" color="#7DE24E" />
           </View>
         </View>
       )
     } else {
 
-      console.log(this.state.premium);
+      
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/5705596900'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;

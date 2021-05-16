@@ -3,13 +3,14 @@
       "name": "Kulinarcho",
       "icon": "./clipboard.png",
       "description": "Твоя персонален иконом",
-      "version": "1.0.1",
+      "version": "2.0.0",
       "orientation": "portrait",
       "privacy": "public",
       "scheme": "kulinarchoapp",
 
       "android": {
         "package": "com.kilesss.kulinarcho",
+        "versionCode": 3,
         "config": {
             "googleMobileAdsAppId": "ca-app-pub-5428132222163769~2137322335"
         }

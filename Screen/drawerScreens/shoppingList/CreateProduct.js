@@ -10,7 +10,7 @@ import { BottomSheet } from 'react-native-btr';
 
 import {
   View,
-  Text,
+  Text,ActivityIndicator,
   Image,
   TouchableOpacity,
   TextInput,
@@ -35,8 +35,8 @@ class CreateProduct extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+         
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -151,8 +151,8 @@ handleBackButtonClick() {
       photo: this.state.image64
     }));
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    console.log(DEMO_TOKEN);
-    await fetch('http://167.172.110.234/api/createProducts', {
+    
+    await fetch('https://kulinarcho.com/api/createProducts', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.typeid,
@@ -189,11 +189,11 @@ handleBackButtonClick() {
           delete data.new_token;
           delete data['new_token'];
         }
-        console.log(data);
+        
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -201,7 +201,7 @@ handleBackButtonClick() {
 
   async fetchDataTypes() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getTypes", {
+    fetch("https://kulinarcho.com/api/getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -236,7 +236,7 @@ handleBackButtonClick() {
   }
   // async fetchDataUnits() {
   //   var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-  //   fetch("http://167.172.110.234/api/getUnits", {
+  //   fetch("https://kulinarcho.com/api/getUnits", {
   //     method: "GET",
   //     headers: {
   //       'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -355,24 +355,22 @@ handleBackButtonClick() {
     if (this.state.externalDataTypes === null && this.state.externalDataUnits === null) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+         <ActivityIndicator size="large" color="#7DE24E" /> 
         </View>
       )
     } else {
-      console.log(this.state.premium);
+      
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;
         }
 
       var test = ''
-      console.log(this.state.image);
+      
       if (this.state.image !== '') {
         test = 
         
@@ -527,7 +525,6 @@ handleBackButtonClick() {
               <SearchableDropdown
                 style={{ width: 170 }}
                 //On text change listner on the searchable input
-                onTextChange={(text) => console.log(text)}
                 onItemSelect={(item) => {
                   this.setState({ placeholderType: item.name })
                   this.setState({

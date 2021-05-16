@@ -38,7 +38,7 @@ const ForgottenPassword = props => {
         console.log( JSON.stringify({
             email: userEmail,
         }))
-        fetch('http://167.172.110.234/api/forgotenPassword', {
+        fetch('https://kulinarcho.com/api/forgotenPassword', {
             method: 'POST',
             body: JSON.stringify({
                 email: userEmail,
@@ -53,17 +53,17 @@ const ForgottenPassword = props => {
             .then(responseJson => {
                 //Hide Loader
                 setLoading(false);
-                console.log(responseJson);
+                
 
                 if (responseJson.errors) {
                     Object.keys(responseJson.errors).map((key, index) => {
-                        console.log(responseJson.errors[key])
+                        
                         setErrortext(responseJson.errors[key]);
                     })
                   }
                 // If server response message same as Data Matched
                 if (responseJson.access_token) {
-                    console.log(responseJson);
+                    
                     if(responseJson.rememberToken ===''){
                         AsyncStorage.setItem('access_token', responseJson.access_token);
                         props.navigation.navigate('DrawerNavigationRoutes');   
@@ -74,7 +74,7 @@ const ForgottenPassword = props => {
                 } 
             })
             .catch(error => {
-                console.log(error);
+                
 
                 //Hide Loader
                 setLoading(false);

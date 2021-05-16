@@ -5,7 +5,7 @@ import DropdownAlert from 'react-native-dropdownalert';
 import { BackHandler } from 'react-native';
 
 import {
-  View,
+  View,ActivityIndicator,
   Text,
   TextInput,
   TouchableHighlight
@@ -29,8 +29,8 @@ class AddShoppingListProduct extends React.Component {
           route.push(lastRoute);
         }
         let goRoute = route.pop();
-        console.log(goRoute);
-        console.log(route);
+        
+        
         if (goRoute != undefined) {
           AsyncStorage.setItem('backRoute', JSON.stringify(route));
           this.props.navigation.navigate(goRoute);
@@ -42,7 +42,7 @@ class AddShoppingListProduct extends React.Component {
   handleBackButtonClick() {
     //this.props.navigation.goBack(null);
 
-    console.log(this.props.navigation);
+    
     this.props.navigation.navigate('ShoppingListEditProducts');
     return true;
   }
@@ -167,8 +167,8 @@ class AddShoppingListProduct extends React.Component {
       name: this.state.newProdTitle,
       description: this.state.description,
     }))
-    console.log(DEMO_TOKEN);
-    await fetch('http://167.172.110.234/api/AddProductShoppingList', {
+    
+    await fetch('https://kulinarcho.com/api/AddProductShoppingList', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.typeid,
@@ -213,7 +213,7 @@ class AddShoppingListProduct extends React.Component {
         }
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -221,7 +221,7 @@ class AddShoppingListProduct extends React.Component {
   async fetchDataProducts() {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch("http://167.172.110.234/api/getProducts", {
+    await fetch("https://kulinarcho.com/api/getProducts", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN,
@@ -269,7 +269,7 @@ class AddShoppingListProduct extends React.Component {
 
   async fetchDataTypes() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getTypes", {
+    fetch("https://kulinarcho.com/api/getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -305,7 +305,7 @@ class AddShoppingListProduct extends React.Component {
   }
   async fetchDataUnits() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getUnits", {
+    fetch("https://kulinarcho.com/api/getUnits", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -343,7 +343,7 @@ class AddShoppingListProduct extends React.Component {
   async submitEditType() {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/createProducts', {
+    await fetch('https://kulinarcho.com/api/createProducts', {
       method: 'POST',
       body: JSON.stringify({
         name: this.state.newProdTitle,
@@ -378,11 +378,11 @@ class AddShoppingListProduct extends React.Component {
           delete data.new_token;
           delete data['new_token'];
         }
-        console.log(data);
+        
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -391,17 +391,15 @@ class AddShoppingListProduct extends React.Component {
     if (this.state.externalDataProducts === null) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+          <ActivityIndicator size="large" color="#7DE24E" /> 
         </View>
       )
     } else {
-      console.log(this.state.premium);
+      
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;
@@ -456,7 +454,7 @@ class AddShoppingListProduct extends React.Component {
                   onTextChange={(text) => { return true; }}
                   //On text change listner on the searchable input
                   onItemSelect={(item) => {
-                    console.log(item);
+                    
                     this.setState({ categoryId: item.id });
                     this.setState({ typesPlaceholder: item.name })
                     this.setState({ placeholder: this.state.newProdTitle });
@@ -566,7 +564,7 @@ class AddShoppingListProduct extends React.Component {
                         color={'green'}
                         onPress={() => {
                           this.setState({ placeholder: this.state.newProdTitle });
-                          console.log(this.state.placeholder)
+                          
 
                           this['RBSheet2'].close()
                           this.submitEditType();
@@ -652,7 +650,7 @@ class AddShoppingListProduct extends React.Component {
                 //On text change listner on the searchable input
                 onItemSelect={(item) => { this.secondTextInput.focus(); this.setProductID(item.id); this.setState({ placeholder: item.name }) }}
                 onItemSelectNoResult={(item) => {
-                  console.log('asdasd');
+                  
                   this.fetchDataTypes()
                   this.setState({ unitsPlaceholder: 'Разфасовки' });
                   this.setState({ typesPlaceholder: 'Категория' });

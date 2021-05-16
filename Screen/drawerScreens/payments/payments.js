@@ -10,13 +10,15 @@
 
 import * as React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
+import { PaymentsStripe as Stripe } from 'expo-payments-stripe';
 
+import { Icon } from 'react-native-elements'
 
 import {
   View,
-  Text,
-  Image, StyleSheet,
-  Modal,
+  Text,ActivityIndicator,
+  Image, StyleSheet,TouchableHighlight,
+  Modal,TextInput,
   Pressable,
   TouchableOpacity
 } from "react-native";
@@ -24,6 +26,7 @@ import { BackHandler } from 'react-native';
 import { ScrollView } from 'react-native';
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 import DropdownAlert from 'react-native-dropdownalert';
+import { Alert } from 'react-native';
 
 class payments extends React.Component {
 
@@ -37,8 +40,6 @@ class payments extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -60,7 +61,9 @@ class payments extends React.Component {
     client: null,
     modalVisible: false,
     creditCart:null,
-    amount:0
+    amount:0, 
+    buttonPay:'',
+    promocode:'',
   };
 
   processResponse(response) {
@@ -77,6 +80,54 @@ class payments extends React.Component {
   async componentDidMount() {
     const { navigation } = this.props;
     this.props.navigation.setParams({ handleSave: this._saveDetails });
+    // Stripe.setOptionsAsync({
+    //   publishableKey: 'pk_live_51ISRmAGdINgbB6LumumdYWJyld8MIuVVrCPMJk8RJja5G3u2DilIsW3eIkrf7zzy0gJnCfc86zwmsmoXeFWZQxZ100TPYilelQ', // Your key
+    // });
+    this.setState({buttonPay:
+      <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
+        this.makepayment();
+      }} underlayColor="white">
+        <View style={{
+          flex: 3, flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "white",
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 7,
+          },
+          shadowOpacity: 0.41,
+          shadowRadius: 9.11,
+          elevation: 6,
+          marginRight: 10,
+          borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
+          padding: 10
+        }}>
+          <View style={{
+            backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1,
+            borderBottomWidth: 1, borderColor: "silver",
+          }}>
+            <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
+              size={30}
+              containerStyle={{
+                backgroundColor: '#ebebeb',
+                padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
+              }}
+              color={'green'}
+              onPress={() => {
+                this.makepayment();
+              }}
+              type='ionicon'
+              backgroundColor='silver'
+              name='checkmark-outline'
+              ></Icon>
+
+          </View>
+          <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+            <Text style={{ flex: 3, marginTop: 15 }}>Купи</Text>
+          </View>
+        </View>
+      </TouchableHighlight>})
 
     this.focusListener = navigation.addListener('didFocus', async () => {
       let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
@@ -115,38 +166,46 @@ class payments extends React.Component {
 
 
 async makepayment(){
+ 
   if(this.state.creditCart.valid == false){
     this.dropDownAlertRef.alertWithType('error', '', 'Данните са непълни или невалидни!', {}, 1000);
 
   }else{
-    // console.log(this.state.creditCart);
-    // Object {
-    //   "status": Object {
-    //     "cvc": "valid",
-    //     "expiry": "valid",
-    //     "number": "valid",
-    //   },
-    //   "valid": true,
-    //   "values": Object {
-    //     "cvc": "412",
-    //     "expiry": "03/24",
-    //     "number": "4170 9903 0367 3808",
-    //     "type": "visa",
-    //   },
-    // }
-    this.setState({modalVisible:false});
-    this.submitPayment();
+    this.setState({buttonPay:<ActivityIndicator size="large" color="#7DE24E" />})
+    
+    // const params = {
+    //   number: this.state.creditCart.values.number,
+    //   expMonth: parseInt(this.state.creditCart.values.expiry.split('/')[0]),
+    //   expYear: parseInt(this.state.creditCart.values.expiry.split('/')[1]),
+    //   cvc: this.state.creditCart.values.cvc,
+    // };
+    // const token = await Stripe.createTokenWithCardAsync(params);
+    this.submitPayment(this.state.creditCart.values.number,this.state.creditCart.values.expiry.split('/')[0],
+    this.state.creditCart.values.expiry.split('/')[1],this.state.creditCart.values.cvc
+    );
 
   }
 
 }
 
-  async submitPayment() {
+  async submitPayment( number, month, year, cvc) {
+    console.log({
+      amount: this.state.amount,
+      number:number,
+      month:month, 
+      year:year,
+      cvc:cvc
+    })
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/makePayment', {
+    await fetch('https://kulinarcho.com/api/makePayment', {
       method: 'POST',
       body: JSON.stringify({
         amount: this.state.amount,
+        number:number,
+        month:month, 
+        year:year,
+        cvc:cvc,
+        promocode:this.state.promocode
       }),
       headers: {
         "Content-Type": "application/json",
@@ -159,7 +218,6 @@ async makepayment(){
       async response => {
         const data = await response.json();
 
-
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -170,17 +228,66 @@ async makepayment(){
           delete data.new_token;
           delete data['new_token'];
         }
-        if (data.errors) {
-          Object.keys(data.errors).map((key, index) => {
-            this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
-          })
+        if (data.error  != undefined) {
+          Alert.alert('Плащането е отказано', 'Причина: '+data.error);
+
+            this.dropDownAlertRef.alertWithType('error', 'Error', data.error, {}, 1000);
         } else {
-          this.dropDownAlertRef.alertWithType('success', 'success', 'Вашето плащане е успешно', {}, 1000);
+
+          Alert.alert('Успешно плащане', 'Вашето плащане е успешно. Благодарим ви.');
 
         }
+
+        this.setState({modalVisible:false});
+        this.setState({buttonPay:
+          <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
+            this.makepayment();
+          }} underlayColor="white">
+            <View style={{
+              flex: 3, flexDirection: "row",
+              alignItems: "center",
+              backgroundColor: "white",
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 7,
+              },
+              shadowOpacity: 0.41,
+              shadowRadius: 9.11,
+              elevation: 6,
+              marginRight: 10,
+              borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
+              padding: 10
+            }}>
+              <View style={{
+                backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1,
+                borderBottomWidth: 1, borderColor: "silver",
+              }}>
+                <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
+                  size={30}
+                  containerStyle={{
+                    backgroundColor: '#ebebeb',
+                    padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
+                  }}
+                  color={'green'}
+                  onPress={() => {
+                    this.makepayment();
+                  }}
+                  type='ionicon'
+                  backgroundColor='silver'
+                  name='checkmark-outline'
+                  ></Icon>
+    
+              </View>
+              <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                <Text style={{ flex: 3, marginTop: 15 }}>Купи</Text>
+              </View>
+            </View>
+          </TouchableHighlight>})
+    
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -194,7 +301,7 @@ async makepayment(){
     return (
       <ScrollView>
                         <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
-
+      
         <Modal
           animationType="slide"
           transparent={true}
@@ -207,28 +314,82 @@ async makepayment(){
             <View style={styles.modalView}>
               <Text style={{ ...styles.modalText, borderBottomWidth: 1, borderBottomColor: 'silver', fontSize: 22, width: '100%', marginTop: 10 }}>Плащане</Text>
               <Text style={{ ...styles.modalText, width: '100%', fontSize: 18 }}>Сума: 5.99 лв</Text>
-              <View style={{marginBottom: 20, height:350}}>
+              <View style={{marginBottom: 20, height:400}}>
               <CreditCardInput onChange={this.onChange} />
-
+              <TextInput
+                  placeholder={'Промо код'}
+                  blurOnSubmit={false}
+                  style={{
+                    width: 250,
+                    marginTop:-40,
+                    borderRadius: 15,
+                    marginLeft: 9, marginRight: 9,
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 7,
+                    },
+                    height: 40,
+                    shadowOpacity: 0.41,
+                    shadowRadius: 9.11,
+                    marginBottom: 20,
+                    borderColor: 'silver',
+                    elevation: 6,
+                    backgroundColor: '#ffffff',
+                    paddingLeft: 10,
+                    borderWidth: 1
+                  }}
+                  onChangeText={typeTitle => this.setState({ promocode: typeTitle })}
+                />
               </View>
+             
               <View style={{flexDirection:'row'}}>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() =>{
-                   this.makepayment();
-
-                } }
-              > 
-                <Text style={styles.textStyle}>Плати</Text>
-              </Pressable>
-              <Pressable
-                style={{...styles.button, backgroundColor:'red', marginLeft:15}}
-                onPress={() =>{
+              {this.state.buttonPay}
+              
+              <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
                   this.setState({modalVisible:false});
-                } }
-              > 
-                <Text style={styles.textStyle}>Отказ</Text>
-              </Pressable>
+                }} underlayColor="white">
+                  <View style={{
+                    flex: 3, flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "white",
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 7,
+                    },
+                    shadowOpacity: 0.41,
+                    shadowRadius: 9.11,
+                    elevation: 6,
+                    marginRight: 10,
+                    borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
+                    padding: 10
+                  }}>
+                    <View style={{
+                      backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1,
+                      borderBottomWidth: 1, borderColor: "silver",
+                    }}>
+                      <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
+                        size={30}
+                        containerStyle={{
+                          backgroundColor: '#ebebeb',
+                          padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
+                        }}
+                        color={'red'}
+                        onPress={() => {
+                          this.setState({modalVisible:false});
+                        }}
+                        type='ionicon'
+                        backgroundColor='silver'
+                        name='close-outline'
+                        ></Icon>
+
+                    </View>
+                    <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                      <Text style={{ flex: 3, marginTop: 15 }}>Отказ</Text>
+                    </View>
+                  </View>
+                </TouchableHighlight>
               </View>
             </View>
           </View>

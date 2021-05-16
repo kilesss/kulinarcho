@@ -465,7 +465,7 @@ const CreateProduct_StackNavigator = createStackNavigator({
         screen: CreateProduct,
         navigationOptions: ({ navigation }) => ({
             title: 'Създай продукт',
-            headerLeft: () => {<NavigationDrawerHeader navigationProps={navigation} />, console.log('czxczxczxczxczcx')},
+            headerLeft: () => {<NavigationDrawerHeader navigationProps={navigation} />},
             headerStyle: {
                 backgroundColor: '#689F38',
             },

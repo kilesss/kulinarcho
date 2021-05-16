@@ -21,7 +21,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   FlatList, View,
-  Text,
+  Text,ActivityIndicator,
   TextInput,
   Modal,
   TouchableHighlight
@@ -60,8 +60,8 @@ class TypesSettings extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+         
+      
               AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
     })
@@ -99,7 +99,7 @@ class TypesSettings extends React.Component {
 
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getTypes", {
+    fetch("https://kulinarcho.com/api/getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -182,7 +182,7 @@ class TypesSettings extends React.Component {
 
   async submitEditType() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/addProductType', {
+    await fetch('https://kulinarcho.com/api/addProductType', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.typeid, name: this.state.typeTitle }),
       headers: {
@@ -214,14 +214,14 @@ class TypesSettings extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
   }
   async submitDeleteType() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/deleteProductType', {
+    await fetch('https://kulinarcho.com/api/deleteProductType', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.typeid }),
       headers: {
@@ -234,7 +234,7 @@ class TypesSettings extends React.Component {
     }).then(
       async response => {
         const data = await response.json();
-        console.log(data);
+        
         if (data.errors) {
           Object.keys(data.errors).map((key, index) => {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 3000);
@@ -250,34 +250,32 @@ class TypesSettings extends React.Component {
           delete data.new_token;
           delete data['new_token'];
         }
-        console.log(data);
+        
         this.fetchData();
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
   }
 
   render(props) {
-    // console.log(RBSheet.useRef());
+    // );
 
     if (this.state.externalData === null) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+          <ActivityIndicator size="large" color="#7DE24E" /> 
         </View>
       )
     } else {
-      console.log(this.state.premium);
+      
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/3859336229'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;
@@ -968,19 +966,10 @@ const styles = StyleSheet.create({
 
   },
   item: {
-    borderLeftWidth: 4, borderLeftColor: '#689F38',
-    borderRadius: 15,
     marginLeft: 5, marginRight: 5,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 7,
-    },
-    shadowOpacity: 0.41,
-    shadowRadius: 9.11,
+    borderBottomWidth: 1, 
     paddingTop: 10,
-    elevation: 6,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f2f2f2',
     marginVertical: 3,
     flex: 3,
     flexDirection: 'row',

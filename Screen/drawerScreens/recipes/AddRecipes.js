@@ -15,6 +15,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import DropdownAlert from 'react-native-dropdownalert';
 import { BackHandler } from 'react-native';
 import { BottomSheet } from 'react-native-btr';
+import { Picker } from '@react-native-picker/picker';
 
 import {
   AdMobBanner,
@@ -23,7 +24,7 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
+  TextInput, ActivityIndicator,
   Image,
   ScrollView,
   TouchableHighlight,
@@ -63,9 +64,10 @@ class EditRecipes extends React.Component {
     count: false,
     RBSheet2: false,
     RBSheet: false,
-    premium:0,
-    categoryplaceholder:'Категория',
-    catIndex:0
+    premium: 0,
+    categoryplaceholder: 'Категория',
+    catIndex: 0,
+    selectedValue: ''
   }
 
   setModalVisible = (visible) => {
@@ -160,7 +162,7 @@ class EditRecipes extends React.Component {
 
   async checkPremium() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/checkPremium', {
+    await fetch('https://kulinarcho.com/api/checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'recipe' }),
       headers: {
@@ -189,7 +191,7 @@ class EditRecipes extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -227,8 +229,8 @@ class EditRecipes extends React.Component {
           route.push(lastRoute);
         }
         let goRoute = route.pop();
-        console.log(goRoute);
-        console.log(route);
+        
+        
         if (goRoute != undefined) {
           AsyncStorage.setItem('backRoute', JSON.stringify(route));
           this.props.navigation.navigate(goRoute);
@@ -243,7 +245,7 @@ class EditRecipes extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("http://167.172.110.234/api/getProducts", {
+    fetch("https://kulinarcho.com/api/getProducts", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -282,7 +284,7 @@ class EditRecipes extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("http://167.172.110.234/api/getRecipeUnits", {
+    fetch("https://kulinarcho.com/api/getRecipeUnits", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -316,7 +318,7 @@ class EditRecipes extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('http://167.172.110.234/api/recipesAdd', {
+    await fetch('https://kulinarcho.com/api/recipesAdd', {
       method: 'POST',
       body: JSON.stringify({
         title: this.state.title,
@@ -327,7 +329,8 @@ class EditRecipes extends React.Component {
         time3: this.state.time3,
         textInputIngridients: this.state.textInputIngridients,
         textInput: this.state.textInput,
-        photo: this.state.image64
+        photo: this.state.image64,
+        category: this.state.selectedValue
       }),
       bodyParser: {
         json: { limit: '50mb', extended: true },
@@ -367,7 +370,7 @@ class EditRecipes extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -420,16 +423,16 @@ class EditRecipes extends React.Component {
 
 
   async pickImage() {
-    this.setState({checkCamera:true})
+    this.setState({ checkCamera: true })
   };
-  
-  async launchGalery(){
+
+  async launchGalery() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
-  
+
     if (result.width > 640) {
       let prop = result.width / 640;
       const manipResult = await ImageManipulator.manipulateAsync(
@@ -450,7 +453,7 @@ class EditRecipes extends React.Component {
       this.setImage(result.uri);
     }
   }
-  async launchCamera(){
+  async launchCamera() {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -482,7 +485,7 @@ class EditRecipes extends React.Component {
 
   async fetchDataTypes() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getTypes", {
+    fetch("https://kulinarcho.com/api/getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -517,7 +520,7 @@ class EditRecipes extends React.Component {
   async submitEditType2() {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/createProducts', {
+    await fetch('https://kulinarcho.com/api/createProducts', {
       method: 'POST',
       body: JSON.stringify({
         name: this.state.newProdTitle,
@@ -560,7 +563,7 @@ class EditRecipes extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -600,113 +603,111 @@ class EditRecipes extends React.Component {
     if (this.state.externalData === null && this.state.count === false && this.state.externalDataUnits === null) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+          <ActivityIndicator size="large" color="#7DE24E" />
         </View>
       )
     } else {
-      console.log(this.state.premium);
-      let Add =  <AdMobBanner
-      bannerSize="smartBannerLandscape" 
-      adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
-        servePersonalizedAds={true}/>;
-        if(this.state.premium != 0){
-          Add = <View></View>;
-        }
+      
+      let Add = <AdMobBanner
+        bannerSize="smartBannerLandscape"
+        adUnitID={'ca-app-pub-5428132222163769/6112419882'}
+        
+        servePersonalizedAds={true} />;
+      if (this.state.premium != 0) {
+        Add = <View></View>;
+      }
 
       if (this.state.count == 'ok' || this.state.count < 10) {
         return (
           <View style={styles.MainContainer}>
             <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
             <BottomSheet
-            animationType="slide"
-            transparent={true}
-            visible={this.state.checkCamera}
-            onBackdropPress={() => {
-              this.setState({checkCamera: false})
+              animationType="slide"
+              transparent={true}
+              visible={this.state.checkCamera}
+              onBackdropPress={() => {
+                this.setState({ checkCamera: false })
               }}
-            onRequestClose={() => {
-            this.setState({checkCamera: false})
-            }}
-          >
+              onRequestClose={() => {
+                this.setState({ checkCamera: false })
+              }}
+            >
 
-<View style={{
-              backgroundColor: '#fff',
-              width: '100%',
-              height: 120,
-              justifyContent: 'center',
-              borderTopRightRadius: 15,
-              borderTopLeftRadius: 15,
-            }}>
-              <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
+              <View style={{
+                backgroundColor: '#fff',
+                width: '100%',
+                height: 120,
+                justifyContent: 'center',
+                borderTopRightRadius: 15,
+                borderTopLeftRadius: 15,
+              }}>
+                <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
 
-                <TouchableOpacity onPress={() => {
-                        this.launchCamera()
+                  <TouchableOpacity onPress={() => {
+                    this.launchCamera()
 
-                }
-                }>
-                  <View style={{ flexDirection: 'row' }}>
+                  }
+                  }>
+                    <View style={{ flexDirection: 'row' }}>
 
-                    <Icon style={styles.icon}
-                      containerStyle={{
-                        backgroundColor: '#ebebeb',
-                        borderRadius: 20,
-                        padding: 5
-                      }}
-                      size={25}
-                      color={'black'}
+                      <Icon style={styles.icon}
+                        containerStyle={{
+                          backgroundColor: '#ebebeb',
+                          borderRadius: 20,
+                          padding: 5
+                        }}
+                        size={25}
+                        color={'black'}
 
-                      onPress={() => {
-                        this.launchCamera()
+                        onPress={() => {
+                          this.launchCamera()
 
 
-                      }
+                        }
 
-                      }
-                      type='ionicon'
-                      backgroundColor='silver'
-                      name='camera-outline'
-                    >Редактирай</Icon>
-                    <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Камера</Text>
-                  </View>
-                </TouchableOpacity>
+                        }
+                        type='ionicon'
+                        backgroundColor='silver'
+                        name='camera-outline'
+                      >Редактирай</Icon>
+                      <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Камера</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
+
+                  <TouchableOpacity onPress={() => {
+                    this.launchGalery()
+
+                  }
+                  }>
+                    <View style={{ flexDirection: 'row' }}>
+
+                      <Icon style={styles.icon}
+                        containerStyle={{
+                          backgroundColor: '#ebebeb',
+                          borderRadius: 20,
+                          padding: 5
+                        }}
+                        size={25}
+                        color={'black'}
+
+                        onPress={() => {
+                          this.launchGalery()
+                        }
+
+                        }
+                        type='ionicon'
+                        name='images-outline'
+                      >Редактирай</Icon>
+                      <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Галерия</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+
               </View>
-              <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
-
-                <TouchableOpacity onPress={() => {
-                        this.launchGalery()
-
-                }
-                }>
-                  <View style={{ flexDirection: 'row' }}>
-
-                    <Icon style={styles.icon}
-                      containerStyle={{
-                        backgroundColor: '#ebebeb',
-                        borderRadius: 20,
-                        padding: 5
-                      }}
-                      size={25}
-                      color={'black'}
-
-                      onPress={() => {
-                        this.launchGalery()
-                      }
-
-                      }
-                      type='ionicon'
-                      name='images-outline'
-                    >Редактирай</Icon>
-                    <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Галерия</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-
-            </View>
             </BottomSheet>
-            <ScrollView keyboardShouldPersistTaps = 'always' style={styles.scrollView} contentContainerStyle={{ flexGrow: 1 }} >
+            <ScrollView keyboardShouldPersistTaps='always' style={styles.scrollView} contentContainerStyle={{ flexGrow: 1 }} >
 
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
               </View>
@@ -737,6 +738,50 @@ class EditRecipes extends React.Component {
                   />
 
 
+                </View>
+                <View style={{ borderColor: '#689F38', borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, marginBottom: 10 }}>
+
+                  <Text style={{ flex: 1, marginBottom: 15, marginLeft: 20, textAlign: 'center', fontWeight: '200', fontSize: 18 }}>Категория</Text>
+
+                  <View style={{
+                    flex: 1,
+                    alignItems: "center", borderRadius: 15,
+                    marginLeft: 9, marginRight: 9,
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 7,
+                    },
+                    shadowOpacity: 0.41,
+                    shadowRadius: 9.11,
+                    marginBottom: 20,
+
+                    elevation: 6,
+                    backgroundColor: 'white',
+                  }}>
+                    <Picker
+                      selectedValue={this.state.selectedValue}
+                      style={{ height: 40, width: '90%' }}
+                      onValueChange={(itemValue, itemIndex) => {  this.state.selectedValue = itemValue }}
+                      itemStyle={{ backgroundColor: "red", color: "blue", fontFamily: "Ebrima", fontSize: 17 }}
+                    >
+
+                      <Picker.Item label="Избери" value="" />
+                      <Picker.Item label="Салати" value="1" />
+                      <Picker.Item label="Супи" value="2" />
+                      <Picker.Item label="Предястия" value="3" />
+                      <Picker.Item label="Сосове" value="4" />
+                      <Picker.Item label="Ястия с месо" value="5" />
+                      <Picker.Item label="Ястия без месо" value="6" />
+                      <Picker.Item label="Тестени" value="7" />
+                      <Picker.Item label="Десерти" value="8" />
+                      <Picker.Item label="Риба" value="9" />
+                      <Picker.Item label="Напитки" value="10" />
+                      <Picker.Item label="Зимнина" value="11" />
+                      <Picker.Item label="Бебешки и детски храни" value="12" />
+                      <Picker.Item label="Други" value="13" />
+                    </Picker>
+                  </View>
                 </View>
                 <View style={{ borderColor: '#689F38', borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, marginBottom: 10 }}>
                   <Text style={{ flex: 1, marginBottom: 15, marginLeft: 20, textAlign: 'center', fontWeight: '200', fontSize: 18 }}>Избор на изображение</Text>
@@ -787,7 +832,7 @@ class EditRecipes extends React.Component {
                   </TouchableHighlight>
 
                 </View>
-               
+
                 <View style={{ borderColor: '#689F38', borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, marginBottom: 10 }}>
 
                   <Text style={{ flex: 1, marginBottom: 15, marginLeft: 20, textAlign: 'center', fontWeight: '200', fontSize: 18 }}>Описание</Text>
@@ -977,7 +1022,7 @@ class EditRecipes extends React.Component {
 
                     this.setState({ unitPlaceholder: 'Разфасовка' });
                     // this.setModalVisible(true)0
-                    this.setState({RBSheet:true});
+                    this.setState({ RBSheet: true });
                   }} underlayColor="white">
                     <View style={{
                       flex: 3, flexDirection: "row",
@@ -1009,7 +1054,7 @@ class EditRecipes extends React.Component {
                             this.setState({ hint: '' });
                             this.setState({ unitPlaceholder: 'Разфасовка' });
                             // this.setModalVisible(true)0
-                            this.setState({RBSheet:true});
+                            this.setState({ RBSheet: true });
                           }
 
                           }
@@ -1095,8 +1140,10 @@ class EditRecipes extends React.Component {
                     marginLeft: 15, marginRight: 10, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
                     padding: 10
                   }}>
-                    <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1,
-                     borderColor: "silver", }}>
+                    <View style={{
+                      backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1,
+                      borderColor: "silver",
+                    }}>
                       <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                         size={30}
                         containerStyle={{
@@ -1310,7 +1357,7 @@ class EditRecipes extends React.Component {
                         this.setState({ placeholder: this.state.newProdTitle });
                         this.setState({ RBSheet2: false });
 
-                        this.setState({RBSheet:true});
+                        this.setState({ RBSheet: true });
 
                         this.submitEditType2();
                       }}
@@ -1320,7 +1367,7 @@ class EditRecipes extends React.Component {
                     <TouchableHighlight
                       style={{ ...styles.openButton, backgroundColor: "#f00000" }}
                       onPress={() => {
-                        this.setState({RBSheet:true});
+                        this.setState({ RBSheet: true });
                         this.setState({ RBSheet2: false });
 
                       }}
@@ -1391,7 +1438,7 @@ class EditRecipes extends React.Component {
                         this.setState({ unitsPlaceholder: 'Разфасовки' });
                         this.setState({ typesPlaceholder: 'Категория' });
                         this.setState({ RBSheet2: true });
-                        this.setState({RBSheet:false});
+                        this.setState({ RBSheet: false });
                       }}
                       itemsContainerStyle={{
                         //items container style you can pass maxHeight
@@ -1453,7 +1500,6 @@ class EditRecipes extends React.Component {
                     />
                     <SearchableDropdown
                       style={{}}
-                      onTextChange={(text) => console.log(text)}
                       //On text change listner on the searchable input
                       onItemSelect={(item) => this.setProductUnit(item)}
                       //onItemSelect called after the selection from the dropdown
@@ -1515,94 +1561,94 @@ class EditRecipes extends React.Component {
                   </View>
 
                   <View style={styles.modalBtn}>
-                  <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
- this.setState({RBSheet:false});
- this.submitEditType();
-            }} underlayColor="white">
-              <View style={{
-                flex: 3, flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: "white",
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 7,
-                },
-                shadowOpacity: 0.41,
-                shadowRadius: 9.11,
-                elevation: 6,
-                marginLeft: 15, marginRight: 10, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
-                padding: 10
-              }}>
-                <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
-                  <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
-                    size={30}
-                    containerStyle={{
-                      backgroundColor: '#ebebeb',
-                      padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
-                    }}
-                    color={'green'}
-                    onPress={() => {
-                      this.setState({RBSheet:false});
+                    <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
+                      this.setState({ RBSheet: false });
                       this.submitEditType();
-                    }
+                    }} underlayColor="white">
+                      <View style={{
+                        flex: 3, flexDirection: "row",
+                        alignItems: "center",
+                        backgroundColor: "white",
+                        shadowColor: "#000",
+                        shadowOffset: {
+                          width: 0,
+                          height: 7,
+                        },
+                        shadowOpacity: 0.41,
+                        shadowRadius: 9.11,
+                        elevation: 6,
+                        marginLeft: 15, marginRight: 10, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
+                        padding: 10
+                      }}>
+                        <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
+                          <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
+                            size={30}
+                            containerStyle={{
+                              backgroundColor: '#ebebeb',
+                              padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
+                            }}
+                            color={'green'}
+                            onPress={() => {
+                              this.setState({ RBSheet: false });
+                              this.submitEditType();
+                            }
 
-                    }
-                    type='ionicon'
-                    backgroundColor='silver'
-                    name='checkmark-outline'
-                  ></Icon>
+                            }
+                            type='ionicon'
+                            backgroundColor='silver'
+                            name='checkmark-outline'
+                          ></Icon>
 
-                </View>
-                <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
-                  <Text style={{ flex: 3, marginTop: 15 }}>Запази</Text>
-                </View>
-              </View>
-            </TouchableHighlight>
-            <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
-                        this.setState({RBSheet:false});
-                      }} underlayColor="white"
-            >
-              <View style={{
-                flex: 3, flexDirection: "row",
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 7,
-                },
-                shadowOpacity: 0.41,
-                shadowRadius: 9.11,
-                elevation: 6,
-                alignItems: "center",
-                backgroundColor: "white",
-                marginLeft: 10, marginRight: 15, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
-                padding: 10
-              }}>
-                <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
-                  <Icon style={{ flex: 2, marginRight: 15, height: 40, borderRightWidth: 1, borderColor: 'silver' }}
-                    size={30}
-                    containerStyle={{
-                      backgroundColor: '#ebebeb',
-                      padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
-                    }}
-                    color={'red'}
-                    onPress={() => {
-                      this.setState({RBSheet:false});
-                    }
+                        </View>
+                        <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                          <Text style={{ flex: 3, marginTop: 15 }}>Запази</Text>
+                        </View>
+                      </View>
+                    </TouchableHighlight>
+                    <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
+                      this.setState({ RBSheet: false });
+                    }} underlayColor="white"
+                    >
+                      <View style={{
+                        flex: 3, flexDirection: "row",
+                        shadowColor: "#000",
+                        shadowOffset: {
+                          width: 0,
+                          height: 7,
+                        },
+                        shadowOpacity: 0.41,
+                        shadowRadius: 9.11,
+                        elevation: 6,
+                        alignItems: "center",
+                        backgroundColor: "white",
+                        marginLeft: 10, marginRight: 15, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
+                        padding: 10
+                      }}>
+                        <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
+                          <Icon style={{ flex: 2, marginRight: 15, height: 40, borderRightWidth: 1, borderColor: 'silver' }}
+                            size={30}
+                            containerStyle={{
+                              backgroundColor: '#ebebeb',
+                              padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
+                            }}
+                            color={'red'}
+                            onPress={() => {
+                              this.setState({ RBSheet: false });
+                            }
 
-                    }
-                    type='ionicon'
-                    backgroundColor='silver'
-                    name='close-outline'
-                  >Редактира��</Icon>
+                            }
+                            type='ionicon'
+                            backgroundColor='silver'
+                            name='close-outline'
+                          >Редактира��</Icon>
 
-                </View>
-                <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
-                  <Text style={{ flex: 3, marginTop: 15 }}>Откажи</Text>
-                </View>
-              </View>
-            </TouchableHighlight>
-                    
+                        </View>
+                        <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                          <Text style={{ flex: 3, marginTop: 15 }}>Откажи</Text>
+                        </View>
+                      </View>
+                    </TouchableHighlight>
+
                   </View>
 
                 </View>

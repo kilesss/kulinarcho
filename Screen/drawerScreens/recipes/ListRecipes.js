@@ -26,7 +26,7 @@ import { BackHandler } from 'react-native';
 import {
     Dimensions,
     SafeAreaView,
-    FlatList,
+    FlatList,ActivityIndicator,
     View,
     Text,
     TextInput,
@@ -110,8 +110,8 @@ class ListRecipes extends React.Component {
                     route.push(lastRoute);
                 }
                 let goRoute = route.pop();
-                console.log(goRoute);
-                console.log(route);
+                
+                
                 if (goRoute != undefined) {
                     AsyncStorage.setItem('backRoute', JSON.stringify(route));
                     this.props.navigation.navigate(goRoute);
@@ -126,7 +126,7 @@ class ListRecipes extends React.Component {
 
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        await fetch('http://167.172.110.234/api/recipesDelete', {
+        await fetch('https://kulinarcho.com/api/recipesDelete', {
             method: 'POST',
             body: JSON.stringify({
                 id: id,
@@ -156,7 +156,7 @@ class ListRecipes extends React.Component {
                 this.fetchData();
             }
         ).catch(function (error) {
-            console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+            
             // ADD THIS THROW error
             throw error;
         });
@@ -167,7 +167,7 @@ class ListRecipes extends React.Component {
         var decoded = jwt_decode(DEMO_TOKEN);
         this.setState({ userId: decoded.oldId })
 
-        fetch("http://167.172.110.234/api/recipes?id=" + this.state.typeId, {
+        fetch("https://kulinarcho.com/api/recipes?id=" + this.state.typeId, {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -196,7 +196,7 @@ class ListRecipes extends React.Component {
                 this.setState({ externalData: newData });
 
             }).catch(function (error) {
-                console.log('There has been a problem with your fetch operation: ' + error.message);
+                
                 // ADD THIS THROW error
                 throw error;
             }).done();
@@ -208,18 +208,16 @@ class ListRecipes extends React.Component {
         if (this.state.externalData === null) {
             return (
                 <View style={styles.MainContainer}>
-                    <View style={styles.topView}>
-                        <Text>Loading....</Text>
-                    </View>
+                   <ActivityIndicator size="large" color="#7DE24E" /> 
                 </View>
             )
         } else {
 
-            console.log(this.state.premium);
+            
             let Add =  <AdMobBanner
             bannerSize="smartBannerLandscape" 
             adUnitID={'ca-app-pub-5428132222163769/5691292646'} 
-              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+               
               servePersonalizedAds={true}/>;
               if(this.state.premium != 0){
                 Add = <View></View>;
@@ -239,7 +237,7 @@ class ListRecipes extends React.Component {
                     publicRec = 'В процес на одобрение'
                     publicRecColor = "blue"
                 }
-                console.log(item);
+                
                 let { width } = Dimensions.get('window');
                 let fields = [];
                 if (this.state.sort == 'typeAsc' || this.state.sort == 'typeDesc') {
@@ -619,6 +617,8 @@ class ListRecipes extends React.Component {
                             showNoResultDefault={'false'}
 
                             onItemSelect={(item) => {
+                                this.setState({externalData:null})
+
                                 this.setState({ placeholder: item.name }); this.setState({
                                     typeId: item.id
                                 });

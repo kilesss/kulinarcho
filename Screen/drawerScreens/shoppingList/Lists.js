@@ -24,7 +24,7 @@ import {
   View,
   Text,
   TextInput,
-  Alert,
+  Alert,ActivityIndicator,
   Modal,
   TouchableHighlight
 } from "react-native";
@@ -104,7 +104,7 @@ class Lists extends React.Component {
 
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/shoppingList", {
+    fetch("https://kulinarcho.com/api/shoppingList", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -134,7 +134,7 @@ class Lists extends React.Component {
   }
   async checkPremium() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/checkPremium', {
+    await fetch('https://kulinarcho.com/api/checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'shopping' }),
       headers: {
@@ -162,14 +162,14 @@ class Lists extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
   }
   async submitDeleteType() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/deleteList', {
+    await fetch('https://kulinarcho.com/api/deleteList', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.typeid }),
       headers: {
@@ -198,7 +198,7 @@ class Lists extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -210,7 +210,7 @@ class Lists extends React.Component {
       active = 1
     }
 
-    await fetch('http://167.172.110.234/api/updateList', {
+    await fetch('https://kulinarcho.com/api/updateList', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.typeid, name: this.state.typeTitle, isShared: active }),
       headers: {
@@ -255,7 +255,7 @@ class Lists extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -290,19 +290,19 @@ class Lists extends React.Component {
     });
   }
   test(){
-    console.log(this.state.count);
-    console.log(this.state.count);
-    console.log(this.state.count);
-    console.log(this.state.count);
-    console.log(this.state.count);
-    console.log(this.state.count);
-    console.log(this.state.count);
-    console.log(this.state.count);
+    
+    
+    
+    
+    
+    
+    
+    
 
   }
  async _saveDetails() {
   var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/checkPremium', {
+    await fetch('https://kulinarcho.com/api/checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'shopping' }),
       headers: {
@@ -358,7 +358,7 @@ class Lists extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -384,7 +384,7 @@ class Lists extends React.Component {
   async archiveShoppingList(id) {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('http://167.172.110.234/api/archiveList', {
+    await fetch('https://kulinarcho.com/api/archiveList', {
       method: 'POST',
       body: JSON.stringify({
         listId: id,
@@ -417,7 +417,7 @@ class Lists extends React.Component {
         this.fetchData();
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -431,9 +431,9 @@ class Lists extends React.Component {
     if (this.state.externalData === null && this.state.count === false) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+                    <ActivityIndicator size="large" color="#7DE24E" />   
+
+       
         </View>
       )
     } else {
@@ -447,7 +447,7 @@ class Lists extends React.Component {
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;
@@ -586,13 +586,16 @@ class Lists extends React.Component {
                     padding: 10
                   }}>
                     <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
+                    
                       <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                         size={30}
                         containerStyle={{
-                          backgroundColor:'green' ,
+                          backgroundColor: '#ebebeb',
                           padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
                         }}
-                        color={ '#ebebeb'}
+                        size={30}
+
+                        color={ 'green'}
                         onPress={() => {
                           this.setState({editList:false});
                           this.submitEditType();
@@ -606,7 +609,8 @@ class Lists extends React.Component {
                       ></Icon>
 
                     </View>
-                    <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                    <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1,
+                     borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
                       <Text style={{ flex: 3, marginTop: 15 }}>Запази</Text>
                     </View>
                   </View>
@@ -626,17 +630,19 @@ class Lists extends React.Component {
                     elevation: 6,
                     alignItems: "center",
                     backgroundColor: "white",
+                    borderRightWidth:1,
                     marginLeft: 10, marginRight: 15, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
                     padding: 10
                   }}>
-                    <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
-                      <Icon style={{ flex: 2, marginRight: 15, height: 40, borderRightWidth: 1, borderColor: 'silver' }}
+                    <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, 
+                    borderColor: "silver", }}>
+                      <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                         size={30}
                         containerStyle={{
-                          backgroundColor: 'red',
+                          backgroundColor: '#ebebeb',
                           padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
                         }}
-                        color={'#ebebeb'}
+                        color={'red'}
                         onPress={() => {
 
                           this.setState({editList:false})

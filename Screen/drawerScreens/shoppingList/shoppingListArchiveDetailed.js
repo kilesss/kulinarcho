@@ -24,7 +24,7 @@ import {
   SafeAreaView,
   TouchableHighlight,
   FlatList,
-  Alert,
+  Alert,ActivityIndicator,
 
   View,
   Text,
@@ -44,7 +44,7 @@ class shoppingListArchiveDetailed extends React.Component {
     const { navigation } = this.props;
 
     this.focusListener = navigation.addListener('didFocus', async () => {
-      
+
 
       // await this.fetchDataShoppingLists();
       await this.fetchData();
@@ -61,7 +61,7 @@ class shoppingListArchiveDetailed extends React.Component {
       }) : null
     }
   }
- 
+
 
   handleBackButtonClick() {
 
@@ -72,7 +72,7 @@ class shoppingListArchiveDetailed extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('http://167.172.110.234/api/deleteArchiveWeekMenu', {
+    await fetch('https://kulinarcho.com/api/deleteArchiveWeekMenu', {
       method: 'POST',
       body: JSON.stringify({
         id: id,
@@ -108,7 +108,7 @@ class shoppingListArchiveDetailed extends React.Component {
         this.fetchData();
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+
       // ADD THIS THROW error
       throw error;
     });
@@ -123,21 +123,21 @@ class shoppingListArchiveDetailed extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+
+
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
       }
     })
   );
-  
+
   }
 
   async restoreShoppingList() {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/checkPremium', {
+    await fetch('https://kulinarcho.com/api/checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'shopping' }),
       headers: {
@@ -161,9 +161,9 @@ class shoppingListArchiveDetailed extends React.Component {
           delete data.new_token;
           delete data['new_token'];
         }
-        
+
         if (data.response == 'ok' || data.response < 2) {
-          
+
     var active = 0;
     if (this.state.isActive == 1) {
       active = 1
@@ -171,14 +171,14 @@ class shoppingListArchiveDetailed extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
     var DEMO_TOKEN2 = await AsyncStorage.getItem('ArchiveWeekMenuID');
-    console.log(DEMO_TOKEN2);
-    console.log(DEMO_TOKEN);
 
-    await fetch('http://167.172.110.234/api/restoreArchive', {
+
+
+    await fetch('https://kulinarcho.com/api/restoreArchive', {
       method: 'POST',
       body: JSON.stringify({
         listID: DEMO_TOKEN2,
-   
+
       }),
 
       headers: {
@@ -209,13 +209,13 @@ class shoppingListArchiveDetailed extends React.Component {
           delete data['new_token'];
 
         }
-        console.log('sadasdasdasdasdasdasd');
+
         this.props.navigation.navigate('ShoppingLists');
 
         // this.fetchData();
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+
       // ADD THIS THROW error
       throw error;
     });
@@ -243,17 +243,17 @@ class shoppingListArchiveDetailed extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+
       // ADD THIS THROW error
       throw error;
     });
   }
-  
+
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     var DEMO_TOKEN2 = await AsyncStorage.getItem('ArchiveWeekMenuID');
 
-    fetch("http://167.172.110.234/api/getShoppingListArchive", {
+    fetch("https://kulinarcho.com/api/getShoppingListArchive", {
       method: "POST",
       body: JSON.stringify({
         id: DEMO_TOKEN2,
@@ -277,17 +277,16 @@ class shoppingListArchiveDetailed extends React.Component {
         this.state.premium = data.premium;
         delete data.premium;
         if (data.new_token) {
-          AsyncStorage.setItem('access_token', data.new_token);
+            AsyncStorage.setItem('access_token', data.new_token);
 
-          delete data.new_token;
-          delete data['new_token'];
+            delete data.new_token;
+            delete data['new_token'];
 
+
+            this.setState({externalData: JSON.parse(data[0].list)});
         }
-        console.log(JSON.parse(data[0].list));
-        this.setState({ externalData: JSON.parse(data[0].list) });
-
       }).catch(function (error) {
-        console.log('There has been a problem with your fetch operation: ' + error.message);
+
         // ADD THIS THROW error
         throw error;
       }).done();
@@ -301,11 +300,11 @@ class shoppingListArchiveDetailed extends React.Component {
   }
   render(props) {
     var cat = '';
-    console.log(this.state.premium);
+
     let Add =  <AdMobBanner
-    bannerSize="smartBannerLandscape" 
-    adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-      onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+    bannerSize="smartBannerLandscape"
+    adUnitID={'ca-app-pub-5428132222163769/6112419882'}
+
       servePersonalizedAds={true}/>;
       if(this.state.premium != 0){
         Add = <View></View>;
@@ -451,7 +450,7 @@ class shoppingListArchiveDetailed extends React.Component {
 
             </View>
           </View>
-          
+
         </View>
       );
     };
@@ -488,9 +487,7 @@ class shoppingListArchiveDetailed extends React.Component {
     if (this.state.externalData === null) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+          <ActivityIndicator size="large" color="#7DE24E" />
         </View>
       )
     } else {
@@ -526,8 +523,8 @@ class shoppingListArchiveDetailed extends React.Component {
             flexDirection: 'row',
             backgroundColor: 'white',
           }}>{Add}</View>
-          
-                
+
+
           <View style={{
             position: 'absolute',
             flex: 1,
@@ -579,7 +576,7 @@ class shoppingListArchiveDetailed extends React.Component {
                   ></Icon>
 
                 </View>
-                
+
                 <View style={{ flex: 3, backgroundColor: 'white', height: 45, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
                   <Text style={{ flex: 3, marginTop: 10 }}>Възстанови списък</Text>
                 </View>

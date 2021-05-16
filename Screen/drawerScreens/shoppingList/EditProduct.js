@@ -9,7 +9,7 @@ import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import {
   View,
-  Alert,
+  Alert,ActivityIndicator,
   Text,
   TouchableOpacity,
   TouchableHighlight,
@@ -36,8 +36,8 @@ class EditProduct extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+         
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -151,7 +151,7 @@ console.log(JSON.stringify({
   typeId: this.state.typesID,
   photo: this.state.image64
 }));
-    await fetch('http://167.172.110.234/api/createProducts', {
+    await fetch('https://kulinarcho.com/api/createProducts', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.typeid,
@@ -188,11 +188,11 @@ console.log(JSON.stringify({
           delete data.new_token;
           delete data['new_token'];
         }
-        console.log(data);
+        
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -201,7 +201,7 @@ console.log(JSON.stringify({
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     var t = await AsyncStorage.getItem('productId');
 
-    await fetch("http://167.172.110.234/api/getProducts?productId=" + t, {
+    await fetch("https://kulinarcho.com/api/getProducts?productId=" + t, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN,
@@ -209,7 +209,7 @@ console.log(JSON.stringify({
       }
     }).then(response => response.json())
       .then(data => {
-        console.log(data);
+        
         this.setState({ newProdTitle: data[0].name });
         this.setState({ placeholderType: data[0].types });
         this.setState({ placeholderUnits: data[0].units });
@@ -247,7 +247,7 @@ console.log(JSON.stringify({
   }
   async fetchDataTypes() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getTypes", {
+    fetch("https://kulinarcho.com/api/getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -285,19 +285,14 @@ this.state.premium = data.premium;
     var t = await AsyncStorage.getItem('productId');
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    console.log(DEMO_TOKEN);
+    
     console.log(JSON.stringify({
       type: 'products',
       productId: t,
 
     }));
-  await fetch("http://167.172.110.234/api/deleteImage", {
-      method: "POST",
-      body: JSON.stringify({
-        type: 'products',
-        productId: t,
+  await fetch("https://kulinarcho.com/api/deleteImage", {
 
-      }),
       method: 'POST',
      
       headers: {
@@ -309,10 +304,10 @@ this.state.premium = data.premium;
      
     }).then(
       async response => {
-        console.log(response)
+        
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -337,7 +332,7 @@ async pickImage() {
  
   if(this.state.premium !== 1){
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/checkPremium', {
+    await fetch('https://kulinarcho.com/api/checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'images' }),
       headers: {
@@ -390,7 +385,7 @@ async pickImage() {
           
       } 
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -478,17 +473,15 @@ render(props) {
   if (this.state.externalDataProducts === null) {
     return (
       <View style={styles.MainContainer}>
-        <View style={styles.topView}>
-          <Text>Loading....</Text>
-        </View>
+      <ActivityIndicator size="large" color="#7DE24E" /> 
       </View>
     )
   } else {
-    console.log(this.state.premium);
+    
     let Add =  <AdMobBanner
     bannerSize="smartBannerLandscape" 
     adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-      onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+       
       servePersonalizedAds={true}/>;
       if(this.state.premium != 0){
         Add = <View></View>;
@@ -684,7 +677,6 @@ render(props) {
         <SearchableDropdown
               style={{ width: 150 }}
               //On text change listner on the searchable input
-              onTextChange={(text) => console.log(text)}
               onItemSelect={(item) => {
                 this.setState({ placeholderType: item.name })
                 this.setState({

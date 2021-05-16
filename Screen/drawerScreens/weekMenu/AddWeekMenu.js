@@ -18,7 +18,7 @@ import {
   View,
   Text,
   TextInput,
-  Alert,
+  Alert,ActivityIndicator,
   Dimensions,
   ScrollView,
   TouchableHighlight
@@ -45,8 +45,8 @@ class AddWeekMenu extends React.Component {
           route.push(lastRoute);
         }
         let goRoute = route.pop();
-        console.log(goRoute);
-        console.log(route);
+        
+        
         if (goRoute != undefined) {
           AsyncStorage.setItem('backRoute', JSON.stringify(route));
           this.props.navigation.navigate(goRoute);
@@ -127,7 +127,7 @@ class AddWeekMenu extends React.Component {
   }
   async checkPremium() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/checkPremium', {
+    await fetch('https://kulinarcho.com/api/checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'menu' }),
       headers: {
@@ -156,7 +156,7 @@ class AddWeekMenu extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -189,7 +189,7 @@ class AddWeekMenu extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("http://167.172.110.234/api/recipes", {
+    fetch("https://kulinarcho.com/api/recipes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -222,11 +222,11 @@ class AddWeekMenu extends React.Component {
 
 
   async fetchDataMenu(id) {
-    console.log(id)
+    
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     this.setState({ edit: id });
-    fetch("http://167.172.110.234/api/weekMenuID?id=" + id, {
+    fetch("https://kulinarcho.com/api/weekMenuID?id=" + id, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -279,7 +279,7 @@ class AddWeekMenu extends React.Component {
 
     
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/submitWeekMenu', {
+    await fetch('https://kulinarcho.com/api/submitWeekMenu', {
       method: 'POST',
       body: JSON.stringify({
         endDate: this.state.endDate,
@@ -314,7 +314,7 @@ class AddWeekMenu extends React.Component {
         if (generate === 1) {
           this.props.navigation.navigate('ListWeekMenu');
         } else {
-          console.log(data)
+          
           AsyncStorage.setItem('productsGenerate', JSON.stringify(data)).then(data => {
             this.props.navigation.navigate('GenerateShoppingList')
 
@@ -326,7 +326,7 @@ class AddWeekMenu extends React.Component {
       }
 
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -515,11 +515,11 @@ class AddWeekMenu extends React.Component {
                 color={'silver'}
                 onPress={() => {
                   let count = index + 1;
-                  console.log(count);
-                  console.log('count');
+                  
+                  
 
                   this.setState({ dayDropdown: index })
-                  console.log(this.state.dayDropdown);
+                  
                   // this.setState({modalEditTitle: 'Редактиране на списък'})
                   this.RBSheet.open();
                   this.setState({ recipeDropdownIndex: 'Рецепта' })
@@ -554,17 +554,15 @@ class AddWeekMenu extends React.Component {
     if (this.state.externalData === null && this.state.count === false) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+         <ActivityIndicator size="large" color="#7DE24E" /> 
         </View>
       )
     } else {
-      console.log(this.state.premium);
+      
       let Add = <AdMobBanner
         bannerSize="smartBannerLandscape"
         adUnitID={'ca-app-pub-5428132222163769/3462576946'}
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)}
+        
         servePersonalizedAds={true} />;
       if (this.state.premium != 0) {
         Add = <View></View>;
@@ -914,7 +912,6 @@ class AddWeekMenu extends React.Component {
                   showNoResultDefault={'false'}
 
                   style={{}}
-                  onTextChange={(text) => console.log(text)}
                   //On text change listner on the searchable input
                   onItemSelect={(item) => this.setProductID(item.id)}
                   //onItemSelect called after the selection from the dropdown

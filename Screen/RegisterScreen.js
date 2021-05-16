@@ -54,9 +54,9 @@ const RegisterScreen = props => {
             email: userEmail,
             password: password,
         });
-        console.log(dataToSend);
+        
 
-        fetch('http://167.172.110.234/api/signup', {
+        fetch('https://kulinarcho.com/api/signup', {
             method: 'POST',
             body: dataToSend,
             headers: {

@@ -14,7 +14,7 @@ import { BackHandler } from 'react-native';
 
 import {
     StyleSheet,
-    View,
+    View,ActivityIndicator,
     Text,
     ScrollView,
     Dimensions} from "react-native";
@@ -58,7 +58,7 @@ class weekMenuArchiveDetailed extends React.Component {
 
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        await fetch('http://167.172.110.234/api/deleteArchiveWeekMenu', {
+        await fetch('https://kulinarcho.com/api/deleteArchiveWeekMenu', {
             method: 'POST',
             body: JSON.stringify({
                 id: id,
@@ -89,7 +89,7 @@ class weekMenuArchiveDetailed extends React.Component {
                 this.fetchData();
             }
         ).catch(function (error) {
-            console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+            
             // ADD THIS THROW error
             throw error;
         });
@@ -104,8 +104,8 @@ class weekMenuArchiveDetailed extends React.Component {
               route.push(lastRoute);
           }
           let goRoute = route.pop();
-             console.log(goRoute);
-      console.log(route);
+             
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -119,7 +119,7 @@ class weekMenuArchiveDetailed extends React.Component {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
         var DEMO_TOKEN2 = await AsyncStorage.getItem('ArchiveWeekMenuID');
 
-        fetch("http://167.172.110.234/api/getArchiveWeekMenu?id=" + DEMO_TOKEN2, {
+        fetch("https://kulinarcho.com/api/getArchiveWeekMenu?id=" + DEMO_TOKEN2, {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -144,7 +144,7 @@ class weekMenuArchiveDetailed extends React.Component {
                 this.setState({ externalData: data });
 
             }).catch(function (error) {
-                console.log('There has been a problem with your fetch operation: ' + error.message);
+                
                 // ADD THIS THROW error
                 throw error;
             }).done();
@@ -257,17 +257,15 @@ class weekMenuArchiveDetailed extends React.Component {
         if (this.state.externalData === null) {
             return (
                 <View style={styles.MainContainer}>
-                    <View style={styles.topView}>
-                        <Text>Loading....</Text>
-                    </View>
+                    <ActivityIndicator size="large" color="#7DE24E" /> 
                 </View>
             )
         } else {
-            console.log(this.state.premium);
+            
             let Add =  <AdMobBanner
             bannerSize="smartBannerLandscape" 
             adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+               
               servePersonalizedAds={true}/>;
               if(this.state.premium != 0){
                 Add = <View></View>;

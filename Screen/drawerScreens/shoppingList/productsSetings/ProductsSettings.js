@@ -17,7 +17,7 @@ import { BackHandler } from 'react-native';
 import {
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
+  SafeAreaView,ActivityIndicator,
   FlatList, View,
   Text, Dimensions,
   TouchableHighlight
@@ -43,8 +43,8 @@ class ProductsSettings extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+         
+      
               AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
     })
@@ -54,8 +54,7 @@ class ProductsSettings extends React.Component {
   }
 
   handleBackButtonClick() {
-    console.log('asdasd');
-    console.log(this.props.navigation.dangerouslyGetParent())
+    
     this.props.navigation.navigate('HomeScreen');
     return true;
   }
@@ -137,7 +136,7 @@ class ProductsSettings extends React.Component {
 
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getProducts", {
+    fetch("https://kulinarcho.com/api/getProducts", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -196,7 +195,7 @@ class ProductsSettings extends React.Component {
     //   AdMobInterstitial.setAdUnitID("ca-app-pub-5428132222163769/6908897742");
     //   await AdMobInterstitial.requestAdAsync({servePersonalizedAds:false});
     //   await AdMobInterstitial.showAdAsync().then(data => {
-    //     console.log(data);
+    //     
     //   })
     // }
       // this.fetchDataUnits()
@@ -226,10 +225,9 @@ class ProductsSettings extends React.Component {
     this.focusListener.remove();
   }
   async submitDeleteType() {
-    console.log(JSON.stringify({ id: this.state.typeid }));
-
+   
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/deleteProducts', {
+    await fetch('https://kulinarcho.com/api/deleteProducts', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.typeid }),
       headers: {
@@ -242,11 +240,11 @@ class ProductsSettings extends React.Component {
     }).then(
       async response => {
         const data = await response.json();
-        console.log(data);
+        
         if (data.errors) {
           Object.keys(data.errors).map((key, index) => {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
-          })
+          }) 
         }
         if (data.login && data.login == true) {
           AsyncStorage.clear();
@@ -262,7 +260,7 @@ class ProductsSettings extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -272,17 +270,15 @@ class ProductsSettings extends React.Component {
     if (this.state.externalData === null) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+         <ActivityIndicator size="large" color="#7DE24E" /> 
         </View>
       )
     } else {
-      console.log(this.state.premium);
+      
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/6481630131'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;
@@ -300,10 +296,11 @@ class ProductsSettings extends React.Component {
         if (item !== t) {
           t = item;
           return (<View>
-            <Text style={{ marginTop: 10, marginBottom: 10, alignItems: 'center', textAlign: 'center', }}>    {t}
+            <Text style={{ marginTop: 10, marginBottom: 10, alignItems: 'center', textAlign: 'center',fontSize: 18}}>    {t}
             </Text>
           </View>)
         }
+
 
       }
       const renderItem = ({ item }) => {
@@ -437,14 +434,7 @@ class ProductsSettings extends React.Component {
             >
               <Text style={styles.customBtnBGTop}>Категории</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity
-              style={{ ...styles.customBtnText, borderRightWidth: 0 }}
-              onPress={() =>
-                this.props.navigation.navigate('CategoriesSettings')
-              }
-            >
-              <Text style={styles.customBtnBGTop}>Разфасовки</Text>
-            </TouchableOpacity> */}
+
           </View>
 
           <SafeAreaView style={styles.container}>
@@ -847,19 +837,10 @@ const styles = StyleSheet.create({
 
   },
   item: {
-    borderLeftWidth: 4, borderLeftColor: '#689F38',
-    borderRadius: 15,
     marginLeft: 5, marginRight: 5,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 7,
-    },
-    shadowOpacity: 0.41,
-    shadowRadius: 9.11,
+    borderBottomWidth: 1, 
     paddingTop: 10,
-    elevation: 6,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f2f2f2',
     marginVertical: 3,
     flex: 3,
     flexDirection: 'row',

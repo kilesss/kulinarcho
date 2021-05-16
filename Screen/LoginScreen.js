@@ -9,351 +9,348 @@ import React, { useState } from 'react';
 
 //Import all required component
 import {
-    StyleSheet,
-    TextInput,
-    View,
-    Text,
-    Image,
-    Keyboard,
-    TouchableOpacity,
-    KeyboardAvoidingView,
-    Alert
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  Image,ScrollView,
+  Keyboard,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Loader from './Components/loader';
 import * as Facebook from 'expo-facebook';
-import * as Google from 'expo-google-app-auth';
 
-    const LoginScreen = props => {
-    let [userEmail, setUserEmail] = useState('');
-    let [userPassword, setUserPassword] = useState('');
-    let [loading, setLoading] = useState(false);
-    let [errortext, setErrortext] = useState('');
-    state = { user: null };
-    const [user, setUser] = useState(null);
-    const [client, setClient] = useState(null);
+const LoginScreen = props => {
+  let [userEmail, setUserEmail] = useState('');
+  let [userPassword, setUserPassword] = useState('');
+  let [loading, setLoading] = useState(false);
+  let [errortext, setErrortext] = useState('');
+  state = { user: null };
+  const [user, setUser] = useState(null);
+  const [client, setClient] = useState(null);
 
-  
 
-    facebookLogIn = async() => {
 
+  facebookLogIn = async () => {
+
+
+    try {
+      await Facebook.initializeAsync(
+        {
+          appId: '1106295049885077',
+        }
+      );
+      const {
+        type,
+        token,
+      } = await Facebook.logInWithReadPermissionsAsync({
+        permissions: ['public_profile', 'email'],
+      });
+      if (type === 'success') {
+        // Get the user's name using Facebook's Graph API
+        const response = await fetch(`https://graph.facebook.com/me?fields=id,name,picture.type(large),email&access_token=${token}`);
+        // 
+        //   Alert.alert('Logged in!', `Hi ${(await response.json()).name}`);
+        const data = await response.json();
         
-        try {
-            await Facebook.initializeAsync(
-                {
-                    appId: '1106295049885077',
-                  }
-                );
-            const {
-              type,
-              token,
-            } = await Facebook.logInWithReadPermissionsAsync({
-              permissions: ['public_profile', 'email'],
-            });
-            if (type === 'success') {
-              // Get the user's name using Facebook's Graph API
-              const response = await fetch(`https://graph.facebook.com/me?fields=id,name,picture.type(large),email&access_token=${token}`);
-              // console.log(response);
-            //   Alert.alert('Logged in!', `Hi ${(await response.json()).name}`);
-              const data = await response.json();
-              console.log(data);
-              setUser(data);
-            //   username = user.name;
-              Alert.alert('Logged in with Facebook!', 'Name:' + ' ' + user.name + '\n' + 'Email:' + ' ' + user.email);
-            } else {
-              console.log(response.json())
-              // type === 'cancel'
-            }
-          } catch ({ message }) {
-            alert(`Facebook Login Error: ${message}`);
-          }
+        setUser(data);
+        //   username = user.name;
+        Alert.alert('Logged in with Facebook!', 'Name:' + ' ' + user.name + '\n' + 'Email:' + ' ' + user.email);
+      } else {
+        // type === 'cancel'
+      }
+    } catch ({ message }) {
+      alert(`Facebook Login Error: ${message}`);
+    }
 
 
-        //   await Facebook.logInWithReadPermissionsAsync({
-        //     appId: '922127875302804',
-        //   });
-        //   const {
-        //     type,
-        //     token,
-        //     expirationDate,
-        //     permissions,
-        //     declinedPermissions,
-        //   } = await Facebook.logInWithReadPermissionsAsync({
-        //     permissions: ['public_profile'],
-        //   }).catch(function (error) {
-        //     console.log('There has been a problem with your fetch operation: ' + error.message);
-        //     // ADD THIS THROW error
-        //     throw error;
-        //   });
-        //   console.log(type);
-        //   if (type === 'success') {
-        //     // Get the user's name using Facebook's Graph API
-        //     const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+    //   await Facebook.logInWithReadPermissionsAsync({
+    //     appId: '922127875302804',
+    //   });
+    //   const {
+    //     type,
+    //     token,
+    //     expirationDate,
+    //     permissions,
+    //     declinedPermissions,
+    //   } = await Facebook.logInWithReadPermissionsAsync({
+    //     permissions: ['public_profile'],
+    //   }).catch(function (error) {
+    //     
+    //     // ADD THIS THROW error
+    //     throw error;
+    //   });
+    //   
+    //   if (type === 'success') {
+    //     // Get the user's name using Facebook's Graph API
+    //     const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
 
-        //     Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
-        //   } else {
-        //     // type === 'cancel'
-        //   }
-       
-      };
-    
-       const run=() =>{
-        Alert.alert('Logged in with Google!', 'Name:' + ' ' + client.name + '\n' + 'Email:' + ' ' + client.email);
-       }
+    //     Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
+    //   } else {
+    //     // type === 'cancel'
+    //   }
+
+  };
+
+  const run = () => {
+    Alert.alert('Logged in with Google!', 'Name:' + ' ' + client.name + '\n' + 'Email:' + ' ' + client.email);
+  }
 
 
-       signInWithGoogleAsync = async() => {
-        try {
-          const result = await Google.logInAsync({
-            androidClientId: '1052999349908-kjhff3atsjdfdisrjetn08mh5gp2emqg.apps.googleusercontent.com',
-            // iosClientId: YOUR_CLIENT_ID_HERE,
-            scopes: ['profile', 'email'],
-          });
-      
-          if (result.type === 'success') {
-            const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${result.accessToken}`)
-            // console.log(response);
-            console.log(result);
-            const clientdata = await response.json();
-            setClient(clientdata)
-            // console.log(client);
-            // Alert.alert('Logged in with Google!', 'Name:' + ' ' + client.name + '\n' + 'Email:' + ' ' + client.email);
-            run();
-            return result.accessToken;
+  signInWithGoogleAsync = async () => {
+    try {
+      const result = await Google.logInAsync({
+        androidClientId: '1052999349908-kjhff3atsjdfdisrjetn08mh5gp2emqg.apps.googleusercontent.com',
+        // iosClientId: YOUR_CLIENT_ID_HERE,
+        scopes: ['profile', 'email'],
+      });
+
+      if (result.type === 'success') {
+        const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${result.accessToken}`)
+        // 
+        
+        const clientdata = await response.json();
+        setClient(clientdata)
+        // 
+        // Alert.alert('Logged in with Google!', 'Name:' + ' ' + client.name + '\n' + 'Email:' + ' ' + client.email);
+        run();
+        return result.accessToken;
+      } else {
+        return { cancelled: true };
+      }
+    } catch (e) {
+      return { error: true };
+    }
+  };
+
+  handleSubmitPress = () => {
+    setErrortext('');
+    if (!userEmail) {
+      alert('Имейла е задължителен');
+      return;
+    }
+    if (!userPassword) {
+      alert('Паролата е задължителна');
+      return;
+    }
+    setLoading(true);
+    var dataToSend = { email: userEmail, password: userPassword };
+    var formBody = [];
+    for (var key in dataToSend) {
+      var encodedKey = encodeURIComponent(key);
+      var encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+    fetch('https://kulinarcho.com/api/login', {
+      method: 'POST',
+      body: formBody,
+      headers: {
+        //Header Defination
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+    }).then(response => response.json())
+      .then(responseJson => {
+        //Hide Loader
+        setLoading(false);
+        
+
+        if (responseJson.errors) {
+          Object.keys(responseJson.errors).map((key, index) => {
+            
+            setErrortext(responseJson.errors[key]);
+          })
+        }
+        // If server response message same as Data Matched
+        if (responseJson.access_token) {
+          
+          if (responseJson.rememberToken === '') {
+            AsyncStorage.setItem('access_token', responseJson.access_token);
+            props.navigation.navigate('DrawerNavigationRoutes');
           } else {
-            return { cancelled: true };
+            setErrortext('Акаунта ви все още не е потвърден');
+
           }
-        } catch (e) {
-          return { error: true };
         }
-      };
-
-    handleSubmitPress = () => {
-        setErrortext('');
-        if (!userEmail) {
-            alert('Имейла е задължителен');
-            return;
-        }
-        if (!userPassword) {
-            alert('Паролата е задължителна');
-            return;
-        }
-        setLoading(true);
-        var dataToSend = { email: userEmail, password: userPassword };
-        var formBody = [];
-        for (var key in dataToSend) {
-            var encodedKey = encodeURIComponent(key);
-            var encodedValue = encodeURIComponent(dataToSend[key]);
-            formBody.push(encodedKey + '=' + encodedValue);
-        }
-        formBody = formBody.join('&');
-        fetch('http://167.172.110.234/api/login', {
-            method: 'POST', 
-            body: formBody,
-            headers: {
-                //Header Defination
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-            },
-        }).then(response => response.json())
-            .then(responseJson => {
-                //Hide Loader
-                setLoading(false);
-                console.log(responseJson);
-
-                if (responseJson.errors) {
-                    Object.keys(responseJson.errors).map((key, index) => {
-                        console.log(responseJson.errors[key])
-                        setErrortext(responseJson.errors[key]);
-                    })
-                }
-                // If server response message same as Data Matched
-                if (responseJson.access_token) {
-                    console.log(responseJson);
-                    if (responseJson.rememberToken === '') {
-                        AsyncStorage.setItem('access_token', responseJson.access_token);
-                        props.navigation.navigate('DrawerNavigationRoutes');
-                    } else {
-                        setErrortext('Акаунта ви все още не е потвърден');
-
-                    }
-                }
-            })
-            .catch(error => {
-                console.log(error);
-
-                //Hide Loader
-                setLoading(false);
-            });
-    };
-        return (
-            <View style={{ flex: 1, backgroundColor: 'white' }}>
-
-                <Loader loading={loading} />
+      })
+      .catch(error => {
         
-        <View style={{marginTop:50}}>
-            <View style={{ alignItems: 'center' }}>
-                <Image
-                    source={require('../Image/aboutreact.png')}
-                    style={{
-          width: '50%',
-          height: 100,
-          resizeMode: 'contain',
-        }}
-                    />
-            </View>
-            <View style={{ alignItems: 'center', padding:0, margin:0,
-          height: 200}}>
-                <Image 
-                    source={require('../Image/regImg.jpg')}
-                    style={{ backgroundColor: 'green',
-          width: '50%',
-          height: '100%'
-        }}
-                    />
-            </View>
-            <KeyboardAvoidingView enabled style={{borderColor:'black',borderWidth:1,width:'90%',
-            borderRadius:10,alignItems: 'center',marginLeft:15, marginTop:-1, paddingBottom:30}}>
-                       
-                        <View style={styles.SectionStyle}>
-                            <TextInput
-                                style={styles.inputStyle}
-                                onChangeText={UserEmail => setUserEmail(UserEmail)}
-                                underlineColorAndroid="#FFFFFF"
-                                placeholder="Имейл" //dummy@abc.com
-                                placeholderTextColor="black"
-                                autoCapitalize="none"
-                                keyboardType="email-address"
-                                ref={ref => {
-                //   this._emailinput = ref;
-                }}
-                                returnKeyType="next"
-                                onSubmitEditing={() =>{
-                //   this._passwordinput && this._passwordinput.focus()
-                }}
-                                blurOnSubmit={false}
-                                />
-                        </View>
-                        <View style={styles.SectionStyle}>
-                            <TextInput
-                                style={styles.inputStyle}
-                                onChangeText={UserPassword => setUserPassword(UserPassword)}
-                                underlineColorAndroid="#FFFFFF"
-                                placeholder="Парола" //12345
-                                placeholderTextColor="black"
-                                keyboardType="default"
-                                ref={ref => {
-                //   this._passwordinput = ref;
-                }}
-                                onSubmitEditing={Keyboard.dismiss}
-                                blurOnSubmit={false}
-                                secureTextEntry={true}
-                                />
-                        </View>
-                        {errortext != '' ? (
-                            <Text style={styles.errorTextStyle}> {errortext} </Text>
-                        ) : null}
-                        <TouchableOpacity
-                            style={styles.buttonStyle}
-                            activeOpacity={0.5}
-                            onPress={handleSubmitPress}>
-                            <Text style={styles.buttonTextStyle}>Вход</Text>
-                        </TouchableOpacity>
-                        
-                        <View style={{flexDirection: 'row', justifyContent: 'space-evenly', paddingHorizontal:10}}>
-                        {/* Facebook LoginButton */}
-                        <View style={{flex:1}}>
-                        {/* <TouchableOpacity style={styles.fbloginBtn} onPress={facebookLogIn}>
+
+        //Hide Loader
+        setLoading(false);
+      });
+  };
+  return (
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+
+      <Loader loading={loading} />
+
+      <ScrollView style={{ marginTop: 50 }}>
+        <View style={{ alignItems: 'center' }}>
+          <Image
+            source={require('../Image/aboutreact.png')}
+            style={{
+              width: '50%',
+              height: 100,
+              resizeMode: 'contain',
+            }}
+          />
+        </View>
+        <View style={{
+          alignItems: 'center', padding: 0, margin: 0,
+          height: 200
+        }}>
+          <Image
+            source={require('../Image/regImg.jpg')}
+            style={{
+              backgroundColor: 'green',
+              width: '50%',
+              height: '100%'
+            }}
+          />
+        </View>
+        <KeyboardAvoidingView enabled style={{
+          borderColor: 'black', borderWidth: 1, width: '90%',
+          borderRadius: 10, alignItems: 'center', marginLeft: 15, marginTop: -1, paddingBottom: 30
+        }}>
+
+          <View style={styles.SectionStyle}>
+            <TextInput
+              style={styles.inputStyle}
+              onChangeText={UserEmail => setUserEmail(UserEmail)}
+              underlineColorAndroid="#FFFFFF"
+              placeholder="Имейл" //dummy@abc.com
+              placeholderTextColor="black"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              blurOnSubmit={false}
+              onSubmitEditing={() => { thirdTextInput.focus(); }}
+              returnKeyType="next"
+            />
+          </View>
+          <View style={styles.SectionStyle}>
+            <TextInput
+              style={styles.inputStyle}
+              onChangeText={UserPassword => setUserPassword(UserPassword)}
+              underlineColorAndroid="#FFFFFF"
+              placeholder="Парола" //12345
+              placeholderTextColor="black"
+              keyboardType="default"
+              returnKeyType="next"
+              secureTextEntry={true} 
+              ref={(input) => {thirdTextInput = input; }}
+              blurOnSubmit={false}
+              onSubmitEditing={() => { handleSubmitPress() }}
+            />
+          </View>
+          {errortext != '' ? (
+            <Text style={styles.errorTextStyle}> {errortext} </Text>
+          ) : null}
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            activeOpacity={0.5}
+            onPress={handleSubmitPress}>
+            <Text style={styles.buttonTextStyle}>Вход</Text>
+          </TouchableOpacity>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', paddingHorizontal: 10 }}>
+            {/* Facebook LoginButton */}
+            <View style={{ flex: 1 }}>
+              {/* <TouchableOpacity style={styles.fbloginBtn} onPress={facebookLogIn}>
                           <Text style={{ flex:1, justifyContent: 'center', textAlign: 'center', color: '#ffffff', marginTop:5 }}>Login with Facebook</Text>
                         </TouchableOpacity> */}
-                        </View>
-                        {/* Google LoginButton */}
-                        <View style={{flex:1}}>
-                        {/* <TouchableOpacity style={styles.googloginBtn} onPress={signInWithGoogleAsync}>
+            </View>
+            {/* Google LoginButton */}
+            <View style={{ flex: 1 }}>
+              {/* <TouchableOpacity style={styles.googloginBtn} onPress={signInWithGoogleAsync}>
                           <Text style={{flex:1, justifyContent: 'center', textAlign: 'center', color: '#ffffff', marginTop:5}}>Login with Google</Text>
                         </TouchableOpacity> */}
-                        </View>
-                        </View>
-                        <Text
-                            style={styles.registerTextStyle}
-                            onPress={() => props.navigation.navigate('RegisterScreen')}>
-                            Регистрация
-                        </Text>
-                        <Text
-                            style={{...styles.registerTextStyle, color:'silver'}}
-                            onPress={() => props.navigation.navigate('ForgottenPassword')}>
-                            Забравена парола
-                        </Text>
-                    </KeyboardAvoidingView>
             </View>
-            </View>
-        );
+          </View>
+          <Text
+            style={styles.registerTextStyle}
+            onPress={() => props.navigation.navigate('RegisterScreen')}>
+            Регистрация
+                        </Text>
+          <Text
+            style={{ ...styles.registerTextStyle, color: 'silver' }}
+            onPress={() => props.navigation.navigate('ForgottenPassword')}>
+            Забравена парола
+                        </Text>
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </View>
+  );
 
 }
-    export default LoginScreen;
+export default LoginScreen;
 
-    const styles = StyleSheet.create({
-        mainBody: {
-            flex: 1,
-            justifyContent: 'center',
-            backgroundColor: '#689F38',
-        },
-        SectionStyle: {
-            flexDirection: 'row',
-            height: 40,
-            marginTop: 20,
-            marginLeft: 35,
-            marginRight: 35,
-            margin: 10,
-        },
-        buttonStyle: {
-            backgroundColor: '#7DE24E',
-            borderWidth: 0,
-            color: '#FFFFFF',
-            borderColor: '#7DE24E',
-            height: 40,
-            alignItems: 'center',
-            borderRadius: 30,
-            marginLeft: 35,
-            marginRight: 35,
-            marginTop: 20,
-            marginBottom: 20,
-            width: 200
-        },
-        buttonTextStyle: {
-            color: '#FFFFFF',
-            paddingVertical: 10,
-            fontSize: 16,
-        },
-        inputStyle: {
-            flex: 1,
-            color: '#6e6e6e',
-            paddingLeft: 15,
-            paddingRight: 15,
-            borderWidth: 1,
-            borderRadius: 30,
-            borderColor: 'silver',
-        },
-        registerTextStyle: {
-            color: 'black',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            fontSize: 14,
-        },
-        errorTextStyle: {
-            color: 'red',
-            textAlign: 'center',
-            fontSize: 14,
-        },
-        fbloginBtn: {
-            backgroundColor:'#3b5998',
-            height:30, 
-            borderRadius:50,
-            marginRight:5
-        },
-        googloginBtn: {
-            backgroundColor:'#db4a39',
-            height:30, 
-            borderRadius:50,
-            marginRight:5
-        }
-    });
+const styles = StyleSheet.create({
+  mainBody: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#689F38',
+  },
+  SectionStyle: {
+    flexDirection: 'row',
+    height: 40,
+    marginTop: 20,
+    marginLeft: 35,
+    marginRight: 35,
+    margin: 10,
+  },
+  buttonStyle: {
+    backgroundColor: '#7DE24E',
+    borderWidth: 0,
+    color: '#FFFFFF',
+    borderColor: '#7DE24E',
+    height: 40,
+    alignItems: 'center',
+    borderRadius: 30,
+    marginLeft: 35,
+    marginRight: 35,
+    marginTop: 20,
+    marginBottom: 20,
+    width: 200
+  },
+  buttonTextStyle: {
+    color: '#FFFFFF',
+    paddingVertical: 10,
+    fontSize: 16,
+  },
+  inputStyle: {
+    flex: 1,
+    color: '#6e6e6e',
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderWidth: 1,
+    borderRadius: 30,
+    borderColor: 'silver',
+  },
+  registerTextStyle: {
+    color: 'black',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  errorTextStyle: {
+    color: 'red',
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  fbloginBtn: {
+    backgroundColor: '#3b5998',
+    height: 30,
+    borderRadius: 50,
+    marginRight: 5
+  },
+  googloginBtn: {
+    backgroundColor: '#db4a39',
+    height: 30,
+    borderRadius: 50,
+    marginRight: 5
+  }
+});

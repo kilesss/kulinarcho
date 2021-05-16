@@ -16,6 +16,8 @@ import DropdownAlert from 'react-native-dropdownalert';
 import RBSheet from "react-native-raw-bottom-sheet";
 import { BackHandler } from 'react-native';
 import { BottomSheet } from 'react-native-btr';
+import { Picker } from '@react-native-picker/picker';
+
 import {
   AdMobBanner,
   AdMobInterstitial,
@@ -23,7 +25,7 @@ import {
 import {
   StyleSheet,
   View,
-  Text, 
+  Text, ActivityIndicator,
   TextInput,
   Image,
   ScrollView,
@@ -51,7 +53,7 @@ class AddRecipes extends React.Component {
 
     time2: '',
     description: '',
-
+    selectedValue:'',
     time3: '',
     externalData: null,
     product: false,
@@ -185,7 +187,7 @@ class AddRecipes extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("http://167.172.110.234/api/getProducts", {
+    fetch("https://kulinarcho.com/api/getProducts", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -210,7 +212,6 @@ class AddRecipes extends React.Component {
           newData.push(data[index]);
         })
         this.setState({ externalData: newData });
-
       }).done();
   }
   async fetchDataRecipe() {
@@ -220,7 +221,7 @@ class AddRecipes extends React.Component {
 
     let DEMO_TOKEN2 = await AsyncStorage.getItem('recipeId');
     this.setState({ id: DEMO_TOKEN2 });
-    await fetch("http://167.172.110.234/api/showRecipe?id=" + DEMO_TOKEN2, {
+    await fetch("https://kulinarcho.com/api/showRecipe?id=" + DEMO_TOKEN2, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -304,6 +305,7 @@ class AddRecipes extends React.Component {
         if (data.recipe.all_time !== null) {
           this.setState({ time3: data.recipe.all_time });
         }
+        this.setState({ selectedValue: data.recipe.categories.toString()});
 
         // this.setState({textInputIngridients: data.recipe.title});
         this.setState({ textInputArea: textInputArea });
@@ -320,6 +322,7 @@ class AddRecipes extends React.Component {
 
         }
 
+        
 
         this.setState({ externalDataRecipe: data });
       }).done();
@@ -340,7 +343,7 @@ class AddRecipes extends React.Component {
     let kur = { key: name, val: test }
     let arr = this.state.textInput;
     // arr[kur.key] = text;
-    console.log(arr);
+    
     // this.setState({ textInput: arr })
   }
   async fetchDataUnits() {
@@ -348,7 +351,7 @@ class AddRecipes extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("http://167.172.110.234/api/getRecipeUnits", {
+    fetch("https://kulinarcho.com/api/getRecipeUnits", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -381,7 +384,7 @@ class AddRecipes extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('http://167.172.110.234/api/recipesEdit', {
+    await fetch('https://kulinarcho.com/api/recipesEdit', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.id,
@@ -394,6 +397,7 @@ class AddRecipes extends React.Component {
         textInputIngridients: this.state.textInputIngridients,
         textInput: this.state.textInput,
         photo: this.state.image64,
+        category: this.state.selectedValue,
 
         image: this.state.image
       }),
@@ -432,8 +436,8 @@ class AddRecipes extends React.Component {
       }
 
     ).catch(function (error) {
-      console.log(error);
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -484,7 +488,7 @@ class AddRecipes extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-  await fetch("http://167.172.110.234/api/deleteImage", {
+  await fetch("https://kulinarcho.com/api/deleteImage", {
       method: "POST",
       body: JSON.stringify({
         type: "recipe",
@@ -502,10 +506,10 @@ class AddRecipes extends React.Component {
      
     }).then(
       async response => {
-        console.log(response)
+        
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -591,8 +595,8 @@ class AddRecipes extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+         
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -632,7 +636,7 @@ class AddRecipes extends React.Component {
     let Add =  <AdMobBanner
     bannerSize="smartBannerLandscape" 
     adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-      onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+       
       servePersonalizedAds={true}/>;
       if(this.state.premium != 0){
         Add = <View></View>;
@@ -759,6 +763,50 @@ class AddRecipes extends React.Component {
 
 
             </View>
+            <View style={{ borderColor: '#689F38', borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, marginBottom: 10 }}>
+
+                  <Text style={{ flex: 1, marginBottom: 15, marginLeft: 20, textAlign: 'center', fontWeight: '200', fontSize: 18 }}>Категория</Text>
+
+                  <View style={{
+                    flex: 1,
+                    alignItems: "center", borderRadius: 15,
+                    marginLeft: 9, marginRight: 9,
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 7,
+                    },
+                    shadowOpacity: 0.41,
+                    shadowRadius: 9.11,
+                    marginBottom: 20,
+
+                    elevation: 6,
+                    backgroundColor: 'white',
+                  }}>
+                    <Picker
+                      selectedValue={this.state.selectedValue}
+                      style={{ height: 40, width: '90%' }}
+                      onValueChange={(itemValue, itemIndex) => {  this.state.selectedValue = itemValue }}
+                      itemStyle={{ backgroundColor: "red", color: "blue", fontFamily: "Ebrima", fontSize: 17 }}
+                    >
+
+                      <Picker.Item label="Избери" value="" />
+                      <Picker.Item label="Салати" value="1" />
+                      <Picker.Item label="Супи" value="2" />
+                      <Picker.Item label="Предястия" value="3" />
+                      <Picker.Item label="Сосове" value="4" />
+                      <Picker.Item label="Ястия с месо" value="5" />
+                      <Picker.Item label="Ястия без месо" value="6" />
+                      <Picker.Item label="Тестени" value="7" />
+                      <Picker.Item label="Десерти" value="8" />
+                      <Picker.Item label="Риба" value="9" />
+                      <Picker.Item label="Напитки" value="10" />
+                      <Picker.Item label="Зимнина" value="11" />
+                      <Picker.Item label="Бебешки и детски храни" value="12" />
+                      <Picker.Item label="Други" value="13" />
+                    </Picker>
+                  </View>
+                </View>
             <View style={{ borderColor: '#689F38', borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, marginBottom: 10 }}>
               <Text style={{ flex: 1, marginBottom: 15, marginLeft: 20, textAlign: 'center', fontWeight: '200', fontSize: 18 }}>Избор на изображение</Text>
 
@@ -973,7 +1021,7 @@ class AddRecipes extends React.Component {
                 if(value.hint != null && value.hint  != '' ) {
                     hint = "("+value.hint+")"
                 }
-                console.log(value)
+                
                 return (<View style={{
                   flexDirection: "row", flex: 3, paddingTop: 10, paddingLeft: 10, borderLeftWidth: 4, borderLeftColor: '#689F38',
                   borderRadius: 15,
@@ -1181,7 +1229,6 @@ class AddRecipes extends React.Component {
             <View style={{ maxHeight: 200 }}>
               <SearchableDropdown
                 style={{}}
-                onTextChange={(text) => console.log(text)}
                 //On text change listner on the searchable input
                 onItemSelect={(item) => this.setProductID(item)}
                 //onItemSelect called after the selection from the dropdown
@@ -1269,7 +1316,6 @@ class AddRecipes extends React.Component {
               />
               <SearchableDropdown
                 style={{}}
-                onTextChange={(text) => console.log(text)}
                 //On text change listner on the searchable input
                 onItemSelect={(item) => this.setProductUnit(item)}
                 //onItemSelect called after the selection from the dropdown

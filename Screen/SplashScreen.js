@@ -15,7 +15,7 @@ const SplashScreen = props => {
 
     function handleDeepLink(event){
         let data = Linking.parse(event.url)
-        console.log(data);
+        
     }
     useEffect(() => {
         Linking.addEventListener('url', handleDeepLink);

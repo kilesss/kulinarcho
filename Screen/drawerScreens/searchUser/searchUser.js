@@ -41,8 +41,8 @@ class searchUser extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+         
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -117,7 +117,7 @@ class searchUser extends React.Component {
     
     
     
-    await fetch('http://167.172.110.234/api/addFollower', {
+    await fetch('https://kulinarcho.com/api/addFollower', {
       method: 'POST',
       body: JSON.stringify({
         follow_id: follow_id
@@ -150,7 +150,7 @@ class searchUser extends React.Component {
         this.fetchData('');
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -161,8 +161,8 @@ class searchUser extends React.Component {
     console.log(JSON.stringify({
       follow_id: follow_id
     }));
-    console.log(DEMO_TOKEN);
-    await fetch('http://167.172.110.234/api/removeFollower', {
+    
+    await fetch('https://kulinarcho.com/api/removeFollower', {
       method: 'POST',
       body: JSON.stringify({
         follow_id: follow_id
@@ -195,7 +195,7 @@ class searchUser extends React.Component {
         this.fetchData('');
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -203,7 +203,7 @@ class searchUser extends React.Component {
 
   async fetchData(id) {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getPublicProfiles/"+id, {
+    fetch("https://kulinarcho.com/api/getPublicProfiles/"+id, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN,
@@ -233,7 +233,7 @@ class searchUser extends React.Component {
         this.setState({ externalData: newData });
 
       }).catch(function (error) {
-        console.log('There has been a problem with your fetch operation: ' + error.message);
+        
         // ADD THIS THROW error
         throw error;
       }).done();
@@ -249,7 +249,7 @@ class searchUser extends React.Component {
       if(variable.follow == 1){
         follow = 1;
         followColour = 'green';
-        console.log(variable)
+        
         }
       if(variable.profilePicture != null) {
         picture =         <Image source={{ uri: "https://kulinarcho.s3.eu-central-1.amazonaws.com/profile/"+variable.profilePicture + '?time' + (new Date()).getTime() }}
@@ -332,17 +332,15 @@ class searchUser extends React.Component {
     if (this.state.externalData === null) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+         <ActivityIndicator size="large" color="#7DE24E" /> 
         </View>
       )
     } else {
-      console.log(this.state.premium);
+      
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/7976537020'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;

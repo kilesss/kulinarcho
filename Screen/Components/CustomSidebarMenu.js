@@ -261,7 +261,7 @@ class CustomSidebarMenu extends Component {
     };
 
     render() {
-        console.log('tuk se slaga logikata za payment');
+        
 
         return (
             <View style={stylesSidebar.sideMenuContainer}>

@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import {
     StyleSheet,
-    View,
+    View,ActivityIndicator,
     Text,
     TextInput,Alert,
     TouchableHighlight
@@ -37,8 +37,8 @@ class GenerateShoppingList extends React.Component {
               route.push(lastRoute);
           }
           let goRoute = route.pop();
-             console.log(goRoute);
-      console.log(route);
+             
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -114,13 +114,13 @@ class GenerateShoppingList extends React.Component {
         })    
         ar2[id.key] = amount;
         this.state.filledProducts = ar2;
-        console.log(this.state.filledProducts)
+        
     // this.setState({filledProducts:ar2});
 
     }
   async  generateList(){
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/checkPremium', {
+    await fetch('https://kulinarcho.com/api/checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'shopping' }),
       headers: {
@@ -146,7 +146,7 @@ class GenerateShoppingList extends React.Component {
         }
         
         if (data.response == 'ok' || data.response < 2) {
-            await fetch('http://167.172.110.234/api/generateShoppingList', {
+            await fetch('https://kulinarcho.com/api/generateShoppingList', {
                 method: 'POST',
                 body: JSON.stringify({
                     title:this.state.title,
@@ -190,8 +190,8 @@ class GenerateShoppingList extends React.Component {
                 }
                 
               ).catch(function (error) {
-                console.log(error);
-                console.log('There has been a problem with your fetch operation: ' + error.message);
+                
+                
                 // ADD THIS THROW error
                 throw error;
               });
@@ -219,7 +219,7 @@ class GenerateShoppingList extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -241,18 +241,16 @@ class GenerateShoppingList extends React.Component {
         if (this.state.externalData === null) {
             return (
                 <View style={styles.MainContainer}>
-                    <View style={styles.topView}>
-                        <Text>Loading....</Text>
-                    </View>
+                   <ActivityIndicator size="large" color="#7DE24E" /> 
                 </View>
             )
         } else {
 
-            console.log(this.state.premium);
+            
             let Add =  <AdMobBanner
             bannerSize="smartBannerLandscape" 
             adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+               
               servePersonalizedAds={true}/>;
               if(this.state.premium != 0){
                 Add = <View></View>;

@@ -6,7 +6,7 @@ import DropdownAlert from 'react-native-dropdownalert';
 import {
   View,
   Text,
-  TextInput,
+  TextInput,ActivityIndicator,
 
   TouchableHighlight
 } from "react-native";
@@ -29,8 +29,8 @@ class EditShoppingListProduct extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+         
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -43,7 +43,7 @@ class EditShoppingListProduct extends React.Component {
   handleBackButtonClick() {
     //this.props.navigation.goBack(null);
 
-    console.log(this.props.navigation);
+    
     this.props.navigation.navigate('ShoppingListEditProducts');
     return true;
   }
@@ -135,7 +135,7 @@ class EditShoppingListProduct extends React.Component {
     this.setState({ listName: listName })
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     this.setState({ unbuyedProduct: 0 });
-    fetch("http://167.172.110.234/api/getShoppingListProducts?listId=" + this.state.listId + "&productId=" + this.state.dropdownSelect, {
+    fetch("https://kulinarcho.com/api/getShoppingListProducts?listId=" + this.state.listId + "&productId=" + this.state.dropdownSelect, {
       method: "GET",
       headers: {
         'Cache-Control': 'no-cache',
@@ -161,8 +161,8 @@ class EditShoppingListProduct extends React.Component {
           delete data.new_token;
           delete data['new_token'];
         }
-        console.log(data[0]);
-        console.log(data[0].name);
+        
+        
         this.setState({ price: data[0].price });
         this.setState({ amount: data[0].value });
         this.setState({ listId: this.state.listId });
@@ -187,7 +187,7 @@ class EditShoppingListProduct extends React.Component {
       typeId: this.state.typesID,
       name: this.state.newProdTitle,
     }))
-    await fetch('http://167.172.110.234/api/AddProductShoppingList', {
+    await fetch('https://kulinarcho.com/api/AddProductShoppingList', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.dropdownSelect,
@@ -232,14 +232,14 @@ class EditShoppingListProduct extends React.Component {
         }
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
   }
   async fetchDataProducts() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch("http://167.172.110.234/api/getProducts", {
+    await fetch("https://kulinarcho.com/api/getProducts", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN,
@@ -274,7 +274,7 @@ class EditShoppingListProduct extends React.Component {
   }
   async fetchDataTypes() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getTypes", {
+    fetch("https://kulinarcho.com/api/getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -308,7 +308,7 @@ class EditShoppingListProduct extends React.Component {
   }
   async fetchDataUnits() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getUnits", {
+    fetch("https://kulinarcho.com/api/getUnits", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -358,17 +358,15 @@ class EditShoppingListProduct extends React.Component {
     if (this.state.externalDataProducts === null) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+          <ActivityIndicator size="large" color="#7DE24E" /> 
         </View>
       )
     } else {
-      console.log(this.state.premium);
+      
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;

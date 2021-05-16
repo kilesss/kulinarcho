@@ -18,7 +18,7 @@ import {
   } from 'expo-ads-admob';
 import {
     StyleSheet,
-    View,
+    View,ActivityIndicator,
     TouchableOpacity,
     FlatList,
     Text, TouchableHighlight,
@@ -49,8 +49,8 @@ class UserProfile extends React.Component {
               route.push(lastRoute);
           }
           let goRoute = route.pop();
-             console.log(goRoute);
-      console.log(route);
+             
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -111,7 +111,7 @@ class UserProfile extends React.Component {
         var userId = await AsyncStorage.getItem('userId');
 
         
-        await fetch('http://167.172.110.234/api/addFollower', {
+        await fetch('https://kulinarcho.com/api/addFollower', {
           method: 'POST',
           body: JSON.stringify({
             follow_id: userId
@@ -144,7 +144,7 @@ class UserProfile extends React.Component {
             this.fetchData('');
           }
         ).catch(function (error) {
-          console.log('There has been a problem with your fetch operation: ' + error.message);
+          
           // ADD THIS THROW error
           throw error;
         });
@@ -153,7 +153,7 @@ class UserProfile extends React.Component {
     async fetchData() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
         var userId = await AsyncStorage.getItem('userId');
-        fetch("http://167.172.110.234/api/getPublicProfile/" + userId, {
+        fetch("https://kulinarcho.com/api/getPublicProfile/" + userId, {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -173,7 +173,7 @@ class UserProfile extends React.Component {
                     delete data['new_token'];
 
                 }
-                console.log(data.user);
+                
                 this.setState({ description: data.user.description });
                 this.setState({ username: data.user.name });
                 this.setState({ profilePicture: data.user.profilePicture });
@@ -187,7 +187,7 @@ class UserProfile extends React.Component {
                 })
                 this.setState({ externalData: newData });
             }).catch(function (error) {
-                console.log('There has been a problem with your fetch operation: ' + error.message);
+                
                 // ADD THIS THROW error
                 throw error;
             }).done();
@@ -198,17 +198,15 @@ class UserProfile extends React.Component {
         if (this.state.externalData === null) {
             return (
                 <View style={styles.MainContainer}>
-                    <View style={styles.topView}>
-                        <Text>Loading....</Text>
-                    </View>
+                    <ActivityIndicator size="large" color="#7DE24E" /> 
                 </View>
             )
         } else {
-            console.log(this.state.premium);
+            
             let Add =  <AdMobBanner
             bannerSize="smartBannerLandscape" 
             adUnitID={'ca-app-pub-5428132222163769/5378293840'} 
-              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+               
               servePersonalizedAds={true}/>;
               if(this.state.premium != 0){
                 Add = <View></View>;

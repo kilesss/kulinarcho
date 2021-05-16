@@ -21,7 +21,7 @@ import {
 import {
     StyleSheet,
     ScrollView,
-    Alert,
+    Alert,ActivityIndicator,
     TouchableOpacity,
     View,
     Image,
@@ -68,8 +68,8 @@ class ShowProfile extends React.Component {
                     route.push(lastRoute);
                 }
                 let goRoute = route.pop();
-                console.log(goRoute);
-                console.log(route);
+                
+                
                 AsyncStorage.setItem('backRoute', JSON.stringify(route));
                 this.props.navigation.navigate(goRoute);
             })
@@ -102,7 +102,7 @@ class ShowProfile extends React.Component {
     async checkPremium() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
         var decoded = jwt_decode(DEMO_TOKEN);
-        console.log(decoded);
+        
         if (decoded.userid != decoded.oldId) {
             this.setState({ groupUser: 1 })
         } else {
@@ -133,7 +133,7 @@ class ShowProfile extends React.Component {
     async fetchData() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        fetch("http://167.172.110.234/api/profile", {
+        fetch("https://kulinarcho.com/api/profile", {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -175,7 +175,7 @@ class ShowProfile extends React.Component {
                 this.setState({ externalData: newData });
 
             }).catch(function (error) {
-                console.log('There has been a problem with your fetch operation: ' + error.message);
+                
                 // ADD THIS THROW error
                 throw error;
             }).done();
@@ -183,7 +183,7 @@ class ShowProfile extends React.Component {
     async fetchFollowers() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        fetch("http://167.172.110.234/api/getFollower", {
+        fetch("https://kulinarcho.com/api/getFollower", {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -212,7 +212,7 @@ class ShowProfile extends React.Component {
                 this.setState({ externalDataFollowers: newData });
 
             }).catch(function (error) {
-                console.log('There has been a problem with your fetch operation: ' + error.message);
+                
                 // ADD THIS THROW error
                 throw error;
             }).done();
@@ -232,7 +232,7 @@ class ShowProfile extends React.Component {
         }
 
 
-        await fetch('http://167.172.110.234/api/updateProfile', {
+        await fetch('https://kulinarcho.com/api/updateProfile', {
             method: 'POST',
             body: JSON.stringify({
                 password: password,
@@ -260,7 +260,7 @@ class ShowProfile extends React.Component {
 
             }
         ).catch(function (error) {
-            console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+            
             // ADD THIS THROW error
             throw error;
         });
@@ -270,7 +270,7 @@ class ShowProfile extends React.Component {
     async acceptRequest(id) {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        await fetch('http://167.172.110.234/api/acceptRequestUser', {
+        await fetch('https://kulinarcho.com/api/acceptRequestUser', {
             method: 'POST',
             body: JSON.stringify({
                 requesterId: id,
@@ -297,14 +297,14 @@ this.fetchData();
 
             }
         ).catch(function (error) {
-            console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+            
             // ADD THIS THROW error
             throw error;
         });
     }
     async switchProfile(id) {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-        await fetch('http://167.172.110.234/api/switchProfile', {
+        await fetch('https://kulinarcho.com/api/switchProfile', {
             method: 'POST',
             body: JSON.stringify({
                 switchTo: id,
@@ -334,14 +334,14 @@ this.fetchData();
                 }
             }
         ).catch(function (error) {
-            console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+            
             // ADD THIS THROW error
             throw error;
         });
     }
     async deleteRequest(id) {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-        await fetch('http://167.172.110.234/api/deleteRequestUser', {
+        await fetch('https://kulinarcho.com/api/deleteRequestUser', {
             method: 'POST',
             body: JSON.stringify({
                 requesterId: id,
@@ -373,7 +373,7 @@ this.fetchData();
                 await this.fetchData();
             }
         ).catch(function (error) {
-            console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+            
             // ADD THIS THROW error
             throw error;
         });
@@ -382,9 +382,9 @@ this.fetchData();
     async submitNewRequest() {
 
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-console.log(DEMO_TOKEN);
-console.log(this.state.requestJoinEmail);
-        await fetch('http://167.172.110.234/api/newRequest', {
+
+
+        await fetch('https://kulinarcho.com/api/newRequest', {
             method: 'POST',
             body: JSON.stringify({
                 requestedEmail: this.state.requestJoinEmail,
@@ -424,7 +424,7 @@ console.log(this.state.requestJoinEmail);
                 await this.fetchData();
             }
         ).catch(function (error) {
-            console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+            
             // ADD THIS THROW error
             throw error;
         });
@@ -433,7 +433,7 @@ console.log(this.state.requestJoinEmail);
 
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        await fetch('http://167.172.110.234/api/removeFollower', {
+        await fetch('https://kulinarcho.com/api/removeFollower', {
             method: 'POST',
             body: JSON.stringify({
                 follow_id: follow_id
@@ -467,7 +467,7 @@ console.log(this.state.requestJoinEmail);
                 this.fetchFollowers();
             }
         ).catch(function (error) {
-            console.log('There has been a problem with your fetch operation: ' + error.message);
+            
             // ADD THIS THROW error
             throw error;
         });
@@ -475,7 +475,7 @@ console.log(this.state.requestJoinEmail);
     async deleteUser(id) {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        await fetch('http://167.172.110.234/api/deleteUser', {
+        await fetch('https://kulinarcho.com/api/deleteUser', {
             method: 'POST',
             body: JSON.stringify({
                 userID: id,
@@ -518,7 +518,7 @@ console.log(this.state.requestJoinEmail);
                 }
 
                 if (data.newToken) {
-                    console.log(data.newToken);
+                    
 
                     AsyncStorage.setItem('access_token', data.newToken);
                     delete data.newToken;
@@ -529,7 +529,7 @@ console.log(this.state.requestJoinEmail);
                 await this.fetchData();
             }
         ).catch(function (error) {
-            console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+            
             // ADD THIS THROW error
             throw error;
         });
@@ -589,7 +589,7 @@ console.log(this.state.requestJoinEmail);
                                     [
                                         {
                                             text: "Не",
-                                            onPress: () => { console.log("Cancel Pressed") },
+                                            onPress: () => {  },
                                             style: "cancel"
                                         },
                                         {
@@ -615,17 +615,15 @@ console.log(this.state.requestJoinEmail);
         if (this.state.externalData === null && this.state.externalDataFollowers === null) {
             return (
                 <View style={styles.MainContainer}>
-                    <View style={styles.topView}>
-                        <Text>Loading....</Text>
-                    </View>
+                   <ActivityIndicator size="large" color="#7DE24E" /> 
                 </View>
             )
         } else {
-            console.log(this.state.premium);
+            
             let Add =  <AdMobBanner
             bannerSize="smartBannerLandscape" 
             adUnitID={'ca-app-pub-5428132222163769/5514025216'} 
-              onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+               
               servePersonalizedAds={true}/>;
               if(this.state.premium != 0){
                 Add = <View></View>;
@@ -1095,7 +1093,7 @@ console.log(this.state.requestJoinEmail);
                                 onPress: () => { this.deleteUser(this.state.userId) },
                                 style: "cancel"
                             },
-                            { text: "Остани", onPress: () => console.log("Cancel Pressed") }
+                            { text: "Остани" }
                         ],
                         { cancelable: false }
                     )}

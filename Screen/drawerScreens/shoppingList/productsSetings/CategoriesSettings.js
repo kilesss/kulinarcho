@@ -22,7 +22,7 @@ import {
   SafeAreaView,
   FlatList, View,
   Text,
-  TextInput,
+  TextInput,ActivityIndicator,
   Modal,
   TouchableHighlight
 } from "react-native";
@@ -42,8 +42,8 @@ class CategoriesSettings extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+         
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -94,7 +94,7 @@ class CategoriesSettings extends React.Component {
 
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("http://167.172.110.234/api/getUnits", {
+    fetch("https://kulinarcho.com/api/getUnits", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -170,9 +170,8 @@ class CategoriesSettings extends React.Component {
   }
 
   async submitEditType(){
-    console.log(JSON.stringify({ id: this.state.typeid, name: this.state.typeTitle }));
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-        await fetch('http://167.172.110.234/api/addUnits', {
+        await fetch('https://kulinarcho.com/api/addUnits', {
             method: 'POST',
             body:  JSON.stringify({ id: this.state.typeid, name: this.state.typeTitle }),
             headers: {
@@ -185,7 +184,7 @@ class CategoriesSettings extends React.Component {
         }).then(
           async response => {
             const data = await response.json();
-            console.log(data);
+            
             if (data.errors) {
               Object.keys(data.errors).map((key, index) => {
                 this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key],{},3000);
@@ -205,15 +204,15 @@ class CategoriesSettings extends React.Component {
 
           }
         ).catch(function(error) {
-          console.log('There has been a problem with your fetch operation: ' + error.message);
+          
            // ADD THIS THROW error
             throw error;
           });
   }
   async submitDeleteType(){
-    console.log(this.state.typeid);
+    
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-        await fetch('http://167.172.110.234/api/deleteUnits', {
+        await fetch('https://kulinarcho.com/api/deleteUnits', {
             method: 'POST',
             body:  JSON.stringify({ id: this.state.typeid}),
             headers: {
@@ -226,7 +225,7 @@ class CategoriesSettings extends React.Component {
         }).then(
           async response => {
             const data = await response.json();
-            console.log(data);
+            
             if (data.errors) {
               Object.keys(data.errors).map((key, index) => {
                 this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key],{},3000);
@@ -242,26 +241,24 @@ class CategoriesSettings extends React.Component {
               delete data.new_token;
               delete data['new_token'];
             }
-            console.log(data);
+            
             this.fetchData();
 
           }
         ).catch(function(error) {
-          console.log('There has been a problem with your fetch operation: ' + error.message);
+          
            // ADD THIS THROW error
             throw error;
           });
   }
   
   render(props) {
-    // console.log(RBSheet.useRef());
+    // );
 
     if (this.state.externalData === null) {
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>Loading....</Text>
-          </View>
+         <ActivityIndicator size="large" color="#7DE24E" /> 
         </View>
       )
     } else {
@@ -344,7 +341,7 @@ class CategoriesSettings extends React.Component {
                 width: "92%", height: 50, alignItems: 'center',
                 borderLeftWidth: 4, borderLeftColor: '#689F38',
                 borderRadius: 15,
-                marginLeft: 9, marginRight: 9,
+                  marginRight: 9,
                 shadowColor: "#000",
                 shadowOffset: {
                   width: 0,

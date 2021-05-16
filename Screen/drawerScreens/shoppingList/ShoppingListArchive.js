@@ -15,7 +15,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View, Dimensions,
-  Modal,
+  Modal,ActivityIndicator,
   TouchableHighlight,
   Text, SafeAreaView, FlatList,
 } from "react-native";
@@ -65,7 +65,7 @@ class ShoppingListArchive extends React.Component {
       //   AdMobInterstitial.setAdUnitID("ca-app-pub-5428132222163769/7210250269");
       //   await AdMobInterstitial.requestAdAsync({servePersonalizedAds:false});
       //   await AdMobInterstitial.showAdAsync().then(data => {
-      //     console.log(data);
+      //     
       //   })
       // }
     });
@@ -94,7 +94,7 @@ class ShoppingListArchive extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('http://167.172.110.234/api/deleteShoppingListArchive', {
+    await fetch('https://kulinarcho.com/api/deleteShoppingListArchive', {
       method: 'POST',
       body: JSON.stringify({
         id: id,
@@ -133,7 +133,7 @@ class ShoppingListArchive extends React.Component {
         this.fetchData();
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -148,8 +148,8 @@ class ShoppingListArchive extends React.Component {
           route.push(lastRoute);
       }
       let goRoute = route.pop();
-         console.log(goRoute);
-      console.log(route);
+         
+      
       if(goRoute != undefined){
         AsyncStorage.setItem('backRoute', JSON.stringify(route));
         this.props.navigation.navigate(goRoute);
@@ -161,7 +161,7 @@ class ShoppingListArchive extends React.Component {
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    fetch("http://167.172.110.234/api/getShoppingListArchive", {
+    fetch("https://kulinarcho.com/api/getShoppingListArchive", {
       method: "POST",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -198,7 +198,7 @@ class ShoppingListArchive extends React.Component {
         this.setState({ externalData: newData });
 
       }).catch(function (error) {
-        console.log('There has been a problem with your fetch operation: ' + error.message);
+        
         // ADD THIS THROW error
         throw error;
       }).done();
@@ -224,7 +224,7 @@ class ShoppingListArchive extends React.Component {
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/6098486751'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;
@@ -371,7 +371,7 @@ class ShoppingListArchive extends React.Component {
           </View>
         );
       };
-      console.log(this.state.modalVisible2)
+      
       return (
 
         <View style={styles.MainContainer}>

@@ -21,7 +21,7 @@ import {
   Dimensions,
   Alert,
   SafeAreaView,
-  FlatList,
+  FlatList,ActivityIndicator,
   View,
   Text,
   TextInput,
@@ -48,8 +48,8 @@ class ListEditProducts extends React.Component {
           route.push(lastRoute);
         }
         let goRoute = route.pop();
-        console.log(goRoute);
-        console.log(route);
+        
+        
         if (goRoute != undefined) {
           AsyncStorage.setItem('backRoute', JSON.stringify(route));
           this.props.navigation.navigate(goRoute);
@@ -79,11 +79,9 @@ class ListEditProducts extends React.Component {
     typeid: '',
     modalEditTitle: 'Купи продукт',
     selectedDropdown: '',
-    externalDataProducts: null,
     sum: 0,
     amount: 0,
     sort: '',
-    externalDataProducts: [],
     selectedIndex: '',
     volume: '',
     price: '',
@@ -157,7 +155,7 @@ class ListEditProducts extends React.Component {
     this.setState({ listName: listName })
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     this.setState({ unbuyedProduct: 0 });
-    fetch("http://167.172.110.234/api/getShoppingListProducts?listId=" + this.state.listId + "&sort=" + this.state.sort, {
+    fetch("https://kulinarcho.com/api/getShoppingListProducts?listId=" + this.state.listId + "&sort=" + this.state.sort, {
       method: "GET",
       headers: {
         'Cache-Control': 'no-cache',
@@ -203,7 +201,7 @@ class ListEditProducts extends React.Component {
             [
               {
                 text: "Продължи пазаруването",
-                onPress: () => { console.log("Cancel Pressed") },
+                onPress: () => {  },
                 style: "cancel"
               },
               { text: "Приключи", onPress: () => this.archiveShoppingList() }
@@ -219,7 +217,7 @@ class ListEditProducts extends React.Component {
 
   async archiveShoppingList() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/archiveList', {
+    await fetch('https://kulinarcho.com/api/archiveList', {
       method: 'POST',
       body: JSON.stringify({
         listId: this.state.listId,
@@ -252,7 +250,7 @@ class ListEditProducts extends React.Component {
         this.props.navigation.navigate('ShoppingLists');
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetchaaaaaaaaaaaaaaa operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -261,15 +259,39 @@ class ListEditProducts extends React.Component {
 
   async submitEditType() {
 
-    var active = 0;
-    if (this.state.isActive == 1) {
-      active = 1
+    let data = this.state.externalData;
+    let finnalprice = 0;
+    Object.keys(data).map((key, index) => {
+     
+      if (data[key].id == this.state.typeid) {
+
+        if (data[key].status == 0) {
+          data[key].status = 1;
+          finnalprice = (parseFloat(finnalprice)+parseFloat(data[key].finalPrice))
+                }else{
+          data[key].status = 0;
+          finnalprice = (parseFloat(finnalprice)-parseFloat(data[key].finalPrice))
+        }
+        data[key].price = this.state.price
+        data[key].value = this.state.amount
+        data[key].finalPrice = (this.state.amount * this.state.price).toFixed(2)
+      }else{
+        if (data[key].status == 1) {
+          finnalprice = (parseFloat(finnalprice)+parseFloat(data[key].finalPrice))
+        }else{
+        }
+      }
+     
+    });   
+    if(finnalprice > 0){
+      this.setState({externalData:data});
+      this.setState({sum:finnalprice.toFixed(2)});      
     }
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
 
-    await fetch('http://167.172.110.234/api/shoppingListBuy', {
+    await fetch('https://kulinarcho.com/api/shoppingListBuy', {
       method: 'POST',
       body: JSON.stringify({
         listID: this.state.listId,
@@ -289,19 +311,18 @@ class ListEditProducts extends React.Component {
       async response => {
         const data = await response.json();
 
-        let arr = this.state.externalData;
-        Object.keys(arr).map((key, index) => {
-          console.log(arr[key].id)
-          if (arr[key].id == this.state.typeid) {
-            if (arr[key].status == 0) {
-              arr[key].status = 1;
-            } else {
-              arr[key].status = 0;
-            }
+        // let arr = this.state.externalData;
+        // Object.keys(arr).map((key, index) => {
+        //   if (arr[key].id == this.state.typeid) {
+        //     if (arr[key].status == 0) {
+        //       arr[key].status = 1;
+        //     } else {
+        //       arr[key].status = 0;
+        //     }
 
-          }
-        })
-        this.setState({ externalData: arr })
+        //   }
+        // })
+        // this.setState({ externalData: arr })
         if (data.errors) {
           Object.keys(data.errors).map((key, index) => {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
@@ -323,7 +344,7 @@ class ListEditProducts extends React.Component {
         // this.fetchData();
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -331,7 +352,7 @@ class ListEditProducts extends React.Component {
 
   async submitDeleteType() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/deleteProductFromList', {
+    await fetch('https://kulinarcho.com/api/deleteProductFromList', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.productId, status: 1 }),
       headers: {
@@ -368,7 +389,7 @@ class ListEditProducts extends React.Component {
 
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
@@ -377,7 +398,7 @@ class ListEditProducts extends React.Component {
   async checkForUpdate() {
     let listId = await AsyncStorage.getItem('listId');
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('http://167.172.110.234/api/checkProductsStatus', {
+    await fetch('https://kulinarcho.com/api/checkProductsStatus', {
       method: 'POST',
       body: JSON.stringify({ listId: listId }),
 
@@ -394,21 +415,21 @@ class ListEditProducts extends React.Component {
 
         const data = await response.json();
         if (data != 0) {
-          console.log('fetch data')
+          
           this.fetchData();
         }
       }
     ).catch(function (error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
+      
       // ADD THIS THROW error
       throw error;
     });
   }
   async componentDidMount() {
-    this.interval = setInterval(
-      () => { this.setState(({ time }) => ({ time: time - 1 })); this.checkForUpdate(); console.log('asdasdasdasd') },
-      15000
-    );
+    // this.interval = setInterval(
+    //   () => { this.setState(({ time }) => ({ time: time - 1 })); this.checkForUpdate();  },
+    //   15000
+    // );
     const { navigation } = this.props;
     this.props.navigation.setParams({ handleSave: this._saveDetails });
     this.focusListener = navigation.addListener('didFocus', async () => {
@@ -454,17 +475,14 @@ class ListEditProducts extends React.Component {
 
       return (
         <View style={styles.MainContainer}>
-          <View style={styles.topView}>
-            <Text>  Loading....</Text>
-          </View>
+          <ActivityIndicator size="large" color="#7DE24E" /> 
         </View>
       )
     } else {
-      console.log(this.state.premium);
       let Add =  <AdMobBanner
       bannerSize="smartBannerLandscape" 
       adUnitID={'ca-app-pub-5428132222163769/9394695947'} 
-        onDidFailToReceiveAdWithError={console.log(this.bannerError)} 
+         
         servePersonalizedAds={true}/>;
         if(this.state.premium != 0){
           Add = <View></View>;
@@ -473,9 +491,10 @@ class ListEditProducts extends React.Component {
 
       const { modalVisible3 } = this.state;
 
-      var cat = '';
+      var cat = ''; 
 
       const Card = ({ item }) => {
+      
         let { width } = Dimensions.get('window');
         let fields = [];
         if (this.state.sort == 'typeAsc' || this.state.sort == 'typeDesc') {
@@ -484,7 +503,6 @@ class ListEditProducts extends React.Component {
             fields.push(<Text style={{ marginLeft: 30, marginTop: 20 }}>{cat}</Text>);
           }
         }
-
         var buyedDesign = 'none';
         var buyedColor = '#689F38';
 
@@ -493,7 +511,6 @@ class ListEditProducts extends React.Component {
           buyedColor = 'silver';
         }
         let categoryColor = '#689F38';
-        var img = ''
         var imgPer = <ImageModal
           borderRadius={60}
           imageBackgroundColor="#ffffff"
@@ -506,7 +523,6 @@ class ListEditProducts extends React.Component {
           }}
         />
         if (item.photo !== null && item.photo !== "") {
-          console.log(item.photo);
           imgPer = <ImageModal
             borderRadius={60}
             imageBackgroundColor="#ffffff"
@@ -1038,7 +1054,7 @@ this.submitDeleteType();
                 [
                   {
                     text: "Продължи пазаруването",
-                    onPress: () => { console.log("Cancel Pressed") },
+                    onPress: () => {  },
                     style: "cancel"
                   },
                   { text: "Приключи", onPress: () => this.archiveShoppingList() }
@@ -1076,7 +1092,7 @@ this.submitDeleteType();
                         [
                           {
                             text: "Продължи пазаруването",
-                            onPress: () => { console.log("Cancel Pressed") },
+                            onPress: () => {  },
                             style: "cancel"
                           },
                           { text: "Приключи", onPress: () => this.archiveShoppingList() }
