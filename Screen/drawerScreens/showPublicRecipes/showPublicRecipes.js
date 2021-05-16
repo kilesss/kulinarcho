@@ -276,6 +276,8 @@ class showPublicRecipes extends React.Component {
   }
   async submitSuggestion() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+    let DEMO_TOKEN2 = await AsyncStorage.getItem('recipeId');
+
     fetch("https://kulinarcho.com/api/submitSuggestion", {
       method: "POST",
       headers: {
@@ -285,6 +287,7 @@ class showPublicRecipes extends React.Component {
         'Authorization': 'Bearer ' + DEMO_TOKEN
       },
       body: JSON.stringify({
+        recipe_id: DEMO_TOKEN2,
         portion: this.state.suggestionPortion,
         preparation: this.state.suggestionPreparation,
         cooking: this.state.suggestionCooking,
