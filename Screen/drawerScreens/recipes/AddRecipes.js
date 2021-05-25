@@ -1681,7 +1681,7 @@ class EditRecipes extends React.Component {
 
             <View style={{ height: 150 }}>
               <View style={{ flexDirection: 'row', borderBottomBottom: 1, borderBottomWidth: 1, borderBottomColor: 'silver', width: '100%', marginBottom: 20 }}>
-                <Text style={{ textAlign: 'center', fontSize: 16, marginBottom: 10 }}>Достигнахте лимита си на безплатни списъци за пазар. Може да увеличите лимита
+                <Text style={{ textAlign: 'center', fontSize: 16, marginBottom: 10 }}>Достигнахте лимита си на безплатни рецептви в готварската си книга. Може да увеличите лимита
                  като преминете на премиум план</Text>
               </View>
               <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {

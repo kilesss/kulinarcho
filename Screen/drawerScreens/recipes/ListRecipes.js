@@ -229,7 +229,7 @@ class ListRecipes extends React.Component {
 
             const Card = ({ item }) => {
                 let publicRec = '';
-                let publicRecColor = ''
+                let publicRecColor = 'green'
                 if (item.public == 1) {
                     publicRec = 'Публична рецепта'
                     publicRecColor = 'green';

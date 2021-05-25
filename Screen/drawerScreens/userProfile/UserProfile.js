@@ -215,6 +215,7 @@ class UserProfile extends React.Component {
             let profileBtn = [];
 
             const Card = ({ item }) => {
+              console.log(item);
                 var img = ''
                 if (item.photo !== null) {
                     img =  <ImageModal
@@ -239,110 +240,6 @@ class UserProfile extends React.Component {
                       alignSelf: 'center',
                     }}
                   />
-                  if (item.cat_id == 1) {
-                    img = <ImageModal
-                      resizeMode="cover"
-                      source={require('../../../Image/salad.jpg')}
-                      style={{
-                        borderRadius: 15,
-                        marginLeft: 10, marginBottom: 10,
-                        width: 80,
-                        height: 80,
-                        alignSelf: 'center',
-                      }}
-                    />
-                  }
-                  if (item.cat_id == 2) {
-                    img = <ImageModal
-                      resizeMode="cover"
-                      source={require('../../../Image/supa.jpg')}
-                      style={{
-                        borderRadius: 15,
-                        marginLeft: 10, marginBottom: 10,
-                        width: 80,
-                        height: 80,
-                        alignSelf: 'center',
-                      }}
-                    />
-                  }
-                  if (item.cat_id == 3) {
-                    img = <ImageModal
-                      resizeMode="cover"
-                      source={require('../../../Image/predqstie.jpg')}
-                      style={{
-                        borderRadius: 15,
-                        marginLeft: 10, marginBottom: 10,
-                        width: 80,
-                        height: 80,
-                        alignSelf: 'center',
-                      }}
-                    />
-                  }
-                  if (item.cat_id == 4) {
-                    img = <ImageModal
-                      resizeMode="cover"
-                      source={require('../../../Image/souse.jpg')}
-                      style={{
-                        borderRadius: 15,
-                        marginLeft: 10, marginBottom: 10,
-                        width: 80,
-                        height: 80,
-                        alignSelf: 'center',
-                      }}
-                    />
-                  }
-                  if (item.cat_id == 5) {
-                    img = <ImageModal
-                      resizeMode="cover"
-                      source={require('../../../Image/meal.jpg')}
-                      style={{
-                        borderRadius: 15,
-                        marginLeft: 10, marginBottom: 10,
-                        width: 80,
-                        height: 80,
-                        alignSelf: 'center',
-                      }}
-                    />
-                  }
-                  if (item.cat_id == 6) {
-                    img = <ImageModal
-                      resizeMode="cover"
-                      source={require('../../../Image/vege.jpg')}
-                      style={{
-                        borderRadius: 15,
-                        marginLeft: 10, marginBottom: 10,
-                        width: 80,
-                        height: 80,
-                        alignSelf: 'center',
-                      }}
-                    />
-                  }
-                  if (item.cat_id == 7) {
-                    img = <ImageModal
-                      resizeMode="cover"
-                      source={require('../../../Image/bread.jpg')}
-                      style={{
-                        borderRadius: 15,
-                        marginLeft: 10, marginBottom: 10,
-                        width: 80,
-                        height: 80,
-                        alignSelf: 'center',
-                      }}
-                    />
-                  }
-                  if (item.cat_id == 8) {
-                    img = <ImageModal
-                      resizeMode="cover"
-                      source={require('../../../Image/dessert.jpg')}
-                      style={{
-                        borderRadius: 15,
-                        marginLeft: 10, marginBottom: 10,
-                        width: 80,
-                        height: 80,
-                        alignSelf: 'center',
-                      }}
-                    />
-                  }
 
                 }
                 return (
@@ -371,7 +268,7 @@ class UserProfile extends React.Component {
                                        borderBottomWidth: 1,  fontWeight: '400', color: '#000' }}>{item.title}</Text>
           
                           <Text style={{
-                            alignItems: 'flex-end', color: 'green', marginBottom: 10
+                            alignItems: 'flex-end', color: 'green', marginBottom: 10, fontSize: 16
                           }}>
                             {item.cat}                    </Text>
                           <View

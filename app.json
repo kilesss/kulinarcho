@@ -7,7 +7,9 @@
       "orientation": "portrait",
       "privacy": "public",
       "scheme": "kulinarchoapp",
-
+      "facebookScheme": "fb3838307209625245",
+      "facebookAppId": "3838307209625245",
+      "facebookDisplayName": "kulinarcho",
       "android": {
         "package": "com.kilesss.kulinarcho",
         "versionCode": 3,

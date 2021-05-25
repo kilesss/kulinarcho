@@ -231,30 +231,24 @@ class showPublicRecipes extends React.Component {
   }
 
   async addTocoockBook() {
+
     let DEMO_TOKEN2 = await AsyncStorage.getItem('recipeId');
-
-
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/transferRecipe", {
-      method: "POST",
+
+    await fetch('https://kulinarcho.com/api/checkPremium', {
+      method: 'POST',
+      body: JSON.stringify({ types: 'recipe' }),
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
         //Header Defination
         'Authorization': 'Bearer ' + DEMO_TOKEN
       },
-      body: JSON.stringify({
-        recipe_id: DEMO_TOKEN2,
-      }),
-    }).then(response => response.json())
-      .then(data => {
-        if (data.response == 'ok') {
-          this.dropDownAlertRef.alertWithType('success', '', "Рецептата е добавена в вашата готварска книга", {}, 2000);
 
-        } else {
-          this.dropDownAlertRef.alertWithType('error', '', "Рецептата вече съществува във вашата готварска книга", {}, 2000);
+    }).then(
+      async response => {
+        const data = await response.json();
 
-        }
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -262,17 +256,61 @@ class showPublicRecipes extends React.Component {
 
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
-
           delete data.new_token;
           delete data['new_token'];
-
         }
 
-      }).catch(function (error) {
+          if(data.response < 10){
+            fetch("https://kulinarcho.com/api/transferRecipe", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                //Header Defination
+                'Authorization': 'Bearer ' + DEMO_TOKEN
+              },
+              body: JSON.stringify({
+                recipe_id: DEMO_TOKEN2,
+              }),
+            }).then(response => response.json())
+              .then(data => {
+                if (data.response == 'ok') {
+                  this.dropDownAlertRef.alertWithType('success', '', "Рецептата е добавена в вашата готварска книга", {}, 2000);
         
-        // ADD THIS THROW error
-        throw error;
-      }).done();
+                } else {
+                  this.dropDownAlertRef.alertWithType('error', '', "Рецептата вече съществува във вашата готварска книга", {}, 2000);
+        
+                }
+                if (data.login && data.login == true) {
+                  AsyncStorage.clear();
+                  this.props.navigation.navigate('Auth');
+                }
+        
+                if (data.new_token) {
+                  AsyncStorage.setItem('access_token', data.new_token);
+        
+                  delete data.new_token;
+                  delete data['new_token'];
+        
+                }
+        
+              }).catch(function (error) {
+                
+                // ADD THIS THROW error
+                throw error;
+              }).done();
+          }else{
+            this.dropDownAlertRef.alertWithType('error', 'Достигнат лимит', "Достигнахте лимита си на рецепти в готварската си книга. Може да увеличите лимита като преминете на премиум план", {}, 4000);
+
+          }
+        
+      }
+    ).catch(function (error) {
+      
+      // ADD THIS THROW error
+      throw error;
+    });
+
   }
   async submitSuggestion() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
@@ -487,77 +525,6 @@ class showPublicRecipes extends React.Component {
               width: '96%', height: 300,
               borderRadius: 15, paddingBottom: 0, marginBottom: 10,
             }} />
-          if (this.state.externalData.recipe.categories == 1) {
-            photo = <Image
-              source={require('../../../Image/salad.jpg')}
-              resizeMethod={'resize'}
-              style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, marginBottom: 10,
-              }} />
-
-          }
-          if (this.state.externalData.recipe.categories == 2) {
-            photo = <Image
-              source={require('../../../Image/supa.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 3) {
-            photo = <Image
-              source={require('../../../Image/predqstie.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 4) {
-            photo = <Image
-              source={require('../../../Image/souse.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 5) {
-            photo = <Image
-              source={require('../../../Image/meal.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 6) {
-
-            photo = <Image
-              source={require('../../../Image/vege.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                aspectRatio: 0.9, width: '96%',
-                resizeMode: 'contain', borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-
-          }
-          if (this.state.externalData.recipe.categories == 7) {
-            photo = <Image
-              source={require('../../../Image/bread.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 8) {
-            photo = <Image
-              source={require('../../../Image/dessert.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-
-
         }
       }
       let galler = <View></View>
@@ -1182,6 +1149,25 @@ class showPublicRecipes extends React.Component {
               paddingLeft: 10, fontSize: 20
             }}>{this.state.externalData.recipe.title} </Text>
 
+<Text style={{
+              // borderLeftWidth: 4, borderLeftColor: '#689F38',
+              // borderRadius: 15,
+              textAlign: 'center',
+              // shadowColor: "#000",
+              // shadowOffset: {
+              //     width: 0,
+              //     height: 7,
+              // },
+              // shadowOpacity: 0.41,
+              // shadowRadius: 9.11,
+              // marginBottom: 20,
+             fontSize:18,
+              // elevation: 6,
+              // backgroundColor: '#ffffff',
+              paddingLeft: 10,
+              backgroundColor: '#689F38',
+              marginBottom:10
+            }}>{this.state.externalData.recipe.catTitle}</Text>
             <View style={{
               borderRadius: 15,
               marginLeft: 19, marginRight: 9,

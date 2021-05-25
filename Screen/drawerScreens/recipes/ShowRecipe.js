@@ -234,6 +234,8 @@ class ShowRecipe extends React.Component {
       }
     }).then(response => response.json())
       .then(data => {
+        console.log(data);
+
         this.state.premium = data.premium;
         delete data.premium;
         if (data.login && data.login == true) {
@@ -558,7 +560,34 @@ class ShowRecipe extends React.Component {
       }
       let galler = <View></View>
       let showGallery = <View></View>
-      
+      let category = '';
+      if(this.state.externalData.recipe.categories  == 1){
+        category = 'Салати';
+      }else if(this.state.externalData.recipe.categories  == 2){
+        category = 'Супи';
+      }else if(this.state.externalData.recipe.categories  == 3){
+        category = 'Предястия';
+      }else if(this.state.externalData.recipe.categories  == 4){
+        category = 'Сосове';
+      }else if(this.state.externalData.recipe.categories  == 5){
+        category = 'Ястия с месо';
+      }else if(this.state.externalData.recipe.categories  == 6){
+        category = 'Ястия без месо';
+      }else if(this.state.externalData.recipe.categories  == 7){
+        category = 'Тестени';
+      }else if(this.state.externalData.recipe.categories  == 8){
+        category = 'Десерти';
+      }else if(this.state.externalData.recipe.categories  == 9){
+        category = 'Риба';
+      }else if(this.state.externalData.recipe.categories  == 10){
+        category = 'Напитки';
+      }else if(this.state.externalData.recipe.categories  == 11){
+        category = 'Зимнина';
+      }else if(this.state.externalData.recipe.categories  == 12){
+        category = 'Бебешки и детски храни';
+      }else if(this.state.externalData.recipe.categories  == 13){
+        category = 'Други';
+      }
       if (this.state.gallery != null) {
         showGallery = <TouchableHighlight style={{ height: 50, flex: 1, marginTop: 15 }} onPress={() => {
           this.fetchData(true)
@@ -718,6 +747,25 @@ class ShowRecipe extends React.Component {
               paddingLeft: 10, fontSize: 20
             }}>{this.state.externalData.recipe.title} </Text>
 
+<Text style={{
+              // borderLeftWidth: 4, borderLeftColor: '#689F38',
+              // borderRadius: 15,
+              textAlign: 'center',
+              // shadowColor: "#000",
+              // shadowOffset: {
+              //     width: 0,
+              //     height: 7,
+              // },
+              // shadowOpacity: 0.41,
+              // shadowRadius: 9.11,
+              // marginBottom: 20,
+             fontSize:18,
+              // elevation: 6,
+              // backgroundColor: '#ffffff',
+              paddingLeft: 10,
+              backgroundColor: '#689F38',
+              marginBottom:10
+            }}>{category}</Text>
             <View style={{
               borderRadius: 15,
               marginLeft: 9, marginRight: 9,
@@ -770,7 +818,6 @@ class ShowRecipe extends React.Component {
               // marginBottom: 20,
               height: 45,
               paddingTop: 10,
-              marginTop: 10,
               // elevation: 6,
               // backgroundColor: '#ffffff',
               paddingLeft: 10
