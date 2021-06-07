@@ -24,7 +24,7 @@ import {
   View,
   Text,
   TextInput,
-  Alert,ActivityIndicator,
+  Alert, ActivityIndicator,
   Modal,
   TouchableHighlight
 } from "react-native";
@@ -36,20 +36,20 @@ class Lists extends React.Component {
   constructor(props) {
     super(props);
     this.didFocus = props.navigation.addListener("didFocus", (payload) =>
-    BackHandler.addEventListener("hardwareBackPress",async () => {
-      let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
-      let lastRoute = route.pop();
-      if(lastRoute != 'ShoppingLists'){
+      BackHandler.addEventListener("hardwareBackPress", async () => {
+        let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
+        let lastRoute = route.pop();
+        if (lastRoute != 'ShoppingLists') {
           route.push(lastRoute);
-      }
-      let goRoute = route.pop();    
-      if(goRoute != undefined){
-        AsyncStorage.setItem('backRoute', JSON.stringify(route));
-        this.props.navigation.navigate(goRoute);
-      }
-    })
-  );
-  
+        }
+        let goRoute = route.pop();
+        if (goRoute != undefined) {
+          AsyncStorage.setItem('backRoute', JSON.stringify(route));
+          this.props.navigation.navigate(goRoute);
+        }
+      })
+    );
+
   }
 
   state = {
@@ -61,12 +61,12 @@ class Lists extends React.Component {
     isActive: false,
     data: [],
     externalData: null,
-    editList:false,
-    editList2:false,
+    editList: false,
+    editList2: false,
     typeid: '',
     modalEditTitle: 'Редактиране на списък',
     count: false,
-    premium:0
+    premium: 0
   };
 
   setTypeTitle = (title) => {
@@ -116,9 +116,10 @@ class Lists extends React.Component {
           this.props.navigation.navigate('Auth');
         }
 
-     
+
         this.state.premium = data.premium;
         delete data.premium;
+        delete data.first;
         if (data.new_token) {
           AsyncStorage.setItem('access_token', data.new_token);
           delete data.new_token;
@@ -162,7 +163,7 @@ class Lists extends React.Component {
 
       }
     ).catch(function (error) {
-      
+
       // ADD THIS THROW error
       throw error;
     });
@@ -198,7 +199,7 @@ class Lists extends React.Component {
 
       }
     ).catch(function (error) {
-      
+
       // ADD THIS THROW error
       throw error;
     });
@@ -236,6 +237,15 @@ class Lists extends React.Component {
           if (this.state.typeid != '') {
             this.dropDownAlertRef.alertWithType('success', '', 'Списъка е редактиран', {}, 1000);
           } else {
+            console.log('--------------------------------')
+console.log(data.response.toString());
+console.log('--------------------------------')
+
+            AsyncStorage.setItem('listId', data.response.toString()).then(data => {
+              this.props.navigation.navigate('AddShoppingListProduct', { user: 'asdasdsdasd' });
+
+            });
+
             this.dropDownAlertRef.alertWithType('success', '', 'Списъка е създаден', {}, 1000);
 
           }
@@ -255,7 +265,7 @@ class Lists extends React.Component {
 
       }
     ).catch(function (error) {
-      
+
       // ADD THIS THROW error
       throw error;
     });
@@ -266,10 +276,10 @@ class Lists extends React.Component {
     const { navigation } = this.props;
     this.props.navigation.setParams({ handleSave: this._saveDetails });
 
-  
+
     this.focusListener = navigation.addListener('didFocus', async () => {
-      
-      let route = await AsyncStorage.getItem('backRoute'); route= JSON.parse(route);
+
+      let route = await AsyncStorage.getItem('backRoute'); route = JSON.parse(route);
       let arrRoute = [];
 
       if (route === null) {
@@ -280,28 +290,28 @@ class Lists extends React.Component {
       if (arrRoute[arrRoute - 1] != 'ShoppingLists') {
         arrRoute.push('ShoppingLists')
       }
-      
+
       AsyncStorage.setItem('backRoute', JSON.stringify(arrRoute));
       this.fetchData();
       this.checkPremium();
-      this.setState({editList2:false})
-      this.setState({editList:false})
-     
+      this.setState({ editList2: false })
+      this.setState({ editList: false })
+
     });
   }
-  test(){
-    
-    
-    
-    
-    
-    
-    
-    
+  test() {
+
+
+
+
+
+
+
+
 
   }
- async _saveDetails() {
-  var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+  async _saveDetails() {
+    var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     await fetch('https://kulinarcho.com/api/checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'shopping' }),
@@ -326,13 +336,13 @@ class Lists extends React.Component {
           delete data.new_token;
           delete data['new_token'];
         }
-        
+
         if (data.response == 'ok' || data.response < 2) {
           this.setTypeTitle('');
           this.setTypeID('');
           this.setActive(false);
-          this.setState({editList:true})
-    
+          this.setState({ editList: true })
+
           this.setState({ modalEditTitle: 'Добави нов списък' })
         } else {
           Alert.alert(
@@ -358,14 +368,14 @@ class Lists extends React.Component {
 
       }
     ).catch(function (error) {
-      
+
       // ADD THIS THROW error
       throw error;
     });
   }
-  
 
-  
+
+
   componentDidUpdate() {
   }
 
@@ -400,7 +410,7 @@ class Lists extends React.Component {
       async response => {
         const data = await response.json();
         this.dropDownAlertRef.alertWithType('success', '', 'Списъка е преместен в архив', {}, 1000);
-        this.setState({editList2:false})
+        this.setState({ editList2: false })
 
         if (data.login && data.login == true) {
           AsyncStorage.clear();
@@ -417,60 +427,62 @@ class Lists extends React.Component {
         this.fetchData();
       }
     ).catch(function (error) {
-      
+
       // ADD THIS THROW error
       throw error;
     });
   }
 
-  toggle = () => this.setState({editList: !this.state.editList})
-  toggle2 = () => this.setState({editList2: !this.state.editList2})
+  toggle = () => this.setState({ editList: !this.state.editList })
+  toggle2 = () => this.setState({ editList2: !this.state.editList2 })
 
   render(props) {
 
     if (this.state.externalData === null && this.state.count === false) {
       return (
         <View style={styles.MainContainer}>
-                    <ActivityIndicator size="large" color="#7DE24E" />   
+          <ActivityIndicator size="large" color="#7DE24E" />
 
-       
+
         </View>
       )
     } else {
-      
+
 
       const { modalVisible2 } = this.state;
       const { modalVisible } = this.state;
 
       const { typeTitle } = this.state;
 
-      let Add =  <AdMobBanner
-      bannerSize="smartBannerLandscape" 
-      adUnitID={'ca-app-pub-5428132222163769/6112419882'} 
-         
-        servePersonalizedAds={true}/>;
-        if(this.state.premium != 0){
-          Add = <View></View>;
-        }
+      let Add = <AdMobBanner
+        bannerSize="smartBannerLandscape"
+        adUnitID={'ca-app-pub-5428132222163769/6112419882'}
+
+        servePersonalizedAds={true} />;
+      if (this.state.premium != 0) {
+        Add = <View></View>;
+      }
       const renderItem = ({ item }) => (
 
-        <View style={{ borderLeftWidth: 4, borderLeftColor: '#689F38',
-        borderRadius: 15,
-        marginLeft: 5, marginRight: 5,
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 7,
-        },
-        shadowOpacity: 0.41,
-        shadowRadius: 9.11,
-    
-        elevation: 6,
-        backgroundColor: '#ffffff',
-        marginVertical: 3,
-        flex: 3,
-        flexDirection: 'row',
-        marginTop: 15,}}>
+        <View style={{
+          borderLeftWidth: 4, borderLeftColor: '#689F38',
+          borderRadius: 15,
+          marginLeft: 5, marginRight: 5,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 7,
+          },
+          shadowOpacity: 0.41,
+          shadowRadius: 9.11,
+
+          elevation: 6,
+          backgroundColor: '#ffffff',
+          marginVertical: 3,
+          flex: 3,
+          flexDirection: 'row',
+          marginTop: 15,
+        }}>
           <TouchableOpacity style={{ marginLeft: 10, marginTop: 6, marginBottom: 5, width: '87%' }} onPress={() => {
             AsyncStorage.setItem('listName', item.name)
             AsyncStorage.setItem('listId', item.id.toString()).then(data => {
@@ -501,7 +513,7 @@ class Lists extends React.Component {
               onPress={() => {
                 this.setTypeTitle(item.name);
                 this.setTypeID(item.id);
-                this.setState({editList2:true})
+                this.setState({ editList2: true })
               }
 
               }
@@ -518,7 +530,7 @@ class Lists extends React.Component {
       return (
         <View style={styles.MainContainer}>
           <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
-               {Add}
+          {Add}
 
           <BottomSheet
             visible={this.state.editList}
@@ -527,13 +539,13 @@ class Lists extends React.Component {
           >
             <View
               style={{
-                  backgroundColor:'white',
-                  borderTopRightRadius: 15,
-                  borderTopLeftRadius: 15,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height:200
-                }}
+                backgroundColor: 'white',
+                borderTopRightRadius: 15,
+                borderTopLeftRadius: 15,
+                justifyContent: "center",
+                alignItems: "center",
+                height: 200
+              }}
             >
               <Text style={styles.titlem}>{this.state.modalEditTitle}</Text>
               <TextInput
@@ -555,10 +567,12 @@ class Lists extends React.Component {
                   backgroundColor: '#ffffff',
                   paddingLeft: 10
                 }}
-                 defaultValue={typeTitle}
-                 onSubmitEditing={() => {   this.setState({editList:false});
-                 this.submitEditType(); }}
-                 blurOnSubmit={false}
+                defaultValue={typeTitle}
+                onSubmitEditing={() => {
+                  this.setState({ editList: false });
+                  this.submitEditType();
+                }}
+                blurOnSubmit={false}
                 placeholder={'Име: '}
                 onChangeText={typeTitle => this.setTypeTitle(typeTitle)}
 
@@ -567,7 +581,7 @@ class Lists extends React.Component {
 
               <View style={{ flex: 1, flexDirection: 'row', marginTop: 20 }}>
                 <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
-      this.setState({editList:false});
+                  this.setState({ editList: false });
                   this.submitEditType();
                 }} underlayColor="white">
                   <View style={{
@@ -586,7 +600,7 @@ class Lists extends React.Component {
                     padding: 10
                   }}>
                     <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
-                    
+
                       <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                         size={30}
                         containerStyle={{
@@ -595,9 +609,9 @@ class Lists extends React.Component {
                         }}
                         size={30}
 
-                        color={ 'green'}
+                        color={'green'}
                         onPress={() => {
-                          this.setState({editList:false});
+                          this.setState({ editList: false });
                           this.submitEditType();
 
                         }
@@ -609,14 +623,17 @@ class Lists extends React.Component {
                       ></Icon>
 
                     </View>
-                    <View style={{ flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1,
-                     borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                    <View style={{
+                      flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1,
+                      borderBottomWidth: 1, borderColor: "silver", alignItems: 'center'
+                    }}>
                       <Text style={{ flex: 3, marginTop: 15 }}>Запази</Text>
                     </View>
                   </View>
                 </TouchableHighlight>
-                <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {       this.setState({editList:false})
- }} underlayColor="white"
+                <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
+                  this.setState({ editList: false })
+                }} underlayColor="white"
                 >
                   <View style={{
                     flex: 3, flexDirection: "row",
@@ -630,12 +647,14 @@ class Lists extends React.Component {
                     elevation: 6,
                     alignItems: "center",
                     backgroundColor: "white",
-                    borderRightWidth:1,
+                    borderRightWidth: 1,
                     marginLeft: 10, marginRight: 15, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
                     padding: 10
                   }}>
-                    <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, 
-                    borderColor: "silver", }}>
+                    <View style={{
+                      backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1,
+                      borderColor: "silver",
+                    }}>
                       <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                         size={30}
                         containerStyle={{
@@ -645,7 +664,7 @@ class Lists extends React.Component {
                         color={'red'}
                         onPress={() => {
 
-                          this.setState({editList:false})
+                          this.setState({ editList: false })
 
 
                         }
@@ -657,15 +676,17 @@ class Lists extends React.Component {
                       >Запази</Icon>
 
                     </View>
-                    <View style={{ flex: 3, backgroundColor: 'white', height: 50,
-                     borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center' }}>
+                    <View style={{
+                      flex: 3, backgroundColor: 'white', height: 50,
+                      borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center'
+                    }}>
                       <Text style={{ flex: 3, marginTop: 15 }}>Отказ</Text>
                     </View>
                   </View>
                 </TouchableHighlight>
 
               </View>
-              
+
             </View>
           </BottomSheet>
           <BottomSheet
@@ -675,110 +696,110 @@ class Lists extends React.Component {
           >
             <View
               style={{
-                backgroundColor:'white',
-                  borderTopRightRadius: 15,
-                  borderTopLeftRadius: 15,
-                 
-                  height:170
-                }}
+                backgroundColor: 'white',
+                borderTopRightRadius: 15,
+                borderTopLeftRadius: 15,
+
+                height: 170
+              }}
             >
-            <View style={{
-              flexDirection: 'row', marginTop: 25, marginLeft: 20
-            }}>
-              <TouchableOpacity onPress={() => {
-                this.setModalVisible(true);
-              }
-              }>
-                <View style={{ flexDirection: 'row', }}>
-                  <Icon style={styles.icon}
-                    borderRadius={15}
-                    containerStyle={{
-                      backgroundColor: '#ebebeb',
-                      borderRadius: 20,
-                      padding: 5
-                    }}
-                    type='ionicon'
-                    size={25}
-                    color={'black'}
-                    onPress={() => {
-                      this.setModalVisible(true);
+              <View style={{
+                flexDirection: 'row', marginTop: 25, marginLeft: 20
+              }}>
+                <TouchableOpacity onPress={() => {
+                  this.setModalVisible(true);
+                }
+                }>
+                  <View style={{ flexDirection: 'row', }}>
+                    <Icon style={styles.icon}
+                      borderRadius={15}
+                      containerStyle={{
+                        backgroundColor: '#ebebeb',
+                        borderRadius: 20,
+                        padding: 5
+                      }}
+                      type='ionicon'
+                      size={25}
+                      color={'black'}
+                      onPress={() => {
+                        this.setModalVisible(true);
 
-                    }
+                      }
 
-                    }
-                    name='archive-outline'
-                  > Архивирай</Icon>
-                  <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Приключи списъка</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
-
-              <TouchableOpacity onPress={() => {
-        this.setState({editList2:false})
-        this.setState({editList:true})
-                this.setState({ modalEditTitle: 'Редактиране на списък' })
-              }
-              }>
-                <View style={{ flexDirection: 'row' }}>
-
-                  <Icon style={styles.icon}
-                    containerStyle={{
-                      backgroundColor: '#ebebeb',
-                      borderRadius: 20,
-                      padding: 5
-                    }}
-                    size={25}
-                    color={'black'}
-
-                    onPress={() => {
-                      this.setState({ modalEditTitle: 'Редактиране на списък' })
-                      this.setState({editList2:false})
-                      this.setState({editList:true})
-
-                    }
-
-                    }
-                    type='font-awesome-5'
-                    name='pencil-alt'
-                  >Редактирай</Icon>
-                  <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Редактирай списъка</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity onPress={() => {
-
-              this.setModalVisible2(true)
-            }
-            }>
+                      }
+                      name='archive-outline'
+                    > Архивирай</Icon>
+                    <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Приключи списъка</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
               <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
 
-                <Icon
-                  containerStyle={{
-                    backgroundColor: '#ebebeb',
-                    borderRadius: 20,
-                    padding: 5
-                  }}
-                  size={25}
-                  color={'silver'}
-                  color={'black'}
-                  type='ionicon'
-                  name='trash-outline'
+                <TouchableOpacity onPress={() => {
+                  this.setState({ editList2: false })
+                  this.setState({ editList: true })
+                  this.setState({ modalEditTitle: 'Редактиране на списък' })
+                }
+                }>
+                  <View style={{ flexDirection: 'row' }}>
 
-                  onPress={() => {
+                    <Icon style={styles.icon}
+                      containerStyle={{
+                        backgroundColor: '#ebebeb',
+                        borderRadius: 20,
+                        padding: 5
+                      }}
+                      size={25}
+                      color={'black'}
 
-                    this.setModalVisible2(true)
-                  }
-                  }
-                  size={25}
-                  style={styles.icon} ></Icon><Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Изтрий списъка</Text>
+                      onPress={() => {
+                        this.setState({ modalEditTitle: 'Редактиране на списък' })
+                        this.setState({ editList2: false })
+                        this.setState({ editList: true })
+
+                      }
+
+                      }
+                      type='font-awesome-5'
+                      name='pencil-alt'
+                    >Редактирай</Icon>
+                    <Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Редактирай списъка</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => {
+
+                this.setModalVisible2(true)
+              }
+              }>
+                <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 15 }}>
+
+                  <Icon
+                    containerStyle={{
+                      backgroundColor: '#ebebeb',
+                      borderRadius: 20,
+                      padding: 5
+                    }}
+                    size={25}
+                    color={'silver'}
+                    color={'black'}
+                    type='ionicon'
+                    name='trash-outline'
+
+                    onPress={() => {
+
+                      this.setModalVisible2(true)
+                    }
+                    }
+                    size={25}
+                    style={styles.icon} ></Icon><Text style={{ marginTop: 5, fontSize: 18, marginLeft: 10, fontWeight: 'bold' }}>Изтрий списъка</Text>
+                </View>
+              </TouchableOpacity>
 
 
 
-          </View>
+            </View>
           </BottomSheet>
           <View style={styles.container}>
             <FlatList
@@ -786,7 +807,7 @@ class Lists extends React.Component {
               renderItem={renderItem}
               keyExtractor={item => item.id}
             />
-                          {Add}
+            {Add}
 
           </View>
 
@@ -811,7 +832,7 @@ class Lists extends React.Component {
                 <View style={{ flex: 1, flexDirection: 'row', marginTop: 20 }}>
                   <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
                     this.submitDeleteType();
-                    this.setState({editList2:false})
+                    this.setState({ editList2: false })
 
                     this.setModalVisible2(!modalVisible2);
                   }} underlayColor="white">
@@ -840,7 +861,7 @@ class Lists extends React.Component {
                           color={'green'}
                           onPress={() => {
                             this.submitDeleteType();
-                            this.setState({editList2:false})
+                            this.setState({ editList2: false })
 
                             this.setModalVisible2(!modalVisible2);
                           }
@@ -858,7 +879,7 @@ class Lists extends React.Component {
                     </View>
                   </TouchableHighlight>
                   <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
-        this.setState({editList2:false})
+                    this.setState({ editList2: false })
 
                     this.setModalVisible2(!modalVisible2);
                   }} underlayColor="white"
@@ -888,7 +909,7 @@ class Lists extends React.Component {
                           color={'red'}
                           onPress={() => {
 
-                            this.setState({editList2:false})
+                            this.setState({ editList2: false })
 
                             this.setModalVisible2(!modalVisible2);
 
@@ -934,8 +955,8 @@ class Lists extends React.Component {
 
                 <View style={{ flex: 1, flexDirection: 'row', marginTop: 20 }}>
                   <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
-                            this.archiveShoppingList(this.state.typeid)
-                            this.setState({editList2:false})
+                    this.archiveShoppingList(this.state.typeid)
+                    this.setState({ editList2: false })
 
                     this.setModalVisible(!modalVisible);
                   }} underlayColor="white">
@@ -965,7 +986,7 @@ class Lists extends React.Component {
                           onPress={() => {
                             this.archiveShoppingList(this.state.typeid)
 
-                            this.setState({editList2:false})
+                            this.setState({ editList2: false })
 
                             this.setModalVisible(!modalVisible);
                           }
@@ -983,7 +1004,7 @@ class Lists extends React.Component {
                     </View>
                   </TouchableHighlight>
                   <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
-        this.setState({editList2:false})
+                    this.setState({ editList2: false })
 
                     this.setModalVisible(!modalVisible);
                   }} underlayColor="white"
@@ -1013,7 +1034,7 @@ class Lists extends React.Component {
                           color={'red'}
                           onPress={() => {
 
-                            this.setState({editList2:false})
+                            this.setState({ editList2: false })
 
                             this.setModalVisible(!modalVisible);
 

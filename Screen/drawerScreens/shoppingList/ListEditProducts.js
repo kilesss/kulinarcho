@@ -163,13 +163,19 @@ class ListEditProducts extends React.Component {
       }
     }).then(response => response.json())
       .then(data => {
+        
         if (data.errors) {
           Object.keys(data.errors).map((key, index) => {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
           })
         }
         this.state.premium = data.premium;
-        delete data.premium;
+        delete data.premium; 
+        let exist = data.exist;
+        delete data.exist;
+        if(Object.keys(data).length === 0 && exist == false) {
+          this.props.navigation.navigate('ShoppingLists');
+        }
         if (data.login && data.login == true) {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
@@ -184,6 +190,8 @@ class ListEditProducts extends React.Component {
         let sum = 0;
         let sumUnbyed = 0;
         let newData = [];
+        
+
         Object.keys(data).map((key, index) => {
           sum = sum + 1;
           if (data[key].status === 1) {

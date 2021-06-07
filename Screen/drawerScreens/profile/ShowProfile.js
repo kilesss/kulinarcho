@@ -1067,7 +1067,8 @@ this.fetchData();
             
             let leaveGroup = <Text></Text>;
             let groupSettings = <View></View>;
-                if (this.state.groupUser == 0 && this.state.premium == 1) {
+
+                if (this.state.groupUser == 0 || this.state.premium == 1) {
                     groupSettings = <View style={page3}>
                     <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
                         size={30}

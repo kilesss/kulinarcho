@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "799869158940",
+    "project_id": "kulinarcho",
+    "storage_bucket": "kulinarcho.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:799869158940:android:aa0d927ef66d97683281d9",
+        "android_client_info": {
+          "package_name": "com.kilessoft.kulinarcho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "799869158940-aevkpn6orak7s2n21udjmd0otse507mp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kilessoft.kulinarcho",
+            "certificate_hash": "1a8b0d089739116e5b9dbcbeb131c223a35f3346"
+          }
+        },
+        {
+          "client_id": "799869158940-poqpl68qe3qnmnqj4bpq8ap32rl6rub7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp8wlp2jfbJ8hcCVpKhlc-ueVCft3ZSfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "799869158940-poqpl68qe3qnmnqj4bpq8ap32rl6rub7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

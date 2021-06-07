@@ -23,7 +23,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Loader from './Components/loader';
 import * as Facebook from 'expo-facebook';
 import * as Google from 'expo-google-app-auth';
-
 const LoginScreen = props => {
   let [userEmail, setUserEmail] = useState('');
   let [userPassword, setUserPassword] = useState('');
@@ -33,6 +32,27 @@ const LoginScreen = props => {
   const [user, setUser] = useState(null);
   const [client, setClient] = useState(null);
 
+  async function signInWithGoogleAsync  ()  {
+    try {
+      const result = await Google.logInAsync({
+        androidClientId: "799869158940",
+        //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
+        scopes: ["profile", "email"]
+
+      })
+      if (result.type === "success") {
+        const credential = firebase.auth.GoogleAuthProvider.credential(result.idToken, result.accessToken);
+           firebase.auth().signInAndRetrieveDataWithCredential(credential).then(function(result){
+             console.log(result);
+           });
+   this.props.navigation.navigate('Where you want to go');
+ } else {
+   console.log("cancelled")
+ }
+    } catch (e) {
+      console.log("error", e)
+    }
+}
 
 
     async function facebookLogIn() {
@@ -67,7 +87,7 @@ const LoginScreen = props => {
     Alert.alert('Logged in with Google!', 'Name:' + ' ' + client.name + '\n' + 'Email:' + ' ' + client.email);
   }
 
-  async function signInWithGoogleAsync() {
+  async function signInWithGoogleAsync2() {
 console.log('sssssssssssssssssssssssss'); 
     try {
       const result = await Google.logInAsync({

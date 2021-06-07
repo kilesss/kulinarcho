@@ -234,9 +234,12 @@ class ShowRecipe extends React.Component {
       }
     }).then(response => response.json())
       .then(data => {
-        console.log(data);
+        if (data.response !== '') {
+          this.setState({ externalData: data });
+        } else {
+          this.props.navigation.navigate('ListRecipes', { name: 'kuyr' });
 
-        this.state.premium = data.premium;
+        }        this.state.premium = data.premium;
         delete data.premium;
         if (data.login && data.login == true) {
           AsyncStorage.clear();
@@ -250,9 +253,8 @@ class ShowRecipe extends React.Component {
           delete data['new_token'];
 
         }
-
-        if (!data.gallery.length) {
-        } else {
+ 
+        if (data.gallery && data.gallery.length) {
           let gall = [];
 
           Object.keys(data.gallery).map((key, index) => {
@@ -276,12 +278,7 @@ class ShowRecipe extends React.Component {
           this.setState({ galleryShow: false })
 
         }
-        if (data.response !== '') {
-          this.setState({ externalData: data });
-        } else {
-          this.props.navigation.navigate('ListRecipes', { name: 'kuyr' });
-
-        }
+      
 
       }).catch(function (error) {
         
@@ -485,77 +482,6 @@ class ShowRecipe extends React.Component {
               width: '96%', height: 300,
               borderRadius: 15, paddingBottom: 0, marginBottom: 10,
             }} />
-          if (this.state.externalData.recipe.categories == 1) {
-            photo = <Image
-              source={require('../../../Image/salad.jpg')}
-              resizeMethod={'resize'}
-              style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, marginBottom: 10,
-              }} />
-
-          }
-          if (this.state.externalData.recipe.categories == 2) {
-            photo = <Image
-              source={require('../../../Image/supa.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 3) {
-            photo = <Image
-              source={require('../../../Image/predqstie.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 4) {
-            photo = <Image
-              source={require('../../../Image/souse.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 5) {
-            photo = <Image
-              source={require('../../../Image/meal.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 6) {
-
-            photo = <Image
-              source={require('../../../Image/vege.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                aspectRatio: 0.9, width: '96%',
-                resizeMode: 'contain', borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-
-          }
-          if (this.state.externalData.recipe.categories == 7) {
-            photo = <Image
-              source={require('../../../Image/bread.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-          if (this.state.externalData.recipe.categories == 8) {
-            photo = <Image
-              source={require('../../../Image/dessert.jpg')}
-              resizeMethod={'resize'} style={{
-                flex: 1,
-                width: '96%', height: 300, borderRadius: 15, paddingBottom: 0, marginBottom: 10,
-              }} />
-          }
-
-
         }
       }
       let galler = <View></View>

@@ -512,7 +512,8 @@ class showPublicRecipes extends React.Component {
 
 
         if (this.state.externalData.recipe.photo != null) {
-          photo = <Image source={{ uri: 'https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/' + this.state.externalData.recipe.photo + '?time' + (new Date()).getTime() }} resizeMethod={'auto'} style={{
+          photo = <Image source={{ uri: 'https://kulinarcho.s3.eu-central-1.amazonaws.com/recipes/' + 
+          this.state.externalData.recipe.photo + '?time' + (new Date()).getTime() }} resizeMethod={'auto'} style={{
             flex: 1,
             aspectRatio: 0.9, width: '96%',
             resizeMode: 'contain', borderRadius: 15, paddingBottom: 0, marginBottom: 10,

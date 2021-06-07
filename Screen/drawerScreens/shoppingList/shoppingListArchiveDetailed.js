@@ -252,7 +252,9 @@ class shoppingListArchiveDetailed extends React.Component {
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     var DEMO_TOKEN2 = await AsyncStorage.getItem('ArchiveWeekMenuID');
-
+console.log(JSON.stringify({
+  id: DEMO_TOKEN2,
+}))
     fetch("https://kulinarcho.com/api/getShoppingListArchive", {
       method: "POST",
       body: JSON.stringify({
@@ -263,8 +265,9 @@ class shoppingListArchiveDetailed extends React.Component {
         "Accept": "application/json",
         'Authorization': 'Bearer ' + DEMO_TOKEN
       }
-    }).then(response => response.json())
-      .then(data => {
+    }).then( async response => {
+      const data = await response.json();
+      console.log(data);
         if (data.errors) {
           Object.keys(data.errors).map((key, index) => {
             this.dropDownAlertRef.alertWithType('error', 'Error', data.errors[key], {}, 1000);
@@ -282,9 +285,9 @@ class shoppingListArchiveDetailed extends React.Component {
             delete data.new_token;
             delete data['new_token'];
 
-
-            this.setState({externalData: JSON.parse(data[0].list)});
         }
+        this.setState({externalData: JSON.parse(data[0].list)});
+
       }).catch(function (error) {
 
         // ADD THIS THROW error

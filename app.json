@@ -12,6 +12,7 @@
       "facebookDisplayName": "kulinarcho",
       "android": {
         "package": "com.kilesss.kulinarcho",
+        "googleServicesFile": "./google-services.json",
         "versionCode": 3,
         "config": {
             "googleMobileAdsAppId": "ca-app-pub-5428132222163769~2137322335"

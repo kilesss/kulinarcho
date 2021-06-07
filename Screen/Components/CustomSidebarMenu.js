@@ -10,7 +10,10 @@ const SECTIONS = [
     //         navOptionName: 'Начало',
     //         screenToNavigate: 'ShoppingList',
     //     },
-
+    {
+        navOptionName: 'Известия',
+        screenToNavigate: 'notification',
+    },
     {
 
         title: 'Списък пазар',
@@ -52,7 +55,7 @@ const SECTIONS = [
                     navOptionName: 'Готварска книга',
                     screenToNavigate: 'ListRecipes',
                 },
-              
+
             ],
     },
 
@@ -261,28 +264,48 @@ class CustomSidebarMenu extends Component {
     };
 
     render() {
-        
+
 
         return (
             <View style={stylesSidebar.sideMenuContainer}>
                 <View style={stylesSidebar.profileHeader}>
 
                     <TouchableHighlight
-                        style={{}}
+                        style={{ width: "100%" }}
                         onPress={() => {
                             this.props.navigation.navigate('ShowProfile');
 
                         }}
                     >
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flexDirection: 'row', width: "100%"}}>
                             <Image source={require('../../Image/circle-cropped.png')}
 
                                 style={{ width: 60, height: 60 }}
                             />
                             <Text style={stylesSidebar.profileHeaderText}>Профил</Text>
+                            <View style={{marginLeft:60, alignSelf: 'flex-end', alignItems: 'flex-end' }}>
+                                <Icon style={{
+
+                                }}
+                                    size={35}
+                                    containerStyle={{
+                                    }}
+                                    color={'white'}
+                                    onPress={() => {
+                                        this.props.navigation.navigate('welcome');
+
+                                    }
+
+                                    }
+                                    type='ionicon'
+                                    backgroundColor='silver'
+                                    name='help-circle-outline'
+                                ></Icon>
+                            </View>
                         </View>
 
                     </TouchableHighlight>
+
                 </View>
                 <View style={stylesSidebar.profileHeaderLine} />
                 <View style={{ width: '100%', flex: 1 }}>
@@ -319,6 +342,7 @@ const stylesSidebar = StyleSheet.create({
         padding: 15,
         paddingBottom: 0,
         textAlign: 'center',
+        width: '90%'
     },
     profileHeaderPicCircle: {
         width: 60,

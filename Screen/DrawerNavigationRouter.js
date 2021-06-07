@@ -44,6 +44,8 @@ import showCategory from './drawerScreens/searchRecipe/showCategory'
 import searchRecipe from './drawerScreens/searchRecipe/searchRecipe'
 import showPublicRecipes from './drawerScreens/showPublicRecipes/showPublicRecipes'
 import Feedback from './drawerScreens/feedback/feedback'
+import notification from './drawerScreens/notification/notification'
+import welcome from './drawerScreens/welcome/welcome'
 import searchUser from './drawerScreens/searchUser/searchUser'
 import payments from './drawerScreens/payments/payments'
 
@@ -125,6 +127,35 @@ const Feedback_StackNavigator = createStackNavigator({
         screen: Feedback,
         navigationOptions: ({ navigation }) => ({
             title: 'Обратна връзка',
+            headerLeft: () => <NavigationDrawerHeader navigationProps={navigation} />,
+            headerStyle: {
+                backgroundColor: '#689F38',
+            },
+            headerTintColor: '#fff',
+        }),
+    },
+});
+
+
+const notification_StackNavigator = createStackNavigator({
+    First: {
+        screen: notification,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Известия',
+            headerLeft: () => <NavigationDrawerHeader navigationProps={navigation} />,
+            headerStyle: {
+                backgroundColor: '#689F38',
+            },
+            headerTintColor: '#fff',
+        }),
+    },
+});
+
+const welcome_StackNavigator = createStackNavigator({
+    First: {
+        screen: welcome,
+        navigationOptions: ({ navigation }) => ({
+            title: 'Добре дошли',
             headerLeft: () => <NavigationDrawerHeader navigationProps={navigation} />,
             headerStyle: {
                 backgroundColor: '#689F38',
@@ -515,6 +546,20 @@ const DrawerNavigatorRoutes = createDrawerNavigator(
                 drawerLabel: 'Добави рецепта',
             },
         },
+        notification: {
+            screen: notification_StackNavigator,
+            navigationOptions: {
+                drawerLabel: 'Известия',
+            },
+        },
+
+        welcome: {
+            screen: welcome_StackNavigator,
+            navigationOptions: {
+                drawerLabel: 'Добре дошли',
+            },
+        },
+
         searchRecipe: {
             screen: searchRecipe_StackNavigator,
             navigationOptions: {
