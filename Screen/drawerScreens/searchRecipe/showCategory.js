@@ -152,7 +152,7 @@ class showCategory extends React.Component {
     var category = await AsyncStorage.getItem('categoryId');
     this.setState({ category: category })
 
-    fetch("https://kulinarcho.com/api/getPublicRecipes", {
+    fetch(global.MyVar+"getPublicRecipes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

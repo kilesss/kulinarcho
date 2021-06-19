@@ -74,7 +74,7 @@ class ListWeekMenu extends React.Component {
 
 
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-        await fetch('https://kulinarcho.com/api/archiveWeekMenu', {
+        await fetch(global.MyVar+'archiveWeekMenu', {
             method: 'POST',
             body: JSON.stringify({
                 id: id,
@@ -135,7 +135,7 @@ class ListWeekMenu extends React.Component {
     async fetchData() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        fetch("https://kulinarcho.com/api/weekMenu", {
+        fetch(global.MyVar+"weekMenu", {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN

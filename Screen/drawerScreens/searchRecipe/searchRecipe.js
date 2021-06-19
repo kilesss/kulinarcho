@@ -144,7 +144,7 @@ class searchRecipe extends React.Component {
 
   async fetchCategories() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getCategories", {
+    fetch(global.MyVar+"getCategories", {
       method: "GET",
       headers: {
         'Cache-Control': 'no-cache',
@@ -193,7 +193,7 @@ class searchRecipe extends React.Component {
     await this.setState({ page: r });
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getPublicRecipes", {
+    fetch(global.MyVar+"getPublicRecipes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

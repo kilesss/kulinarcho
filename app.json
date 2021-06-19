@@ -3,7 +3,7 @@
       "name": "Kulinarcho",
       "icon": "./clipboard.png",
       "description": "Твоя персонален иконом",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "orientation": "portrait",
       "privacy": "public",
       "scheme": "kulinarchoapp",
@@ -11,12 +11,15 @@
       "facebookAppId": "3838307209625245",
       "facebookDisplayName": "kulinarcho",
       "android": {
-        "package": "com.kilesss.kulinarcho",
-        "googleServicesFile": "./google-services.json",
-        "versionCode": 3,
+        "package": "com.kilessoft.kulinarcho",
+        "googleServicesFile": "google-services.json",
+        "versionCode": 4,
         "config": {
             "googleMobileAdsAppId": "ca-app-pub-5428132222163769~2137322335"
-        }
+        },
+        "permissions":["com.android.vending.BILLING"]
       }
-    }
+    },
+    "host":"http://kulinarcho.com"
+    
   }

@@ -107,7 +107,7 @@ class notification extends React.Component {
 
   async deleteRequest(id,notId) {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/deleteRequestUser', {
+    await fetch(global.MyVar+'deleteRequestUser', {
         method: 'POST',
         body: JSON.stringify({
             requesterId: id,
@@ -135,7 +135,7 @@ class notification extends React.Component {
 async deleteNotification(id) {
   var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-  await fetch('https://kulinarcho.com/api/deleteNotification/'+id, {
+  await fetch(global.MyVar+'deleteNotification/'+id, {
       method: 'POST',
       body: JSON.stringify({
       }),
@@ -161,7 +161,7 @@ async deleteNotification(id) {
   async acceptRequest(id, notId) {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('https://kulinarcho.com/api/acceptRequestUser', {
+    await fetch(global.MyVar+'acceptRequestUser', {
         method: 'POST',
         body: JSON.stringify({
             requesterId: id,
@@ -194,7 +194,7 @@ async deleteNotification(id) {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("https://kulinarcho.com/api/notification", {
+    fetch(global.MyVar+"notification", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN

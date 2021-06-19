@@ -45,6 +45,7 @@ class ShowProfile extends React.Component {
         activeProfile: 0,
         activeGroupProfile: 0,
         requests: [],
+        requestsIncome:[],
         groupUsers: [],
         typeProfile: '',
         master: 0,
@@ -133,7 +134,7 @@ class ShowProfile extends React.Component {
     async fetchData() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        fetch("https://kulinarcho.com/api/profile", {
+        fetch(global.MyVar+"profile", {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -164,6 +165,7 @@ class ShowProfile extends React.Component {
 
                 this.setState({ master: data.master });
                 this.setState({ requests: data.requests });
+                this.setState({ requestsIncome: data.requestsIncome });
                 this.setState({ groupUsers: data.groupUsers });
 
                 this.setState({ name: data.name })
@@ -183,7 +185,7 @@ class ShowProfile extends React.Component {
     async fetchFollowers() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        fetch("https://kulinarcho.com/api/getFollower", {
+        fetch(global.MyVar+"getFollower", {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -232,7 +234,7 @@ class ShowProfile extends React.Component {
         }
 
 
-        await fetch('https://kulinarcho.com/api/updateProfile', {
+        await fetch(global.MyVar+'updateProfile', {
             method: 'POST',
             body: JSON.stringify({
                 password: password,
@@ -270,7 +272,7 @@ class ShowProfile extends React.Component {
     async acceptRequest(id) {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        await fetch('https://kulinarcho.com/api/acceptRequestUser', {
+        await fetch(global.MyVar+'acceptRequestUser', {
             method: 'POST',
             body: JSON.stringify({
                 requesterId: id,
@@ -304,7 +306,7 @@ this.fetchData();
     }
     async switchProfile(id) {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-        await fetch('https://kulinarcho.com/api/switchProfile', {
+        await fetch(global.MyVar+'switchProfile', {
             method: 'POST',
             body: JSON.stringify({
                 switchTo: id,
@@ -339,12 +341,19 @@ this.fetchData();
             throw error;
         });
     }
-    async deleteRequest(id) {
+    async deleteRequest(id,income = 0,email) {
+        console.log(JSON.stringify({
+            requesterId: id,
+            income:income,
+            email: email
+        }));
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-        await fetch('https://kulinarcho.com/api/deleteRequestUser', {
+        await fetch(global.MyVar+'deleteRequestUser', {
             method: 'POST',
             body: JSON.stringify({
                 requesterId: id,
+                income:income,
+                email: email
             }),
             headers: {
                 "Content-Type": "application/json",
@@ -384,7 +393,7 @@ this.fetchData();
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-        await fetch('https://kulinarcho.com/api/newRequest', {
+        await fetch(global.MyVar+'newRequest', {
             method: 'POST',
             body: JSON.stringify({
                 requestedEmail: this.state.requestJoinEmail,
@@ -433,7 +442,7 @@ this.fetchData();
 
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        await fetch('https://kulinarcho.com/api/removeFollower', {
+        await fetch(global.MyVar+'removeFollower', {
             method: 'POST',
             body: JSON.stringify({
                 follow_id: follow_id
@@ -475,7 +484,7 @@ this.fetchData();
     async deleteUser(id) {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        await fetch('https://kulinarcho.com/api/deleteUser', {
+        await fetch(global.MyVar+'deleteUser', {
             method: 'POST',
             body: JSON.stringify({
                 userID: id,
@@ -636,9 +645,88 @@ this.fetchData();
                 page1 = { borderColor: '#85cc47', borderBottomWidth: 1, paddingBottom: 3, marginBottom: 2, flex: 1 };
                 page2 = { flex: 1 };
                 page3 = { flex: 1 };
+                var requestsIncome = [];
+                var requestsIncomeTitle = <View></View>
+                Object.keys(this.state.requestsIncome).map((key, index) => {
+                    requestsIncomeTitle =                                 <Text style={{ flex: 3, borderBottomColor: 'silver', fontSize: 18, borderBottomWidth: 1, marginBottom: 15 }}>Получени заявки: </Text>
+
+
+                    let email = '';
+                    if(this.state.requestsIncome[key].email !== null) {
+                        email = this.state.requestsIncome[key].email;
+                    }else{
+                        email = this.state.requestsIncome[key].noreg;
+                    }
+                    requestsIncome.push(
+                        <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 }}>
+                                                        <Text style={{ flex: 9 }}>{email}</Text>
+
+                            <TouchableOpacity style={{ flex: 3 }}
+                                onPress={() => {
+                                    Alert.alert(
+                                        'Приемане на заявка',
+                                        'Сигурни ли сте че искате да приемете  ' + email + ' в групата ви?',
+                                        [
+                                            {
+                                                text: 'Отказ',
+                                                onPress: () => {
+                                                    return null;
+                                                },
+                                            },
+                                            {
+                                                text: 'Приемане',
+                                                onPress: () => {
+                                                    this.acceptRequest(this.state.requestsIncome[key].id)
+                                                },
+                                            },
+                                        ],
+                                        { cancelable: false }
+                                    );
+
+                                }}
+                            ><Text style={{ borderBottomWidth: 1, alignContent: 'flex-end' }}>Приеми</Text></TouchableOpacity>
+                            <TouchableOpacity style={{ flex: 3 }}
+                                onPress={() => {
+                                    Alert.alert(
+                                        'Изтриване на заявка',
+                                        'Сигурни ли сте че искате да изтриете заявката на ' + this.state.requestsIncome[key].email + ' ?',
+                                        [
+                                            {
+                                                text: 'Отказ',
+                                                onPress: () => {
+                                                    return null;
+                                                },
+                                            },
+                                            {
+                                                text: 'Изтриване',
+                                                onPress: () => {
+                                                    this.deleteRequest(this.state.requestsIncome[key].id,1)
+                                                },
+                                            },
+                                        ],
+                                        { cancelable: false }
+                                    );
+
+
+                                }}
+                            ><Text style={{ borderBottomWidth: 1, alignContent: 'flex-end' }}>Изтрий</Text></TouchableOpacity>
+                        </View>
+                    )
+                });
                 PageView.push(<ScrollView style={{ height: 350, }}>
-                    <View style={{ marginBottom: 50, borderColor: '#689F38', paddingBottom: 15, borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, paddingTop: 15 }}>
                     {Add}
+
+                     <View style={{
+                                borderRadius: 15,
+                                marginLeft: 9, marginRight: 9,
+
+                                paddingLeft: 10
+                            }}>
+                        {requestsIncomeTitle}
+                        {requestsIncome}
+                    </View>
+                    <View style={{ marginBottom: 50, borderColor: '#689F38', paddingBottom: 15, borderWidth: 1, borderRadius: 10, padding: 5, marginLeft: 5, marginRight: 5, paddingTop: 15 }}>
+                   
 
                         <TextInput
                             placeholder={this.state.name}
@@ -763,9 +851,9 @@ this.fetchData();
                         paddingTop: 15
                     }}>
 
-                        <Text style={{ fontSize: 18, color: 'silver', textAlign: 'center', marginBottom: 6 }}>Изпрати заявка за присъединяване в група</Text>
+                        <Text style={{ fontSize: 18, color: 'silver', textAlign: 'center', marginBottom: 6 }}>Изпрати заявка за присъединяване към група</Text>
                         <TextInput
-                            placeholder={'Имейл на собственика на групата'}
+                            placeholder={'Имейл'}
                             style={{
                                 borderRadius: 15,
                                 marginLeft: 9, marginRight: 9,
@@ -922,33 +1010,15 @@ this.fetchData();
                     });
                 var requests = [];
                 Object.keys(this.state.requests).map((key, index) => {
+                    let email = '';
+                    if(this.state.requests[key].email !== null) {
+                        email = this.state.requests[key].email;
+                    }else{
+                        email = this.state.requests[key].noreg;
+                    }
                     requests.push(
                         <View style={{ flex: 1, flexDirection: "row", marginBottom: 10 }}>
-                            <Text style={{ flex: 9 }}>{this.state.requests[key].email}</Text>
-                            <TouchableOpacity style={{ flex: 3 }}
-                                onPress={() => {
-                                    Alert.alert(
-                                        'Приемане на заявка',
-                                        'Сигурни ли сте че искате да приемете  ' + this.state.requests[key].email + 'в групата ви?',
-                                        [
-                                            {
-                                                text: 'Отказ',
-                                                onPress: () => {
-                                                    return null;
-                                                },
-                                            },
-                                            {
-                                                text: 'Приемане',
-                                                onPress: () => {
-                                                    this.acceptRequest(this.state.requests[key].id)
-                                                },
-                                            },
-                                        ],
-                                        { cancelable: false }
-                                    );
-
-                                }}
-                            ><Text style={{ borderBottomWidth: 1, alignContent: 'flex-end' }}>Приеми</Text></TouchableOpacity>
+                            <Text style={{ flex: 9 }}>{email}</Text>
                             <TouchableOpacity style={{ flex: 3 }}
                                 onPress={() => {
                                     Alert.alert(
@@ -964,7 +1034,7 @@ this.fetchData();
                                             {
                                                 text: 'Изтриване',
                                                 onPress: () => {
-                                                    this.deleteRequest(this.state.requests[key].id)
+                                                    this.deleteRequest(this.state.requests[key].id,0,email);
                                                 },
                                             },
                                         ],
@@ -977,6 +1047,8 @@ this.fetchData();
                         </View>
                     )
                 });
+
+              
                 let all = [];
                 var personalFields = [];
 
@@ -989,7 +1061,7 @@ this.fetchData();
 
                                 paddingLeft: 10
                             }}>
-                                <Text style={{ flex: 3, borderBottomColor: 'silver', fontSize: 18, borderBottomWidth: 1, marginBottom: 15 }}>Получени заявки: </Text>
+                                <Text style={{ flex: 3, borderBottomColor: 'silver', fontSize: 18, borderBottomWidth: 1, marginBottom: 15 }}>Изпратени заявки: </Text>
                                 {requests}
                             </View>
                             <View style={{

@@ -182,7 +182,7 @@ class ShowRecipe extends React.Component {
       recipeId: DEMO_TOKEN2,
       photo: this.state.image64
     }))
-    fetch("https://kulinarcho.com/api/uploadImageGallery", {
+    fetch(global.MyVar+"uploadImageGallery", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -227,7 +227,7 @@ class ShowRecipe extends React.Component {
   async fetchData(showGallery = false) {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     let DEMO_TOKEN2 = await AsyncStorage.getItem('recipeId');
-    fetch("https://kulinarcho.com/api/showRecipe?id=" + DEMO_TOKEN2, {
+    fetch(global.MyVar+"showRecipe?id=" + DEMO_TOKEN2, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -290,7 +290,7 @@ class ShowRecipe extends React.Component {
   async setPublic(id) {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/setPublicRecipe', {
+    await fetch(global.MyVar+'setPublicRecipe', {
       method: 'POST',
       body: JSON.stringify({
         recipe_id: id,

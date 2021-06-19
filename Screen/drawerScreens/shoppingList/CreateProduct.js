@@ -152,7 +152,7 @@ handleBackButtonClick() {
     }));
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     
-    await fetch('https://kulinarcho.com/api/createProducts', {
+    await fetch(global.MyVar+'createProducts', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.typeid,
@@ -201,7 +201,7 @@ handleBackButtonClick() {
 
   async fetchDataTypes() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getTypes", {
+    fetch(global.MyVar+"getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -236,7 +236,7 @@ handleBackButtonClick() {
   }
   // async fetchDataUnits() {
   //   var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-  //   fetch("https://kulinarcho.com/api/getUnits", {
+  //   fetch(global.MyVar+"getUnits", {
   //     method: "GET",
   //     headers: {
   //       'Authorization': 'Bearer ' + DEMO_TOKEN

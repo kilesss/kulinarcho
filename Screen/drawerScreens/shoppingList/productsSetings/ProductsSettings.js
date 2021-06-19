@@ -136,7 +136,7 @@ class ProductsSettings extends React.Component {
 
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getProducts", {
+    fetch(global.MyVar+"getProducts", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -227,7 +227,7 @@ class ProductsSettings extends React.Component {
   async submitDeleteType() {
    
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/deleteProducts', {
+    await fetch(global.MyVar+'deleteProducts', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.typeid }),
       headers: {

@@ -127,7 +127,7 @@ class AddWeekMenu extends React.Component {
   }
   async checkPremium() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/checkPremium', {
+    await fetch(global.MyVar+'checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'menu' }),
       headers: {
@@ -189,7 +189,7 @@ class AddWeekMenu extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("https://kulinarcho.com/api/recipes", {
+    fetch(global.MyVar+"recipes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -226,7 +226,7 @@ class AddWeekMenu extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     this.setState({ edit: id });
-    fetch("https://kulinarcho.com/api/weekMenuID?id=" + id, {
+    fetch(global.MyVar+"weekMenuID?id=" + id, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -279,7 +279,7 @@ class AddWeekMenu extends React.Component {
 
     
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/submitWeekMenu', {
+    await fetch(global.MyVar+'submitWeekMenu', {
       method: 'POST',
       body: JSON.stringify({
         endDate: this.state.endDate,

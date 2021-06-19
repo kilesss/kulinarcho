@@ -111,7 +111,7 @@ class UserProfile extends React.Component {
         var userId = await AsyncStorage.getItem('userId');
 
         
-        await fetch('https://kulinarcho.com/api/addFollower', {
+        await fetch(global.MyVar+'addFollower', {
           method: 'POST',
           body: JSON.stringify({
             follow_id: userId
@@ -153,7 +153,7 @@ class UserProfile extends React.Component {
     async fetchData() {
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
         var userId = await AsyncStorage.getItem('userId');
-        fetch("https://kulinarcho.com/api/getPublicProfile/" + userId, {
+        fetch(global.MyVar+"getPublicProfile/" + userId, {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN

@@ -94,7 +94,7 @@ class CategoriesSettings extends React.Component {
 
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getUnits", {
+    fetch(global.MyVar+"getUnits", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -171,7 +171,7 @@ class CategoriesSettings extends React.Component {
 
   async submitEditType(){
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-        await fetch('https://kulinarcho.com/api/addUnits', {
+        await fetch(global.MyVar+'addUnits', {
             method: 'POST',
             body:  JSON.stringify({ id: this.state.typeid, name: this.state.typeTitle }),
             headers: {
@@ -212,7 +212,7 @@ class CategoriesSettings extends React.Component {
   async submitDeleteType(){
     
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-        await fetch('https://kulinarcho.com/api/deleteUnits', {
+        await fetch(global.MyVar+'deleteUnits', {
             method: 'POST',
             body:  JSON.stringify({ id: this.state.typeid}),
             headers: {

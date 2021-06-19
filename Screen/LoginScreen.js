@@ -67,13 +67,17 @@ const LoginScreen = props => {
           permissions,
           declinedPermissions,
         } = await Facebook.logInWithReadPermissionsAsync({
-          permissions: ['public_profile'],
+          permissions: ['public_profile','email'],
         });
-        console.log(type);
         if (type === 'success') {
           // Get the user's name using Facebook's Graph API
-          const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-          Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
+          const response = await fetch(`https://graph.facebook.com/me?fields=name,email&access_token=${token}`);
+          await response.json().then(response => {
+            setLoading(true);
+      
+            loginFB(response.email, response.name)
+
+          })
         } else {
           // type === 'cancel'
         }
@@ -83,6 +87,50 @@ const LoginScreen = props => {
     }
 
 
+
+      async function loginFB(emailFB, nameFB){
+        await fetch(global.MyVar+'login', {
+          method: 'POST',
+          body: JSON.stringify({
+            type:'fb',
+            email: emailFB,
+            name:nameFB
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+  
+        }).then(response => response.json())
+        .then(responseJson => {
+          //Hide Loader
+          setLoading(false);
+          
+  
+          if (responseJson.errors) {
+            Object.keys(responseJson.errors).map((key, index) => {
+              
+              setErrortext(responseJson.errors[key]);
+            })
+          }
+          // If server response message same as Data Matched
+          if (responseJson.access_token) {
+            
+            if (responseJson.rememberToken === '') {
+              AsyncStorage.setItem('access_token', responseJson.access_token);
+              props.navigation.navigate('DrawerNavigationRoutes');
+            } else {
+              setErrortext('Акаунта ви все още не е потвърден');
+  
+            }
+          }
+        }).catch(function (error) {
+          
+          // ADD THIS THROW error
+          throw error;
+        });
+        }
+      
   const run = () => {
     Alert.alert('Logged in with Google!', 'Name:' + ' ' + client.name + '\n' + 'Email:' + ' ' + client.email);
   }
@@ -133,8 +181,11 @@ console.log('sssssssssssssssssssssssss');
       var encodedValue = encodeURIComponent(dataToSend[key]);
       formBody.push(encodedKey + '=' + encodedValue);
     }
+
+    
     formBody = formBody.join('&');
-    fetch('https://kulinarcho.com/api/login', {
+    console.log(formBody)
+    fetch(global.MyVar+'login', {
       method: 'POST',
       body: formBody,
       headers: {
@@ -248,16 +299,16 @@ console.log('sssssssssssssssssssssssss');
           <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', paddingHorizontal: 10 }}>
             {/* Facebook LoginButton */}
             <View style={{ flex: 1 }}>
-              <TouchableOpacity style={styles.fbloginBtn} onPress={facebookLogIn}>
-                          <Text style={{ flex:1, justifyContent: 'center', textAlign: 'center', color: '#ffffff', marginTop:5 }}>Login with Facebook</Text>
+              <TouchableOpacity style={{...styles.buttonStyle, marginLeft:50,backgroundColor: '#3b5998',marginTop:10,paddingTop:5}} onPress={facebookLogIn}>
+                          <Text style={{ flex:1, justifyContent: 'center', height:45, textAlign: 'center', color: '#ffffff', marginTop:5 }}>Login with Facebook</Text>
                         </TouchableOpacity>
             </View>
             {/* Google LoginButton */}
-            <View style={{ flex: 1 }}>
+            {/* <View style={{ flex: 1 }}>
               <TouchableOpacity style={styles.googloginBtn} onPress={signInWithGoogleAsync}>
                           <Text style={{flex:1, justifyContent: 'center', textAlign: 'center', color: '#ffffff', marginTop:5}}>Login with Google</Text>
                         </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
           <Text
             style={styles.registerTextStyle}
@@ -265,7 +316,7 @@ console.log('sssssssssssssssssssssssss');
             Регистрация
                         </Text>
           <Text
-            style={{ ...styles.registerTextStyle, color: 'silver' }}
+            style={{ ...styles.registerTextStyle, color: 'silver', marginTop:9 }}
             onPress={() => props.navigation.navigate('ForgottenPassword')}>
             Забравена парола
                         </Text>
@@ -323,7 +374,7 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 17,
   },
   errorTextStyle: {
     color: 'red',
@@ -332,7 +383,10 @@ const styles = StyleSheet.create({
   },
   fbloginBtn: {
     backgroundColor: '#3b5998',
-    height: 30,
+    height: 45,
+    paddingTop: 7,
+    width:'50%',
+    alignItems: 'center',
     borderRadius: 50,
     marginRight: 5
   },

@@ -151,7 +151,7 @@ console.log(JSON.stringify({
   typeId: this.state.typesID,
   photo: this.state.image64
 }));
-    await fetch('https://kulinarcho.com/api/createProducts', {
+    await fetch(global.MyVar+'createProducts', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.typeid,
@@ -201,7 +201,7 @@ console.log(JSON.stringify({
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     var t = await AsyncStorage.getItem('productId');
 
-    await fetch("https://kulinarcho.com/api/getProducts?productId=" + t, {
+    await fetch(global.MyVar+"getProducts?productId=" + t, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN,
@@ -247,7 +247,7 @@ console.log(JSON.stringify({
   }
   async fetchDataTypes() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getTypes", {
+    fetch(global.MyVar+"getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -291,7 +291,7 @@ this.state.premium = data.premium;
       productId: t,
 
     }));
-  await fetch("https://kulinarcho.com/api/deleteImage", {
+  await fetch(global.MyVar+"deleteImage", {
 
       method: 'POST',
      
@@ -332,7 +332,7 @@ async pickImage() {
  
   if(this.state.premium !== 1){
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/checkPremium', {
+    await fetch(global.MyVar+'checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'images' }),
       headers: {

@@ -56,7 +56,7 @@ const RegisterScreen = props => {
         });
         
 
-        fetch('https://kulinarcho.com/api/signup', {
+        fetch(global.MyVar+'signup', {
             method: 'POST',
             body: dataToSend,
             headers: {
@@ -126,12 +126,11 @@ const RegisterScreen = props => {
     return (
         <ScrollView style={{
             flex: 1,
-            marginBottom: 60,
 
             width: '100%',
             height: '50%'
         }}>
-            <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <View style={{ flex: 1, backgroundColor: 'white', height: '100%'}}>
                 <Loader loading={loading} />
 
                 <View style={{ marginTop: 50 }}>

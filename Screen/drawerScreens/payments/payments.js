@@ -197,7 +197,7 @@ async makepayment(){
       cvc:cvc
     })
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/makePayment', {
+    await fetch(global.MyVar+'makePayment', {
       method: 'POST',
       body: JSON.stringify({
         amount: this.state.amount,

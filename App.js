@@ -7,7 +7,6 @@ import React from 'react';
 //Import Navigators from React Navigation
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-
 //Import all the screens needed
 import SplashScreen from './Screen/SplashScreen';
 import LoginScreen from './Screen/LoginScreen';
@@ -15,9 +14,11 @@ import RegisterScreen from './Screen/RegisterScreen';
 import ForgottenPassword from './Screen/ForgottenPassword';
 import DrawerNavigationRoutes from './Screen/DrawerNavigationRouter';
 import ProductsSettings from './Screen/drawerScreens/shoppingList/productsSetings/ProductsSettings';
+// global.MyVar = global.MyVar+'';
+global.MyVar = 'http://192.168.100.5/kulinarchophp/public/api/';
 
 const Auth = createStackNavigator({
-    //Stack Navigator for Login and Sign up Screen
+    //Stack Navigator for Login and Sign up Screen 
     LoginScreen: {
         screen: LoginScreen,
         navigationOptions: {

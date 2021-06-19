@@ -168,7 +168,7 @@ class AddShoppingListProduct extends React.Component {
       description: this.state.description,
     }))
     
-    await fetch('https://kulinarcho.com/api/AddProductShoppingList', {
+    await fetch(global.MyVar+'AddProductShoppingList', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.typeid,
@@ -221,7 +221,7 @@ class AddShoppingListProduct extends React.Component {
   async fetchDataProducts() {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch("https://kulinarcho.com/api/getProducts", {
+    await fetch(global.MyVar+"getProducts", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN,
@@ -269,7 +269,7 @@ class AddShoppingListProduct extends React.Component {
 
   async fetchDataTypes() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getTypes", {
+    fetch(global.MyVar+"getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -305,7 +305,7 @@ class AddShoppingListProduct extends React.Component {
   }
   async fetchDataUnits() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getUnits", {
+    fetch(global.MyVar+"getUnits", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -343,7 +343,7 @@ class AddShoppingListProduct extends React.Component {
   async submitEditType() {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/createProducts', {
+    await fetch(global.MyVar+'createProducts', {
       method: 'POST',
       body: JSON.stringify({
         name: this.state.newProdTitle,

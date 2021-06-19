@@ -38,7 +38,7 @@ const ForgottenPassword = props => {
         console.log( JSON.stringify({
             email: userEmail,
         }))
-        fetch('https://kulinarcho.com/api/forgotenPassword', {
+        fetch(global.MyVar+'forgotenPassword', {
             method: 'POST',
             body: JSON.stringify({
                 email: userEmail,

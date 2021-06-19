@@ -187,7 +187,7 @@ class AddRecipes extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("https://kulinarcho.com/api/getProducts", {
+    fetch(global.MyVar+"getProducts", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -221,7 +221,7 @@ class AddRecipes extends React.Component {
 
     let DEMO_TOKEN2 = await AsyncStorage.getItem('recipeId');
     this.setState({ id: DEMO_TOKEN2 });
-    await fetch("https://kulinarcho.com/api/showRecipe?id=" + DEMO_TOKEN2, {
+    await fetch(global.MyVar+"showRecipe?id=" + DEMO_TOKEN2, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -351,7 +351,7 @@ class AddRecipes extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("https://kulinarcho.com/api/getRecipeUnits", {
+    fetch(global.MyVar+"getRecipeUnits", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -384,7 +384,7 @@ class AddRecipes extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('https://kulinarcho.com/api/recipesEdit', {
+    await fetch(global.MyVar+'recipesEdit', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.id,
@@ -488,7 +488,7 @@ class AddRecipes extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-  await fetch("https://kulinarcho.com/api/deleteImage", {
+  await fetch(global.MyVar+"deleteImage", {
       method: "POST",
       body: JSON.stringify({
         type: "recipe",

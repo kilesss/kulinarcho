@@ -112,7 +112,7 @@ class feeback extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
 
-    fetch("https://kulinarcho.com/api/getFeedback", {
+    fetch(global.MyVar+"getFeedback", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -141,7 +141,7 @@ class feeback extends React.Component {
 
   async deleteFeedback(id){
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/deleteFeedback', {
+    await fetch(global.MyVar+'deleteFeedback', {
       method: 'POST',
       body: JSON.stringify({
         id: id,
@@ -190,7 +190,7 @@ class feeback extends React.Component {
       type: this.state.country
     }))
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/submitFeedback', {
+    await fetch(global.MyVar+'submitFeedback', {
       method: 'POST',
       body: JSON.stringify({
         description: this.state.description,

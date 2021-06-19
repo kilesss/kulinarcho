@@ -72,7 +72,7 @@ class shoppingListArchiveDetailed extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('https://kulinarcho.com/api/deleteArchiveWeekMenu', {
+    await fetch(global.MyVar+'deleteArchiveWeekMenu', {
       method: 'POST',
       body: JSON.stringify({
         id: id,
@@ -137,7 +137,7 @@ class shoppingListArchiveDetailed extends React.Component {
   async restoreShoppingList() {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/checkPremium', {
+    await fetch(global.MyVar+'checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'shopping' }),
       headers: {
@@ -174,7 +174,7 @@ class shoppingListArchiveDetailed extends React.Component {
 
 
 
-    await fetch('https://kulinarcho.com/api/restoreArchive', {
+    await fetch(global.MyVar+'restoreArchive', {
       method: 'POST',
       body: JSON.stringify({
         listID: DEMO_TOKEN2,
@@ -255,7 +255,7 @@ class shoppingListArchiveDetailed extends React.Component {
 console.log(JSON.stringify({
   id: DEMO_TOKEN2,
 }))
-    fetch("https://kulinarcho.com/api/getShoppingListArchive", {
+    fetch(global.MyVar+"getShoppingListArchive", {
       method: "POST",
       body: JSON.stringify({
         id: DEMO_TOKEN2,

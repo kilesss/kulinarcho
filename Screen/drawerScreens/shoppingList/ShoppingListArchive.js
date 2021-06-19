@@ -94,7 +94,7 @@ class ShoppingListArchive extends React.Component {
 
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('https://kulinarcho.com/api/deleteShoppingListArchive', {
+    await fetch(global.MyVar+'deleteShoppingListArchive', {
       method: 'POST',
       body: JSON.stringify({
         id: id,
@@ -161,7 +161,7 @@ class ShoppingListArchive extends React.Component {
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    fetch("https://kulinarcho.com/api/getShoppingListArchive", {
+    fetch(global.MyVar+"getShoppingListArchive", {
       method: "POST",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN

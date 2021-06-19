@@ -16,7 +16,6 @@ import {
 } from 'expo-ads-admob';
 import DropdownAlert from 'react-native-dropdownalert';
 import { BottomSheet } from 'react-native-btr';
-
 import {
   StyleSheet,
   TouchableOpacity,
@@ -66,7 +65,11 @@ class Lists extends React.Component {
     typeid: '',
     modalEditTitle: 'Редактиране на списък',
     count: false,
-    premium: 0
+    premium: 0,
+    first_login: 0,
+    addUser: false,
+    addEmail:'',
+    userReq:''
   };
 
   setTypeTitle = (title) => {
@@ -104,7 +107,9 @@ class Lists extends React.Component {
 
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/shoppingList", {
+    console.log(DEMO_TOKEN);
+console.log(global.MyVar);
+    fetch(global.MyVar + "shoppingList", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -115,7 +120,20 @@ class Lists extends React.Component {
           AsyncStorage.clear();
           this.props.navigation.navigate('Auth');
         }
+        this.state.userReq = data.user_requests;
+        delete data.user_requests
 
+        this.state.first_login = data.first_login;
+        if (data.first_login == 1) {
+          fetch(global.MyVar + "firstLogin", {
+            method: "POST",
+            headers: {
+              'Authorization': 'Bearer ' + DEMO_TOKEN
+            }
+          })
+          this.state.addUser = true;
+        }
+        delete data.first_login
 
         this.state.premium = data.premium;
         delete data.premium;
@@ -131,11 +149,12 @@ class Lists extends React.Component {
           newData.push(data[index]);
         })
         this.setState({ externalData: newData });
+
       }).done();
   }
   async checkPremium() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/checkPremium', {
+    await fetch(global.MyVar+'checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'shopping' }),
       headers: {
@@ -170,7 +189,7 @@ class Lists extends React.Component {
   }
   async submitDeleteType() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/deleteList', {
+    await fetch(global.MyVar+'deleteList', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.typeid }),
       headers: {
@@ -211,7 +230,7 @@ class Lists extends React.Component {
       active = 1
     }
 
-    await fetch('https://kulinarcho.com/api/updateList', {
+    await fetch(global.MyVar+'updateList', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.typeid, name: this.state.typeTitle, isShared: active }),
       headers: {
@@ -238,8 +257,8 @@ class Lists extends React.Component {
             this.dropDownAlertRef.alertWithType('success', '', 'Списъка е редактиран', {}, 1000);
           } else {
             console.log('--------------------------------')
-console.log(data.response.toString());
-console.log('--------------------------------')
+            console.log(data.response.toString());
+            console.log('--------------------------------')
 
             AsyncStorage.setItem('listId', data.response.toString()).then(data => {
               this.props.navigation.navigate('AddShoppingListProduct', { user: 'asdasdsdasd' });
@@ -270,7 +289,56 @@ console.log('--------------------------------')
       throw error;
     });
   }
+  async submitNewRequest() {
 
+    var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
+
+
+    await fetch(global.MyVar+'newRequest', {
+        method: 'POST',
+        body: JSON.stringify({
+            requestedEmail: this.state.addEmail,
+        }),
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            //Header Defination
+            'Authorization': 'Bearer ' + DEMO_TOKEN
+        },
+
+    }).then(
+        async response => {
+            const data = await response.json();
+
+            if (data.errors !== undefined) {
+                Object.keys(data.errors).map((key, index) => {
+                    this.dropDownAlertRef.alertWithType('error', '', data.errors[key], {}, 1000);
+                })
+            } else {
+                this.dropDownAlertRef.alertWithType('success', '', 'Успешно изпратена заявка', {}, 1000);
+            }
+
+
+            if (data.login && data.login == true) {
+                AsyncStorage.clear();
+                this.props.navigation.navigate('Auth');
+            }
+
+            if (data.new_token) {
+                AsyncStorage.setItem('access_token', data.new_token);
+                delete data.new_token;
+                delete data['new_token'];
+            }
+
+
+            await this.fetchData();
+        }
+    ).catch(function (error) {
+        
+        // ADD THIS THROW error
+        throw error;
+    });
+}
 
   async componentDidMount() {
     const { navigation } = this.props;
@@ -299,20 +367,10 @@ console.log('--------------------------------')
 
     });
   }
-  test() {
 
-
-
-
-
-
-
-
-
-  }
   async _saveDetails() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/checkPremium', {
+    await fetch(global.MyVar+'checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'shopping' }),
       headers: {
@@ -394,7 +452,7 @@ console.log('--------------------------------')
   async archiveShoppingList(id) {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('https://kulinarcho.com/api/archiveList', {
+    await fetch(global.MyVar+'archiveList', {
       method: 'POST',
       body: JSON.stringify({
         listId: id,
@@ -527,11 +585,188 @@ console.log('--------------------------------')
 
       );
 
+      if (this.state.userReq != '') {
+          Alert.alert('Нови заявки за присъединяване', 'Имате нови заявки от '+this.state.userReq+' можете да ги приемете или откажете в секцията Профил.',[
+            {
+              text: 'Отказ',
+              onPress: () => {
+                return null;
+              },
+            },
+            {
+              text: 'Моя профил',
+              onPress: () => {
+                this.props.navigation.navigate('ShowProfile');
+              },
+            },
+          ])
+      }
       return (
         <View style={styles.MainContainer}>
           <DropdownAlert ref={ref => this.dropDownAlertRef = ref} />
           {Add}
 
+          <BottomSheet
+            visible={this.state.addUser}
+            onBackButtonPress={this.toggle}
+            onBackdropPress={this.toggle}
+          >
+            <View
+              style={{
+                backgroundColor: 'white',
+                borderTopRightRadius: 15,
+                borderTopLeftRadius: 15,
+                justifyContent: "center",
+                alignItems: "center",
+                height: 200
+              }}
+            >
+              <Text style={styles.titlem}>Добре дошли в Килинарчо</Text>
+              <Text style={{ ...styles.titlem, fontSize: 16 }}>Можете да добавите член в групата ви като му изпратите покана</Text>
+              <TextInput
+                style={{
+                  width: "92%", height: 40,
+                  borderLeftWidth: 4, borderLeftColor: '#689F38',
+                  borderRadius: 15,
+                  marginLeft: 9, marginRight: 9,
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 7,
+                  },
+                  shadowOpacity: 0.41,
+                  shadowRadius: 9.11,
+                  elevation: 6,
+                  marginTop: 15,
+
+                  backgroundColor: '#ffffff',
+                  paddingLeft: 10
+                }}
+                defaultValue={typeTitle}
+                onSubmitEditing={() => {
+                  this.submitEditType();
+                }}
+                blurOnSubmit={false}
+                placeholder={'Имайл: '}
+                onChangeText={typeTitle => this.setState({ addEmail: typeTitle })
+                }
+
+              />
+
+
+              <View style={{ flex: 1, flexDirection: 'row', marginTop: 20 }}>
+
+                <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
+                          this.setState({addUser:false})
+                          alert('Можете да добавите член към групата си по всяко време от профила си.')
+                }} underlayColor="white"
+                >
+                  <View style={{
+                    flex: 3, flexDirection: "row",
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 7,
+                    },
+                    shadowOpacity: 0.41,
+                    shadowRadius: 9.11,
+                    elevation: 6,
+                    alignItems: "center",
+                    backgroundColor: "white",
+                    borderRightWidth: 1,
+                    marginLeft: 10, marginRight: 15, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
+                    padding: 10
+                  }}>
+                    <View style={{
+                      backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1,
+                      borderColor: "silver",
+                    }}>
+                      <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
+                        size={30}
+                        containerStyle={{
+                          backgroundColor: '#ebebeb',
+                          padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
+                        }}
+                        color={'red'}
+                        onPress={() => {
+                          this.setState({addUser:false})
+
+                          alert('Можете да добавите член към групата си по всяко време от профила си.')
+
+                        }
+
+                        }
+                        type='ionicon'
+                        backgroundColor='silver'
+                        name='close-outline'
+                      >Запази</Icon>
+
+                    </View>
+                    <View style={{
+                      flex: 3, backgroundColor: 'white', height: 50,
+                      borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", alignItems: 'center'
+                    }}>
+                      <Text style={{ flex: 3, marginTop: 15 }}>Отказ</Text>
+                    </View>
+                  </View>
+                </TouchableHighlight>
+                <TouchableHighlight style={{ height: 50, flex: 1 }} onPress={() => {
+                                            this.setState({addUser:false})
+                                            this.submitNewRequest()
+                  
+                }} underlayColor="white">
+                  <View style={{
+                    flex: 3, flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "white",
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 7,
+                    },
+                    shadowOpacity: 0.41,
+                    shadowRadius: 9.11,
+                    elevation: 6,
+                    marginLeft: 15, marginRight: 10, borderRadius: 10, borderWidth: 1, borderColor: "silver", height: 50,
+                    padding: 10
+                  }}>
+                    <View style={{ backgroundColor: 'silver', height: 50, paddingBottom: 4, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "silver", }}>
+
+                      <Icon style={{ flex: 1, marginRight: 15, height: 50, borderRightWidth: 1, borderColor: 'silver' }}
+                        size={30}
+                        containerStyle={{
+                          backgroundColor: '#ebebeb',
+                          padding: 10, marginLeft: -10, borderTopLeftRadius: 10, borderBottomLeftRadius: 10
+                        }}
+                        size={30}
+
+                        color={'green'}
+                        onPress={() => {
+                          this.setState({addUser:false})
+                          this.submitNewRequest()
+
+                        }
+
+                        }
+                        type='ionicon'
+                        backgroundColor='silver'
+                        name='checkmark-outline'
+                      ></Icon>
+
+                    </View>
+                    <View style={{
+                      flex: 3, backgroundColor: 'white', height: 50, borderTopWidth: 1,
+                      borderBottomWidth: 1, borderColor: "silver", alignItems: 'center'
+                    }}>
+                      <Text style={{ flex: 3, marginTop: 15 }}>Запази</Text>
+                    </View>
+                  </View>
+                </TouchableHighlight>
+
+              </View>
+
+            </View>
+          </BottomSheet>
           <BottomSheet
             visible={this.state.editList}
             onBackButtonPress={this.toggle}

@@ -135,7 +135,7 @@ class EditShoppingListProduct extends React.Component {
     this.setState({ listName: listName })
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     this.setState({ unbuyedProduct: 0 });
-    fetch("https://kulinarcho.com/api/getShoppingListProducts?listId=" + this.state.listId + "&productId=" + this.state.dropdownSelect, {
+    fetch(global.MyVar+"getShoppingListProducts?listId=" + this.state.listId + "&productId=" + this.state.dropdownSelect, {
       method: "GET",
       headers: {
         'Cache-Control': 'no-cache',
@@ -187,7 +187,7 @@ class EditShoppingListProduct extends React.Component {
       typeId: this.state.typesID,
       name: this.state.newProdTitle,
     }))
-    await fetch('https://kulinarcho.com/api/AddProductShoppingList', {
+    await fetch(global.MyVar+'AddProductShoppingList', {
       method: 'POST',
       body: JSON.stringify({
         id: this.state.dropdownSelect,
@@ -239,7 +239,7 @@ class EditShoppingListProduct extends React.Component {
   }
   async fetchDataProducts() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch("https://kulinarcho.com/api/getProducts", {
+    await fetch(global.MyVar+"getProducts", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN,
@@ -274,7 +274,7 @@ class EditShoppingListProduct extends React.Component {
   }
   async fetchDataTypes() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getTypes", {
+    fetch(global.MyVar+"getTypes", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
@@ -308,7 +308,7 @@ class EditShoppingListProduct extends React.Component {
   }
   async fetchDataUnits() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getUnits", {
+    fetch(global.MyVar+"getUnits", {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN

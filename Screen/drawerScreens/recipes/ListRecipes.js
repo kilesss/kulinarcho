@@ -126,7 +126,7 @@ class ListRecipes extends React.Component {
 
         var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-        await fetch('https://kulinarcho.com/api/recipesDelete', {
+        await fetch(global.MyVar+'recipesDelete', {
             method: 'POST',
             body: JSON.stringify({
                 id: id,
@@ -167,7 +167,7 @@ class ListRecipes extends React.Component {
         var decoded = jwt_decode(DEMO_TOKEN);
         this.setState({ userId: decoded.oldId })
 
-        fetch("https://kulinarcho.com/api/recipes?id=" + this.state.typeId, {
+        fetch(global.MyVar+"recipes?id=" + this.state.typeId, {
             method: "GET",
             headers: {
                 'Authorization': 'Bearer ' + DEMO_TOKEN

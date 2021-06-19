@@ -155,7 +155,7 @@ class ListEditProducts extends React.Component {
     this.setState({ listName: listName })
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     this.setState({ unbuyedProduct: 0 });
-    fetch("https://kulinarcho.com/api/getShoppingListProducts?listId=" + this.state.listId + "&sort=" + this.state.sort, {
+    fetch(global.MyVar+"getShoppingListProducts?listId=" + this.state.listId + "&sort=" + this.state.sort, {
       method: "GET",
       headers: {
         'Cache-Control': 'no-cache',
@@ -225,7 +225,7 @@ class ListEditProducts extends React.Component {
 
   async archiveShoppingList() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/archiveList', {
+    await fetch(global.MyVar+'archiveList', {
       method: 'POST',
       body: JSON.stringify({
         listId: this.state.listId,
@@ -299,7 +299,7 @@ class ListEditProducts extends React.Component {
 
 
 
-    await fetch('https://kulinarcho.com/api/shoppingListBuy', {
+    await fetch(global.MyVar+'shoppingListBuy', {
       method: 'POST',
       body: JSON.stringify({
         listID: this.state.listId,
@@ -360,7 +360,7 @@ class ListEditProducts extends React.Component {
 
   async submitDeleteType() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/deleteProductFromList', {
+    await fetch(global.MyVar+'deleteProductFromList', {
       method: 'POST',
       body: JSON.stringify({ id: this.state.productId, status: 1 }),
       headers: {
@@ -406,7 +406,7 @@ class ListEditProducts extends React.Component {
   async checkForUpdate() {
     let listId = await AsyncStorage.getItem('listId');
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/checkProductsStatus', {
+    await fetch(global.MyVar+'checkProductsStatus', {
       method: 'POST',
       body: JSON.stringify({ listId: listId }),
 

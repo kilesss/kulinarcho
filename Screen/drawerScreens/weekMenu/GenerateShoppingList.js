@@ -120,7 +120,7 @@ class GenerateShoppingList extends React.Component {
     }
   async  generateList(){
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    await fetch('https://kulinarcho.com/api/checkPremium', {
+    await fetch(global.MyVar+'checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'shopping' }),
       headers: {
@@ -146,7 +146,7 @@ class GenerateShoppingList extends React.Component {
         }
         
         if (data.response == 'ok' || data.response < 2) {
-            await fetch('https://kulinarcho.com/api/generateShoppingList', {
+            await fetch(global.MyVar+'generateShoppingList', {
                 method: 'POST',
                 body: JSON.stringify({
                     title:this.state.title,

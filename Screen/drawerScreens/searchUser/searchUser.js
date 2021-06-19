@@ -117,7 +117,7 @@ class searchUser extends React.Component {
     
     
     
-    await fetch('https://kulinarcho.com/api/addFollower', {
+    await fetch(global.MyVar+'addFollower', {
       method: 'POST',
       body: JSON.stringify({
         follow_id: follow_id
@@ -162,7 +162,7 @@ class searchUser extends React.Component {
       follow_id: follow_id
     }));
     
-    await fetch('https://kulinarcho.com/api/removeFollower', {
+    await fetch(global.MyVar+'removeFollower', {
       method: 'POST',
       body: JSON.stringify({
         follow_id: follow_id
@@ -203,7 +203,7 @@ class searchUser extends React.Component {
 
   async fetchData(id) {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
-    fetch("https://kulinarcho.com/api/getPublicProfiles/"+id, {
+    fetch(global.MyVar+"getPublicProfiles/"+id, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN,

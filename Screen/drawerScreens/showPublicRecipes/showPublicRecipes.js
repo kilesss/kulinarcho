@@ -189,7 +189,7 @@ class showPublicRecipes extends React.Component {
       photo: this.state.image64,
       approved: 0
     }))
-    fetch("https://kulinarcho.com/api/uploadImageGallery", {
+    fetch(global.MyVar+"uploadImageGallery", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -235,7 +235,7 @@ class showPublicRecipes extends React.Component {
     let DEMO_TOKEN2 = await AsyncStorage.getItem('recipeId');
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
 
-    await fetch('https://kulinarcho.com/api/checkPremium', {
+    await fetch(global.MyVar+'checkPremium', {
       method: 'POST',
       body: JSON.stringify({ types: 'recipe' }),
       headers: {
@@ -261,7 +261,7 @@ class showPublicRecipes extends React.Component {
         }
 
           if(data.response < 10){
-            fetch("https://kulinarcho.com/api/transferRecipe", {
+            fetch(global.MyVar+"transferRecipe", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -316,7 +316,7 @@ class showPublicRecipes extends React.Component {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     let DEMO_TOKEN2 = await AsyncStorage.getItem('recipeId');
 
-    fetch("https://kulinarcho.com/api/submitSuggestion", {
+    fetch(global.MyVar+"submitSuggestion", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -363,7 +363,7 @@ class showPublicRecipes extends React.Component {
   async fetchData() {
     var DEMO_TOKEN = await AsyncStorage.getItem('access_token');
     let DEMO_TOKEN2 = await AsyncStorage.getItem('recipeId');
-    fetch("https://kulinarcho.com/api/showRecipe?id=" + DEMO_TOKEN2, {
+    fetch(global.MyVar+"showRecipe?id=" + DEMO_TOKEN2, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + DEMO_TOKEN
